@@ -1,25 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { blue, red } from "@material-ui/core/colors";
+import { CssBaseline } from "@material-ui/core";
+import "typeface-roboto";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+import SignInSide from "./components/auth/SignInSide";
+import Landing from "./components/landing/Landing";
+
+const theme = createMuiTheme({
+  palette: {
+    primary: blue,
+    secondary: red
+  }
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Landing}></Route>
+          <Route path="/signin" component={SignInSide}></Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
   );
 }
 
