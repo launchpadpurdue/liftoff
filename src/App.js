@@ -5,8 +5,8 @@ import { CssBaseline } from "@material-ui/core";
 import "typeface-roboto";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import SignInSide from "./components/auth/SignInSide";
 import Landing from "./components/landing/Landing";
+import SignIn from "./components/auth/SignIn";
 
 const theme = createMuiTheme({
   palette: {
@@ -22,7 +22,7 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/" component={Landing}></Route>
-          <Route path="/signin" component={SignInSide}></Route>
+          <Route path="/signin" component={SignIn}></Route>
         </Switch>
       </Router>
     </ThemeProvider>
