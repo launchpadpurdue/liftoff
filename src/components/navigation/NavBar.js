@@ -16,6 +16,7 @@ import { signOut } from "../../store/actions/authActions";
 import SignedOutLinks from "./SignedOutLinks";
 import SignedInLinks from "./SignedInLinks";
 import { withRouter } from "react-router-dom";
+import { toggleTheme } from "../../store/actions/themeActions";
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
@@ -176,6 +177,15 @@ function NavBar(props) {
             <Button
               color="inherit"
               onClick={() => {
+                if (props.history.location.pathname !== "/mentees")
+                  props.history.push("/mentees");
+              }}
+            >
+              Mentees
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => {
                 if (props.history.location.pathname !== "/mentors")
                   props.history.push("/mentors");
               }}
@@ -185,11 +195,14 @@ function NavBar(props) {
             <Button
               color="inherit"
               onClick={() => {
-                if (props.history.location.pathname !== "/mentees")
-                  props.history.push("/mentees");
+                if (props.history.location.pathname !== "/organizers")
+                  props.history.push("/organizers");
               }}
             >
-              Mentees
+              Organizers
+            </Button>
+            <Button color="inherit" onClick={() => props.toggleTheme()}>
+              Theme
             </Button>
             {auth.uid ? <SignedInLinks /> : <SignedOutLinks />}
           </div>
@@ -218,7 +231,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signOut: () => dispatch(signOut())
+    signOut: () => dispatch(signOut()),
+    toggleTheme: () => dispatch(toggleTheme())
   };
 };
 
