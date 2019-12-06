@@ -9,12 +9,13 @@ import thunk from "redux-thunk";
 import firebase from "./config/firebaseConfig";
 import { ReactReduxFirebaseProvider, getFirebase } from "react-redux-firebase";
 
+// Create the redux store
 const store = createStore(
   rootReducer,
   applyMiddleware(thunk.withExtraArgument({ getFirebase }))
 );
 
-// react-redux-firebase config
+// Create the config and props for react-redux-firebase
 const rrfConfig = {
   attachAuthIsReady: true
   // userProfile: 'users',
@@ -29,6 +30,7 @@ const rrfProps = {
   // createFirestoreInstance // <- needed if using firestore
 };
 
+// Render the app using a provider to store the redux and firebase state
 ReactDOM.render(
   <Provider store={store}>
     <ReactReduxFirebaseProvider {...rrfProps}>

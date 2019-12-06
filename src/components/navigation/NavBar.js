@@ -10,24 +10,18 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { Button, Avatar } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { connect } from "react-redux";
 import { signOut } from "../../store/actions/authActions";
 import SignedOutLinks from "./SignedOutLinks";
 import SignedInLinks from "./SignedInLinks";
-
+import { withRouter } from "react-router-dom";
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
   },
   menuButton: {
     marginRight: theme.spacing(2)
-  },
-  title: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
   },
   search: {
     position: "relative",
@@ -166,19 +160,38 @@ function NavBar(props) {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
+            onClick={() => {
+              if (props.history.location.pathname !== "/")
+                props.history.push("/");
+            }}
           >
             <img src="./logo.png" alt="bug" height={32} />
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
+          <Typography variant="h6" noWrap>
             Liftoff
           </Typography>
 
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button color="inherit">Mentors</Button>
-            <Button color="inherit">Mentees</Button>
+            <Button
+              color="inherit"
+              onClick={() => {
+                if (props.history.location.pathname !== "/mentors")
+                  props.history.push("/mentors");
+              }}
+            >
+              Mentors
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => {
+                if (props.history.location.pathname !== "/mentees")
+                  props.history.push("/mentees");
+              }}
+            >
+              Mentees
+            </Button>
             {auth.uid ? <SignedInLinks /> : <SignedOutLinks />}
-            {/* <Avatar src="./logo.png" /> */}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
@@ -209,4 +222,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));

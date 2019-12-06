@@ -9,27 +9,35 @@ import Landing from "./components/landing/Landing";
 import SignIn from "./components/auth/SignIn";
 import { isLoaded } from "react-redux-firebase";
 import { connect } from "react-redux";
+import MenteeGallery from "./components/dashboard/MenteeGallery";
+import MentorGallery from "./components/dashboard/MentorGallery";
 
 const theme = createMuiTheme({
   palette: {
     primary: blue,
-    secondary: red
+    secondary: red,
+    // type: "dark"
   }
 });
 
 function App(props) {
-  return isLoaded(props.auth) ? (
+  // TODO: Make a prettier loading page
+  // Waits for firebase to initialize before loading any page
+  if (!isLoaded(props.auth)) return <h1>Loading</h1>;
+
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Switch>
           <Route exact path="/" component={Landing}></Route>
           <Route path="/signin" component={SignIn}></Route>
+          <Route path="/mentees" component={MenteeGallery}></Route>
+          <Route path="/mentors" component={MentorGallery}></Route>
+
         </Switch>
       </Router>
     </ThemeProvider>
-  ) : (
-    <h1>Loading</h1>
   );
 }
 
