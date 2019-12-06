@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import MenteeGallery from "./components/dashboard/MenteeGallery";
 import MentorGallery from "./components/dashboard/MentorGallery";
 import OrganizerGallery from "./components/dashboard/OrganizerGallery";
+import SignUp from "./components/auth/SignUp";
 
 function App(props) {
   // TODO: Make a prettier loading page
@@ -25,6 +26,7 @@ function App(props) {
         <Switch>
           <Route exact path="/" component={Landing}></Route>
           <Route path="/signin" component={SignIn}></Route>
+          <Route path="/signup" component={SignUp}></Route>
           <Route path="/mentees" component={MenteeGallery}></Route>
           <Route path="/mentors" component={MentorGallery}></Route>
           <Route path="/organizers" component={OrganizerGallery}></Route>
