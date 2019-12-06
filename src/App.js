@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Landing from "./components/landing/Landing";
 import SignIn from "./components/auth/SignIn";
+import { isLoaded } from "react-redux-firebase";
+import { connect } from "react-redux";
 
 const theme = createMuiTheme({
   palette: {
@@ -15,8 +17,8 @@ const theme = createMuiTheme({
   }
 });
 
-function App() {
-  return (
+function App(props) {
+  return isLoaded(props.auth) ? (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
@@ -26,7 +28,13 @@ function App() {
         </Switch>
       </Router>
     </ThemeProvider>
+  ) : (
+    <h1>Loading</h1>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return { auth: state.firebase.auth };
+};
+
+export default connect(mapStateToProps)(App);

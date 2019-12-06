@@ -11,6 +11,10 @@ import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Button, Avatar } from "@material-ui/core";
+import { connect } from "react-redux";
+import { signOut } from "../../store/actions/authActions";
+import SignedOutLinks from "./SignedOutLinks";
+import SignedInLinks from "./SignedInLinks";
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -74,7 +78,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function NavBar() {
+function NavBar(props) {
+  const { auth } = props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -172,10 +177,8 @@ export default function NavBar() {
           <div className={classes.sectionDesktop}>
             <Button color="inherit">Mentors</Button>
             <Button color="inherit">Mentees</Button>
-            <Button color="inherit" margin="normal">
-              Login
-            </Button>
-            <Avatar alt="Remy Sharp" src="./logo.png" />
+            {auth.uid ? <SignedInLinks /> : <SignedOutLinks />}
+            {/* <Avatar src="./logo.png" /> */}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
@@ -195,3 +198,15 @@ export default function NavBar() {
     </div>
   );
 }
+
+const mapStateToProps = state => {
+  return { auth: state.firebase.auth };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    signOut: () => dispatch(signOut())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
