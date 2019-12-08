@@ -13,6 +13,7 @@ import MentorGallery from "./components/dashboard/MentorGallery";
 import OrganizerGallery from "./components/dashboard/OrganizerGallery";
 import SignUp from "./components/auth/SignUp";
 
+
 function App(props) {
   // TODO: Make a prettier loading page
   // Waits for firebase to initialize before loading any page

@@ -8,6 +8,13 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { withStyles } from "@material-ui/styles";
+import { signUp } from "../../store/actions/authActions";
+import { connect } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+
+const LinkTemplate = React.forwardRef((props, ref) => (
+  <RouterLink innerRef={ref} {...props} />
+));
 
 const styles = theme => ({
   paper: {
@@ -43,10 +50,11 @@ class SignUp extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    this.props.signUp(this.state);
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, authError } = this.props;
     console.log(this.state);
     return (
       <Container component="main" maxWidth="xs">
@@ -114,6 +122,11 @@ class SignUp extends Component {
                 />
               </Grid>
             </Grid>
+            {authError ? (
+              <Typography variant="body1" gutterBottom color="error">
+                {authError}
+              </Typography>
+            ) : null}
             <Button
               type="submit"
               fullWidth
@@ -125,11 +138,7 @@ class SignUp extends Component {
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link
-                  href="#"
-                  variant="body2"
-                  onClick={() => this.props.history.push("/signin")}
-                >
+                <Link to="signin" component={LinkTemplate} variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
@@ -141,4 +150,20 @@ class SignUp extends Component {
   }
 }
 
-export default withStyles(styles)(SignUp);
+const mapStateToProps = state => {
+  return {
+    auth: state.firebase.props,
+    authError: state.auth.authError
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    signUp: accountDetails => dispatch(signUp(accountDetails))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(SignUp));

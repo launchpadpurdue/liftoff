@@ -18,3 +18,31 @@ export const signOut = () => {
       .catch(error => dispatch({ type: "LOGOUT_ERROR", error }));
   };
 };
+
+export const signUp = accountDetails => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    const firestore = getFirestore();
+
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(
+        accountDetails.email,
+        accountDetails.password
+      )
+      .then(resp =>
+        firestore
+          .collection("users")
+          .doc(resp.user.uid)
+          .set({
+            firstName: accountDetails.firstName,
+            lastName: accountDetails.lastName,
+            initials:
+              accountDetails.firstName[0].toUpperCase() +
+              accountDetails.lastName[0].toUpperCase()
+          })
+      )
+      .then(() => dispatch({ type: "SIGNUP_SUCCESS" }))
+      .catch(error => dispatch({ type: "SIGNUP_ERROR", error }));
+  };
+};
