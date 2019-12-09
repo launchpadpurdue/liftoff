@@ -118,9 +118,21 @@ export default function MentorGallery() {
                     <Typography gutterBottom variant="h5" component="h2">
                       Heading
                     </Typography>
+                    {card % 2 === 0 ? (
+                          <Typography>
+                          This is a media card. You can use this section to describe
+                          the content.
+                         
+                        </Typography>
+                      ) :   <Typography>
+                      This is a media card. You can use this section to describe
+                      the content. Plus a bunch nire jad kfljaksl;f jsda;fjasdfjsakfjs;a  jfaskjfk a jlasfjsa
+                     
+                    </Typography>}
                     <Typography>
                       This is a media card. You can use this section to describe
                       the content.
+                     
                     </Typography>
                   </CardContent>
                   <CardActions>

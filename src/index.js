@@ -21,9 +21,9 @@ const store = createStore(
 
 // Create the config and props for react-redux-firebase
 const rrfConfig = {
-  attachAuthIsReady: true
-  // userProfile: 'users',
-  // useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+  attachAuthIsReady: true,
+  userProfile: "users",
+  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
   // enableClaims: true // Get custom claims along with the profile
 };
 
@@ -31,7 +31,6 @@ const rrfProps = {
   firebase,
   config: rrfConfig,
   dispatch: store.dispatch
-  // createFirestoreInstance // <- needed if using firestore
 };
 
 // Render the app using a provider to store the redux and firebase state

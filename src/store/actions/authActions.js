@@ -24,24 +24,45 @@ export const signUp = accountDetails => {
     const firebase = getFirebase();
     const firestore = getFirestore();
 
+    let credentials = {
+      email: accountDetails.email,
+      password: accountDetails.password
+    };
+
+    let profile = {
+      firstName: accountDetails.firstName,
+      lastName: accountDetails.lastName,
+      initials:
+        accountDetails.firstName[0].toUpperCase() +
+        accountDetails.lastName[0].toUpperCase(),
+      profilePicture: ""
+    };
+
+    let userImage = accountDetails.image;
+
     firebase
-      .auth()
-      .createUserWithEmailAndPassword(
-        accountDetails.email,
-        accountDetails.password
-      )
-      .then(resp =>
-        firestore
-          .collection("users")
-          .doc(resp.user.uid)
-          .set({
-            firstName: accountDetails.firstName,
-            lastName: accountDetails.lastName,
-            initials:
-              accountDetails.firstName[0].toUpperCase() +
-              accountDetails.lastName[0].toUpperCase()
-          })
-      )
+      .createUser(credentials, profile)
+      .then(() => {
+        let uid = firebase.auth().currentUser.uid;
+        if (userImage)
+          return firebase
+            .uploadFile(`/userImages/${uid}`, userImage, null, {
+              name: "profilePicture"
+            })
+            .then(() =>
+              firebase
+                .storage()
+                .ref()
+                .child(`/userImages/${uid}/profilePicture`)
+                .getDownloadURL()
+                .then(downloadURL =>
+                  firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({ profilePicture: downloadURL })
+                )
+            );
+      })
       .then(() => dispatch({ type: "SIGNUP_SUCCESS" }))
       .catch(error => dispatch({ type: "SIGNUP_ERROR", error }));
   };
