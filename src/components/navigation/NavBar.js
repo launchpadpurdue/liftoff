@@ -226,7 +226,7 @@ function NavBar(props) {
 }
 
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth };
+  return { auth: state.firebase.auth, firebase: state.firebase };
 };
 
 const mapDispatchToProps = dispatch => {

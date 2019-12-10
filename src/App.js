@@ -1,17 +1,18 @@
-import React from "react";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { CssBaseline } from "@material-ui/core";
 import "typeface-roboto";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
+import { CssBaseline } from "@material-ui/core";
 import Landing from "./components/landing/Landing";
-import SignIn from "./components/auth/SignIn";
-import { isLoaded } from "react-redux-firebase";
-import { connect } from "react-redux";
 import MenteeGallery from "./components/dashboard/MenteeGallery";
 import MentorGallery from "./components/dashboard/MentorGallery";
 import OrganizerGallery from "./components/dashboard/OrganizerGallery";
+import React from "react";
+import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
+import { connect } from "react-redux";
+import { isLoaded } from "react-redux-firebase";
 
 function App(props) {
   // TODO: Make a prettier loading page

@@ -1,84 +1,166 @@
-import React, { Component } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  withStyles,
-  Box,
-  DialogContent,
-  DialogActions,
-  Button
-} from "@material-ui/core";
-import { display } from "@material-ui/system";
+import "react-image-crop/dist/ReactCrop.css";
 
-const styles = theme => ({
-  image: {
-    display: "block",
-    maxWidth: "auto",
-    maxHeight: ".8vh"
-  },
-  dialogContent: {
-    display: "flex",
-    alignItems: "center"
-  },
-  dialogActions: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  withStyles
+} from "@material-ui/core";
+import React, { Component } from "react";
+
+import ReactCrop from "react-image-crop";
+
+const styles = {
   hidden: {
     visibility: "hidden"
   }
-});
+};
 
 class ImageCropper extends Component {
   state = {
     hasCropped: false,
-    imageURL: ""
+    croppedImageURL: "",
+    croppedImageFile: null,
+    crop: {
+      aspect: 1
+    }
   };
 
-  componentDidMount() {
-    console.log("SUG");
-  }
-
-  revert = () => {
-    this.setState({ hasCropped: false });
+  back = () => {
+    this.setState({
+      hasCropped: false,
+      croppedImageURL: "",
+      croppedImageFile: null
+    });
   };
 
-  proceed = () => {
+  next = () => {
     if (this.state.hasCropped) {
-      this.props.onClose("success", this.state.imageURL);
-      this.setState({ hasCropped: false, imageURL: "" });
+      this.props.onClose(this.state.croppedImageFile);
+      this.setState({
+        hasCropped: false,
+        croppedImageURL: "",
+        croppedImageFile: null,
+        crop: {
+          aspect: 1
+        }
+      });
     } else {
       this.setState({ hasCropped: true });
     }
   };
 
-  render() {
-    const { onClose, imageURL, open, classes } = this.props;
+  onImageLoaded = image => {
+    this.imageRef = image;
+  };
 
-    const handleClose = (event, reason) => {
-      console.log(event, reason);
-      onClose(reason);
-    };
+  onCropComplete = crop => {
+    this.makeClientCrop(crop);
+  };
+
+  async makeClientCrop(crop) {
+    if (this.imageRef && crop.width && crop.height) {
+      const croppedFile = await this.getCroppedImg(this.imageRef, crop);
+      this.setState({
+        croppedImageFile: croppedFile,
+        croppedImageURL: URL.createObjectURL(croppedFile)
+      });
+    }
+  }
+
+  getCroppedImg(image, crop) {
+    const canvas = document.createElement("canvas");
+    const scaleX = image.naturalWidth / image.width,
+      scaleY = image.naturalHeight / image.height,
+      ctx = canvas.getContext("2d");
+    canvas.width = 500;
+    canvas.height = 500;
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      500,
+      500
+    );
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(blob => {
+        if (!blob) {
+          //reject(new Error('Canvas is empty'));
+          console.error("Canvas is empty");
+          return;
+        }
+        const file = new File([blob], "image.png", { type: "image/png" });
+        resolve(file);
+      }, "image/png");
+    });
+  }
+
+  handleClose = (event, reason) => {
+    this.props.onClose(null);
+    this.setState({
+      hasCropped: false,
+      croppedImageURL: "",
+      croppedImageFile: null,
+      crop: {
+        aspect: 1
+      }
+    });
+  };
+
+  render() {
+    const { classes, image, open } = this.props;
+    if (!image) return null;
+    const imageURL = URL.createObjectURL(image);
 
     return (
-      <Dialog onClose={handleClose} open={open} fullWidth={true} maxWidth="md">
+      <Dialog
+        onClose={this.handleClose}
+        open={open}
+        maxWidth="sm"
+        className={classes.dialog}
+      >
         <DialogTitle id="simple-dialog-title">Crop Profile Image</DialogTitle>
-        <DialogContent className={classes.dialogContent}>
+        <DialogContent>
           {!this.state.hasCropped ? (
-            <img height="500vh" width="auto" alt="Cropped" src={imageURL}></img>
-          ) : null}
+            <ReactCrop
+              src={imageURL}
+              crop={this.state.crop}
+              onImageLoaded={this.onImageLoaded}
+              onChange={newCrop => this.setState({ crop: newCrop })}
+              onComplete={this.onCropComplete}
+            />
+          ) : (
+            <img
+              height="auto"
+              width="100%"
+              alt="Cropped"
+              src={this.state.croppedImageURL}
+            ></img>
+          )}
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button
-            variant="contained"
             className={this.state.hasCropped ? null : classes.hidden}
-            onClick={this.revert}
+            variant="contained"
+            onClick={this.back}
           >
             Back
           </Button>
-          <Button color="primary" variant="contained" onClick={this.proceed}>
-            {this.state.hasCropped ? "Done" : "Crop"}
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={this.next}
+            disabled={this.state.croppedImageFile == null}
+          >
+            {this.state.hasCropped ? "Finish" : "Crop"}
           </Button>
         </DialogActions>
       </Dialog>

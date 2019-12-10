@@ -1,32 +1,31 @@
+import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select
+} from "@material-ui/core";
 import React, { Component, Fragment } from "react";
-import ReactDOM from "react-dom";
 
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
 import Container from "@material-ui/core/Container";
-import { withStyles } from "@material-ui/styles";
-import { signUp } from "../../store/actions/authActions";
-import { connect } from "react-redux";
-import { Link as RouterLink } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import {
-  CardMedia,
-  Card,
-  Select,
-  MenuItem,
-  ListItemText,
-  FormControl,
-  InputLabel,
-  Checkbox,
-  OutlinedInput
-} from "@material-ui/core";
-import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
+import Grid from "@material-ui/core/Grid";
 import ImageCropper from "./ImageCropper";
+import Link from "@material-ui/core/Link";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
+import ReactDOM from "react-dom";
+import { Redirect } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import { connect } from "react-redux";
+import { signUp } from "../../store/actions/authActions";
+import { withStyles } from "@material-ui/styles";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -81,15 +80,25 @@ const names = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
 
 class SignUp extends Component {
   state = {
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    openCropDialog: false,
+    // Account Info
+    email: null,
+    password: null,
+    firstName: null,
+    lastName: null,
+    signUpCode: null,
     image: null,
-    imagePreview: null,
     skills: [],
-    labelWidth: 0
+    description: null,
+    // Metadata State
+    openCropDialog: false,
+    labelWidth: 0,
+    errors: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      signUpCode: ""
+    }
   };
 
   componentDidMount() {
@@ -101,6 +110,16 @@ class SignUp extends Component {
   handleChange = event => {
     const targetProp = event.target.id ? event.target.id : event.target.name;
     this.setState({ [targetProp]: event.target.value });
+    if (this.state.targetProp == null && event.target.value === "") {
+      console.log("HERE");
+      this.setState({
+        errors: { ...this.state.errors, [targetProp]: "Error" }
+      });
+    } else {
+      this.setState({
+        errors: { ...this.state.errors, [targetProp]: "" }
+      });
+    }
   };
 
   handleSubmit = event => {
@@ -108,24 +127,32 @@ class SignUp extends Component {
     this.props.signUp(this.state);
   };
 
-  handleCropDialog = (reason, imageURL) => {
-    if (reason === "success") {
-      console.log(imageURL);
-    }
-    this.setState({ openCropDialog: false });
+  handleCropDialog = croppedImageFile => {
+    console.log(croppedImageFile);
+    this.setState({
+      openCropDialog: false,
+      image: croppedImageFile
+    });
   };
 
-  handleFile = event => {
+  handleFileSelect = event => {
     this.setState({
       image: event.target.files[0],
-      openCropDialog: true,
-      imagePreview: URL.createObjectURL(event.target.files[0])
+      openCropDialog: true
+    });
+    event.target.value = null;
+  };
+
+  clearImage = () => {
+    this.setState({
+      image: null
     });
   };
 
   render() {
-    const { classes, authError, auth } = this.props;
-    if (auth.uid) return <Redirect to="/"></Redirect>;
+    if (this.props.auth.uid) return <Redirect to="/"></Redirect>;
+    const { classes, authError } = this.props;
+    const { errors } = this.state;
 
     return (
       <Fragment>
@@ -145,6 +172,8 @@ class SignUp extends Component {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    error={errors.firstName !== ""}
+                    helperText={errors.firstName ? "First name is empty" : ""}
                     onChange={this.handleChange}
                     autoComplete="fname"
                     name="firstName"
@@ -158,6 +187,8 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    error={errors.lastName !== ""}
+                    helperText={errors.lastName ? "Last name is empty" : ""}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -170,6 +201,8 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    error={errors.email !== ""}
+                    helperText={errors.email ? "Email is empty" : ""}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -182,6 +215,8 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    error={errors.password !== ""}
+                    helperText={errors.password ? "Password is empty" : ""}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -195,14 +230,53 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
+                    error={errors.signUpCode !== ""}
+                    helperText={errors.signUpCode ? "Code is empty" : ""}
+                    onChange={this.handleChange}
                     variant="outlined"
+                    required
                     fullWidth
-                    name="description"
-                    label="Description"
-                    id="description"
-                    multiline={true}
-                    placeholder="Elaborate on your skills and self"
+                    id="signUpCode"
+                    label="Sign Up Code"
+                    name="signUpCode"
                   />
+                </Grid>
+                <Grid item xs={12}>
+                  <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="raised-button-file"
+                    multiple
+                    onClick={() => (this.value = null)}
+                    type="file"
+                    onChange={this.handleFileSelect}
+                  />
+                  {!this.state.image ? (
+                    <label htmlFor={"raised-button-file"}>
+                      <Button
+                        component="span"
+                        color={"default"}
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        startIcon={<PhotoCameraIcon />}
+                      >
+                        Add Profile Picture
+                      </Button>
+                    </label>
+                  ) : (
+                    <Button
+                      size="large"
+                      onClick={this.clearImage}
+                      component="span"
+                      color={"secondary"}
+                      fullWidth
+                      variant="contained"
+                      startIcon={<CloseIcon />}
+                    >
+                      Clear Profile Picture
+                    </Button>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl variant="outlined" fullWidth>
@@ -239,36 +313,16 @@ class SignUp extends Component {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <input
-                    accept="image/*"
-                    className={classes.input}
-                    id="raised-button-file"
-                    multiple
-                    type="file"
-                    onChange={this.handleFile}
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    onChange={this.handleChange}
+                    name="description"
+                    label="Description"
+                    id="description"
+                    multiline={true}
+                    placeholder="Elaborate on your skills and self"
                   />
-                  <label htmlFor="raised-button-file">
-                    <Button
-                      component="span"
-                      fullWidth
-                      variant="contained"
-                      className={classes.button}
-                      startIcon={<PhotoCameraIcon />}
-                    >
-                      Add Profile Picture
-                    </Button>
-                  </label>
-                </Grid>
-                <Grid item xs={12}>
-                  {this.state.imagePreview ? (
-                    <Card className={classes.card}>
-                      <CardMedia
-                        className={classes.cardMedia}
-                        image={this.state.imagePreview}
-                        title="Image title"
-                      />
-                    </Card>
-                  ) : null}
                 </Grid>
               </Grid>
               {authError ? (
@@ -298,7 +352,7 @@ class SignUp extends Component {
         <ImageCropper
           open={this.state.openCropDialog}
           onClose={this.handleCropDialog}
-          imageURL={this.state.imagePreview}
+          image={this.state.image}
         />
       </Fragment>
     );

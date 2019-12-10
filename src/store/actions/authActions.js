@@ -2,8 +2,7 @@ export const signIn = credentials => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase();
     firebase
-      .auth()
-      .signInWithEmailAndPassword(credentials.email, credentials.password)
+      .login(credentials)
       .then(() => dispatch({ type: "LOGIN_SUCCESS" }))
       .catch(error => dispatch({ type: "LOGIN_ERROR", error }));
   };
@@ -23,7 +22,7 @@ export const signUp = accountDetails => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
-
+    console.log(accountDetails);
     let credentials = {
       email: accountDetails.email,
       password: accountDetails.password
@@ -35,8 +34,11 @@ export const signUp = accountDetails => {
       initials:
         accountDetails.firstName[0].toUpperCase() +
         accountDetails.lastName[0].toUpperCase(),
-      profilePicture: ""
+      profilePicture: "",
+      skills: accountDetails.skills,
+      description: accountDetails.description
     };
+    console.log(profile);
 
     let userImage = accountDetails.image;
 
