@@ -1,63 +1,39 @@
 import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
-import { Button } from "@material-ui/core";
+
+// React Router Imports
+import { Link } from "react-router-dom";
+
+// Material UI Imports
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
+} from "@material-ui/core";
+import { ColorLens, FolderShared, Info, MoreVert } from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+
+// Redux Imports
 import { connect } from "react-redux";
 import { signOut } from "../../store/actions/authActions";
-import SignedOutLinks from "./SignedOutLinks";
-import SignedInLinks from "./SignedInLinks";
-import { withRouter } from "react-router-dom";
 import { toggleTheme } from "../../store/actions/themeActions";
+
+// Local Imports
+import SignedInLinks from "./SignedInLinks";
+import SignedOutLinks from "./SignedOutLinks";
+
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
   },
-  menuButton: {
+  logo: {
     marginRight: theme.spacing(2)
   },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto"
-    }
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  inputRoot: {
-    color: "inherit"
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: 200
-    }
+  icon: {
+    marginRight: theme.spacing.unit
   },
   sectionDesktop: {
     display: "none",
@@ -76,42 +52,52 @@ const useStyles = makeStyles(theme => ({
 function NavBar(props) {
   const { auth } = props;
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [directoryAnchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isMenuOpen = Boolean(directoryAnchorEl),
+    isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = event => {
+  const openDirectoryMenu = event => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
+  const closeMobileMenu = () => {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
+  const closeDirectoryMenu = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
+    closeMobileMenu();
   };
 
-  const handleMobileMenuOpen = event => {
+  const openMobileMenu = event => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      anchorEl={directoryAnchorEl}
       id={menuId}
       keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
       open={isMenuOpen}
-      onClose={handleMenuClose}
+ 
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right"
+      }}
+      onClose={closeDirectoryMenu}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={closeDirectoryMenu} component={Link} to="/mentees">
+        Mentees
+      </MenuItem>
+      <MenuItem onClick={closeDirectoryMenu} component={Link} to="/mentors">
+        Mentors
+      </MenuItem>
+      <MenuItem onClick={closeDirectoryMenu} component={Link} to="/organizers">
+        Organizers
+      </MenuItem>
     </Menu>
   );
 
@@ -119,35 +105,22 @@ function NavBar(props) {
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
       id={mobileMenuId}
       keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
+      onClose={closeMobileMenu}
     >
-      <MenuItem>
-        <IconButton color="inherit">
-          <MailIcon />
-        </IconButton>
-        <p>Mentors</p>
+      <MenuItem onClick={openDirectoryMenu}>
+        <FolderShared className={classes.icon} />
+        Directory
       </MenuItem>
-      <MenuItem>
-        <IconButton color="inherit">
-          <NotificationsIcon />
-        </IconButton>
-        <p>Mentees</p>
+      <MenuItem onClick={props.toggleTheme}>
+        <Info className={classes.icon} />
+        About
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
+      <MenuItem onClick={props.toggleTheme}>
+        <ColorLens className={classes.icon} />
+        Theme
       </MenuItem>
     </Menu>
   );
@@ -158,15 +131,12 @@ function NavBar(props) {
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.menuButton}
+            className={classes.log}
             color="inherit"
-            aria-label="open drawer"
-            onClick={() => {
-              if (props.history.location.pathname !== "/")
-                props.history.push("/");
-            }}
+            component={Link}
+            to="/"
           >
-            <img src="./logo.png" alt="bug" height={32} />
+            <img src="./logo.png" alt="Logo" height={32} />
           </IconButton>
           <Typography variant="h6" noWrap>
             Liftoff
@@ -176,49 +146,38 @@ function NavBar(props) {
           <div className={classes.sectionDesktop}>
             <Button
               color="inherit"
-              onClick={() => {
-                if (props.history.location.pathname !== "/mentees")
-                  props.history.push("/mentees");
-              }}
+              onClick={openDirectoryMenu}
+              startIcon={<FolderShared />}
             >
-              Mentees
+              Directory
             </Button>
             <Button
               color="inherit"
-              onClick={() => {
-                if (props.history.location.pathname !== "/mentors")
-                  props.history.push("/mentors");
-              }}
+              component={Link}
+              to="/"
+              startIcon={<Info />}
             >
-              Mentors
+              About
             </Button>
             <Button
               color="inherit"
-              onClick={() => {
-                if (props.history.location.pathname !== "/organizers")
-                  props.history.push("/organizers");
-              }}
+              onClick={props.toggleTheme}
+              startIcon={<ColorLens />}
             >
-              Organizers
-            </Button>
-            <Button color="inherit" onClick={() => props.toggleTheme()}>
               Theme
             </Button>
-            {auth.uid ? <SignedInLinks /> : <SignedOutLinks />}
+
+            {!auth.uid && <SignedOutLinks />}
           </div>
           <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
+            <IconButton onClick={openMobileMenu} color="inherit">
+              <MoreVert />
             </IconButton>
           </div>
+          {auth.uid && <SignedInLinks />}
         </Toolbar>
       </AppBar>
+
       {renderMobileMenu}
       {renderMenu}
     </div>
@@ -236,4 +195,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar));
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

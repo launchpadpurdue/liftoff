@@ -1,18 +1,25 @@
 import "typeface-roboto";
+import React from "react";
 
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+// React Router Imports
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
+// Material UI Imports
 import { CssBaseline } from "@material-ui/core";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+
+// Redux Imports
+import { connect } from "react-redux";
+import { isLoaded } from "react-redux-firebase";
+
+// Local Imports
 import Landing from "./components/landing/Landing";
 import MenteeGallery from "./components/dashboard/MenteeGallery";
 import MentorGallery from "./components/dashboard/MentorGallery";
 import OrganizerGallery from "./components/dashboard/OrganizerGallery";
-import React from "react";
+import Profile from "./components/auth/Profile";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
-import { connect } from "react-redux";
-import { isLoaded } from "react-redux-firebase";
 
 function App(props) {
   // TODO: Make a prettier loading page
@@ -28,6 +35,7 @@ function App(props) {
           <Route exact path="/" component={Landing}></Route>
           <Route path="/signin" component={SignIn}></Route>
           <Route path="/signup" component={SignUp}></Route>
+          <Route path="/profile" component={Profile}></Route>
           <Route path="/mentees" component={MenteeGallery}></Route>
           <Route path="/mentors" component={MentorGallery}></Route>
           <Route path="/organizers" component={OrganizerGallery}></Route>

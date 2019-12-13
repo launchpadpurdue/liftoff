@@ -1,31 +1,35 @@
+import React, { Component, Fragment } from "react";
+import ReactDOM from "react-dom";
+
+// React Router Imports
+import { Link as RouterLink, Redirect } from "react-router-dom";
+
+// Material UI Imports
 import {
+  Avatar,
+  Button,
+  Container,
   Checkbox,
   FormControl,
+  Grid,
   InputLabel,
+  Link,
   ListItemText,
   MenuItem,
   OutlinedInput,
-  Select
+  Select,
+  TextField,
+  Typography
 } from "@material-ui/core";
-import React, { Component, Fragment } from "react";
+import { LockOutlined, PhotoLibrary, Close } from "@material-ui/icons";
+import { withStyles } from "@material-ui/styles";
 
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CloseIcon from "@material-ui/icons/Close";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import ImageCropper from "./ImageCropper";
-import Link from "@material-ui/core/Link";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
-import ReactDOM from "react-dom";
-import { Redirect } from "react-router-dom";
-import { Link as RouterLink } from "react-router-dom";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
+// Redux Imports
 import { connect } from "react-redux";
 import { signUp } from "../../store/actions/authActions";
-import { withStyles } from "@material-ui/styles";
+
+// Local Imports
+import ImageCropper from "../utils/ImageCropper";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -159,7 +163,7 @@ class SignUp extends Component {
         <Container component="main" maxWidth="xs">
           <div className={classes.paper}>
             <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
+              <LockOutlined />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign up
@@ -255,11 +259,11 @@ class SignUp extends Component {
                     <label htmlFor={"raised-button-file"}>
                       <Button
                         component="span"
-                        color={"default"}
+                        color="default"
                         fullWidth
                         size="large"
                         variant="contained"
-                        startIcon={<PhotoCameraIcon />}
+                        startIcon={<PhotoLibrary />}
                       >
                         Add Profile Picture
                       </Button>
@@ -272,7 +276,7 @@ class SignUp extends Component {
                       color={"secondary"}
                       fullWidth
                       variant="contained"
-                      startIcon={<CloseIcon />}
+                      startIcon={<Close />}
                     >
                       Clear Profile Picture
                     </Button>

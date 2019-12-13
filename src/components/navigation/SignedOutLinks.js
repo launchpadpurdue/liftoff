@@ -1,23 +1,17 @@
-import React, { Fragment } from "react";
-import { Button } from "@material-ui/core";
-import { connect } from "react-redux";
-import { signOut } from "../../store/actions/authActions";
-import { withRouter } from "react-router-dom";
+import React from "react";
 
-const SignedOutLinks = props => {
+// React Router Imports
+import { Link } from "react-router-dom";
+
+// Material UI Imports
+import { Button } from "@material-ui/core";
+
+const SignedOutLinks = () => {
   return (
-    <Fragment>
-      <Button color="inherit" onClick={() => props.history.push("/signin")}>
-        Sign In
-      </Button>
-    </Fragment>
+    <Button component={Link} to="/signin" color="inherit">
+      Sign In
+    </Button>
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    signOut: () => dispatch(signOut())
-  };
-};
-
-export default withRouter(connect(null, mapDispatchToProps)(SignedOutLinks));
+export default SignedOutLinks;
