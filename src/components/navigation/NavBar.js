@@ -13,7 +13,13 @@ import {
   Toolbar,
   Typography
 } from "@material-ui/core";
-import { ColorLens, FolderShared, Info, MoreVert } from "@material-ui/icons";
+import {
+  ColorLens,
+  FolderShared,
+  Info,
+  MoreVert,
+  PersonAdd
+} from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Redux Imports
@@ -113,7 +119,7 @@ function NavBar(props) {
         <FolderShared className={classes.icon} />
         Directory
       </MenuItem>
-      <MenuItem onClick={props.toggleTheme}>
+      <MenuItem onClick={closeMobileMenu} component={Link} to="/">
         <Info className={classes.icon} />
         About
       </MenuItem>
@@ -121,6 +127,12 @@ function NavBar(props) {
         <ColorLens className={classes.icon} />
         Theme
       </MenuItem>
+      {!auth.uid && (
+        <MenuItem onClick={closeMobileMenu} component={Link} to="/signin">
+          <PersonAdd className={classes.icon} />
+          Sign In
+        </MenuItem>
+      )}
     </Menu>
   );
 
