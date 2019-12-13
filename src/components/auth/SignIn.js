@@ -106,9 +106,11 @@ class SignIn extends Component {
                 id="password"
                 autoComplete="current-password"
               />
-              {authError ? (
-                <Typography variant="body1">{authError}</Typography>
-              ) : null}
+              {authError && (
+                <Typography variant="body1" gutterBottom color="error">
+                  {authError}
+                </Typography>
+              )}
 
               <Button
                 type="submit"
