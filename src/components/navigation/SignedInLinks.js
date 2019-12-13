@@ -16,9 +16,12 @@ import { signOut } from "../../store/actions/authActions";
 
 const useStyles = makeStyles(theme => ({
   avatar: {
+    backgroundColor: theme.palette.secondary.main,
     color: "#fff",
     cursor: "pointer",
-    backgroundColor: theme.palette.secondary.main
+    [theme.breakpoints.up("md")]: {
+      marginLeft: theme.spacing.unit
+    }
   },
   icon: {
     marginRight: theme.spacing.unit
@@ -28,19 +31,19 @@ const useStyles = makeStyles(theme => ({
 const SignedInLinks = props => {
   const classes = useStyles();
   const { profile } = props;
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [profileAnchorEl, setProfileAnchorEl] = React.useState(null);
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+  const openProfileMenu = event => {
+    setProfileAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const closeProfileMenu = () => {
+    setProfileAnchorEl(null);
   };
 
   const handleSignOut = () => {
     props.signOut();
-    handleClose();
+    closeProfileMenu();
   };
 
   return (
@@ -49,7 +52,7 @@ const SignedInLinks = props => {
         <Avatar
           src={profile.profilePicture}
           className={classes.avatar}
-          onClick={handleClick}
+          onClick={openProfileMenu}
           aria-controls="simple-menu"
           aria-haspopup="true"
         >
@@ -58,12 +61,12 @@ const SignedInLinks = props => {
       </Tooltip>
       <Menu
         id="simple-menu"
-        anchorEl={anchorEl}
+        anchorEl={profileAnchorEl}
         keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
+        open={Boolean(profileAnchorEl)}
+        onClose={closeProfileMenu}
       >
-        <MenuItem onClick={handleClose} component={Link} to="/profile">
+        <MenuItem onClick={closeProfileMenu} component={Link} to="/profile">
           <AccountCircle className={classes.icon} />
           Profile
         </MenuItem>

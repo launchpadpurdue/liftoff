@@ -52,27 +52,27 @@ const useStyles = makeStyles(theme => ({
 function NavBar(props) {
   const { auth } = props;
   const classes = useStyles();
-  const [directoryAnchorEl, setAnchorEl] = React.useState(null);
+  const [directoryAnchorEl, setDirectoryAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(directoryAnchorEl),
     isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const openDirectoryMenu = event => {
-    setAnchorEl(event.currentTarget);
+  const openMobileMenu = event => {
+    setMobileMoreAnchorEl(event.currentTarget);
   };
 
   const closeMobileMenu = () => {
     setMobileMoreAnchorEl(null);
   };
 
-  const closeDirectoryMenu = () => {
-    setAnchorEl(null);
-    closeMobileMenu();
+  const openDirectoryMenu = event => {
+    setDirectoryAnchorEl(event.currentTarget);
   };
 
-  const openMobileMenu = event => {
-    setMobileMoreAnchorEl(event.currentTarget);
+  const closeDirectoryMenu = () => {
+    setDirectoryAnchorEl(null);
+    closeMobileMenu();
   };
 
   const menuId = "primary-search-account-menu";
@@ -82,7 +82,6 @@ function NavBar(props) {
       id={menuId}
       keepMounted
       open={isMenuOpen}
- 
       transformOrigin={{
         vertical: "top",
         horizontal: "right"
