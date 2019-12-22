@@ -80,28 +80,30 @@ const MenuProps = {
   }
 };
 
+const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
 const names = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
 
 class SignUp extends Component {
   state = {
     // Account Info
-    email: null,
-    password: null,
-    firstName: null,
-    lastName: null,
-    signUpCode: null,
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    signUpCode: "",
     image: null,
     skills: [],
-    description: null,
+    description: "",
     // Metadata State
     openCropDialog: false,
     labelWidth: 0,
-    errors: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      signUpCode: ""
+    formErrors: {
+      firstName: null,
+      lastName: null,
+      email: null,
+      password: null,
+      signUpCode: null
     }
   };
 
@@ -112,27 +114,26 @@ class SignUp extends Component {
   }
 
   handleChange = event => {
-    const targetProp = event.target.id ? event.target.id : event.target.name;
-    this.setState({ [targetProp]: event.target.value });
-    if (this.state.targetProp == null && event.target.value === "") {
-      console.log("HERE");
-      this.setState({
-        errors: { ...this.state.errors, [targetProp]: "Error" }
-      });
-    } else {
-      this.setState({
-        errors: { ...this.state.errors, [targetProp]: "" }
-      });
-    }
+    const property = event.target.id ? event.target.id : event.target.name;
+    const value = event.target.value;
+    this.setState({ [property]: value });
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.signUp(this.state);
+    const fieldsToValidate = [
+      "firstName",
+      "lastName",
+      "email",
+      "password",
+      "signUpCode"
+    ];
+    let validated = this.validateForm(fieldsToValidate);
+    // TODO: Use real sign up code
+    if (validated) this.props.signUp(this.state);
   };
 
   handleCropDialog = croppedImageFile => {
-    console.log(croppedImageFile);
     this.setState({
       openCropDialog: false,
       image: croppedImageFile
@@ -147,16 +148,97 @@ class SignUp extends Component {
     event.target.value = null;
   };
 
-  clearImage = () => {
+  handleBlur = event => {
+    let property = event.currentTarget.name,
+      value = this.state[property],
+      error = null;
+
+    switch (property) {
+      case "firstName":
+        error = value === "" ? "First name is empty" : null;
+        break;
+      case "lastName":
+        error = value === "" ? "Last name is empty" : null;
+        break;
+      case "email":
+        if (value === "") {
+          error = "Email is empty";
+        } else if (!emailRegex.test(value)) {
+          error = "Invalid email";
+        }
+        break;
+      case "password":
+        if (value === "") {
+          error = "Password is empty";
+        } else if (value.length < 6) {
+          error = "Password must be 6 characters";
+        }
+        break;
+      case "signUpCode":
+        error = value === "" ? "Sign up code is empty" : null;
+        break;
+      default:
+    }
     this.setState({
-      image: null
+      formErrors: { ...this.state.formErrors, [property]: error }
     });
+  };
+
+  validateForm = properties => {
+    let formErrors = {
+      firstName: null,
+      lastName: null,
+      email: null,
+      password: null,
+      signUpCode: null
+    };
+
+    for (let property of properties) {
+      let value = this.state[property];
+      switch (property) {
+        case "firstName":
+          let firstNameError = value === "" ? "First name is empty" : null;
+          formErrors.firstName = firstNameError;
+          break;
+        case "lastName":
+          let lastNameError = value === "" ? "Last name is empty" : null;
+          formErrors.lastName = lastNameError;
+          break;
+        case "email":
+          let emailError = null;
+          if (value === "" || value === null) {
+            emailError = "Email is empty";
+          } else if (!emailRegex.test(value)) {
+            emailError = "Invalid email";
+          }
+          formErrors.email = emailError;
+          break;
+        case "password":
+          let passwordError = null;
+          if (value === "" || value === null) {
+            passwordError = "Password is empty";
+          } else if (value.length < 6) {
+            passwordError = "Password must be 6 characters";
+          }
+          formErrors.password = passwordError;
+          break;
+        case "signUpCode":
+          let signUpCodeError = value === "" ? "Sign up code is empty" : null;
+          formErrors.signUpCode = signUpCodeError;
+          break;
+        default:
+      }
+    }
+    this.setState({ formErrors: formErrors });
+    for (let error in formErrors) {
+      if (formErrors[error] !== null) return false;
+    }
+    return true;
   };
 
   render() {
     if (this.props.auth.uid) return <Redirect to="/"></Redirect>;
     const { classes, authError } = this.props;
-    const { errors } = this.state;
 
     return (
       <Fragment>
@@ -176,8 +258,9 @@ class SignUp extends Component {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    error={errors.firstName !== ""}
-                    helperText={errors.firstName ? "First name is empty" : ""}
+                    error={Boolean(this.state.formErrors.firstName)}
+                    helperText={this.state.formErrors.firstName}
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     autoComplete="fname"
                     name="firstName"
@@ -191,8 +274,9 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    error={errors.lastName !== ""}
-                    helperText={errors.lastName ? "Last name is empty" : ""}
+                    error={Boolean(this.state.formErrors.lastName)}
+                    helperText={this.state.formErrors.lastName}
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -205,8 +289,9 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    error={errors.email !== ""}
-                    helperText={errors.email ? "Email is empty" : ""}
+                    error={Boolean(this.state.formErrors.email)}
+                    helperText={this.state.formErrors.email}
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -219,8 +304,9 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    error={errors.password !== ""}
-                    helperText={errors.password ? "Password is empty" : ""}
+                    error={Boolean(this.state.formErrors.password)}
+                    helperText={this.state.formErrors.password}
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -234,8 +320,9 @@ class SignUp extends Component {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    error={errors.signUpCode !== ""}
-                    helperText={errors.signUpCode ? "Code is empty" : ""}
+                    error={Boolean(this.state.formErrors.signUpCode)}
+                    helperText={this.state.formErrors.signUpCode}
+                    onBlur={this.handleBlur}
                     onChange={this.handleChange}
                     variant="outlined"
                     required
@@ -271,7 +358,11 @@ class SignUp extends Component {
                   ) : (
                     <Button
                       size="large"
-                      onClick={this.clearImage}
+                      onClick={() =>
+                        this.setState({
+                          image: null
+                        })
+                      }
                       component="span"
                       color={"secondary"}
                       fullWidth
