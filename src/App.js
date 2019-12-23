@@ -13,10 +13,10 @@ import { connect } from "react-redux";
 import { isLoaded } from "react-redux-firebase";
 
 // Local Imports
-import Landing from "./components/landing/Landing";
-import MenteeGallery from "./components/dashboard/MenteeGallery";
-import MentorGallery from "./components/dashboard/MentorGallery";
-import OrganizerGallery from "./components/dashboard/OrganizerGallery";
+import Landing from "./components/general/Landing";
+import MenteeGallery from "./components/directories/MenteeGallery";
+import MentorGallery from "./components/directories/MentorGallery";
+import OrganizerGallery from "./components/directories/OrganizerGallery";
 import Profile from "./components/auth/Profile";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
