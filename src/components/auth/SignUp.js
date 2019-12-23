@@ -98,6 +98,7 @@ class SignUp extends Component {
     // Metadata State
     openCropDialog: false,
     labelWidth: 0,
+    currentPage: 0,
     formErrors: {
       firstName: null,
       lastName: null,
@@ -116,21 +117,35 @@ class SignUp extends Component {
   handleChange = event => {
     const property = event.target.id ? event.target.id : event.target.name;
     const value = event.target.value;
+    if (this.state.formErrors[property]) {
+      this.validateField(property, value);
+    }
     this.setState({ [property]: value });
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    const fieldsToValidate = [
-      "firstName",
-      "lastName",
-      "email",
-      "password",
-      "signUpCode"
-    ];
-    let validated = this.validateForm(fieldsToValidate);
+    if (this.state.currentPage === 0) {
+      const fieldsToValidate = [
+        "firstName",
+        "lastName",
+        "email",
+        "password",
+        "signUpCode"
+      ];
+      let validated = this.validateForm(fieldsToValidate);
+      if (validated) this.setState({ currentPage: 1 });
+    }
+    // const fieldsToValidate = [
+    //   "firstName",
+    //   "lastName",
+    //   "email",
+    //   "password",
+    //   "signUpCode"
+    // ];
+    // let validated = this.validateForm(fieldsToValidate);
     // TODO: Use real sign up code
-    if (validated) this.props.signUp(this.state);
+    // if (validated) this.props.signUp(this.state);
   };
 
   handleCropDialog = croppedImageFile => {
@@ -150,8 +165,12 @@ class SignUp extends Component {
 
   handleBlur = event => {
     let property = event.currentTarget.name,
-      value = this.state[property],
-      error = null;
+      value = this.state[property];
+    this.validateField(property, value);
+  };
+
+  validateField = (property, value) => {
+    let error = null;
 
     switch (property) {
       case "firstName":
@@ -236,6 +255,8 @@ class SignUp extends Component {
     return true;
   };
 
+  renderForm = () => {};
+
   render() {
     if (this.props.auth.uid) return <Redirect to="/"></Redirect>;
     const { classes, authError } = this.props;
@@ -256,7 +277,14 @@ class SignUp extends Component {
               onSubmit={this.handleSubmit}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  className={
+                    this.state.currentPage === 0 ? null : classes.input
+                  }
+                >
                   <TextField
                     error={Boolean(this.state.formErrors.firstName)}
                     helperText={this.state.formErrors.firstName}
@@ -272,7 +300,14 @@ class SignUp extends Component {
                     autoFocus
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  className={
+                    this.state.currentPage === 0 ? null : classes.input
+                  }
+                >
                   <TextField
                     error={Boolean(this.state.formErrors.lastName)}
                     helperText={this.state.formErrors.lastName}
@@ -287,7 +322,13 @@ class SignUp extends Component {
                     autoComplete="lname"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 0 ? null : classes.input
+                  }
+                >
                   <TextField
                     error={Boolean(this.state.formErrors.email)}
                     helperText={this.state.formErrors.email}
@@ -302,7 +343,13 @@ class SignUp extends Component {
                     autoComplete="email"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 0 ? null : classes.input
+                  }
+                >
                   <TextField
                     error={Boolean(this.state.formErrors.password)}
                     helperText={this.state.formErrors.password}
@@ -318,7 +365,13 @@ class SignUp extends Component {
                     autoComplete="current-password"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 0 ? null : classes.input
+                  }
+                >
                   <TextField
                     error={Boolean(this.state.formErrors.signUpCode)}
                     helperText={this.state.formErrors.signUpCode}
@@ -332,7 +385,14 @@ class SignUp extends Component {
                     name="signUpCode"
                   />
                 </Grid>
-                <Grid item xs={12}>
+
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 1 ? null : classes.input
+                  }
+                >
                   <input
                     accept="image/*"
                     className={classes.input}
@@ -373,7 +433,13 @@ class SignUp extends Component {
                     </Button>
                   )}
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 1 ? null : classes.input
+                  }
+                >
                   <FormControl variant="outlined" fullWidth>
                     <InputLabel
                       ref={ref => {
@@ -407,7 +473,13 @@ class SignUp extends Component {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  className={
+                    this.state.currentPage === 1 ? null : classes.input
+                  }
+                >
                   <TextField
                     variant="outlined"
                     fullWidth
@@ -425,15 +497,35 @@ class SignUp extends Component {
                   {authError}
                 </Typography>
               ) : null}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Sign Up
-              </Button>
+              <Grid container spacing={2}>
+                <Grid
+                  item
+                  xs={6}
+                  className={
+                    this.state.currentPage === 0 ? classes.input : null
+                  }
+                >
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                    onClick={() => this.setState({ currentPage: 0 })}
+                  >
+                    Back
+                  </Button>
+                </Grid>
+                <Grid item xs={this.state.currentPage === 0 ? 12 : 6}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    className={classes.submit}
+                  >
+                    {this.state.currentPage === 0 ? "Next" : "Sign Up"}
+                  </Button>
+                </Grid>
+              </Grid>
               <Grid container justify="flex-end">
                 <Grid item>
                   <Link to="signin" component={LinkTemplate} variant="body2">
