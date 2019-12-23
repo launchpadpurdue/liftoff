@@ -19,7 +19,8 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography
+  Typography,
+  Fade
 } from "@material-ui/core";
 import { LockOutlined, PhotoLibrary, Close } from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
@@ -51,31 +52,17 @@ const styles = theme => ({
     marginTop: theme.spacing(3)
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
+    margin: theme.spacing(2, 0, 2)
   },
   input: {
     display: "none"
-  },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column"
-  },
-  cardMedia: {
-    paddingTop: "56.25%" // 16:9
-  },
-  cardContent: {
-    flexGrow: 1
   }
 });
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
     style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
+      maxHeight: 48 * 4.5 + 8
     }
   }
 };
@@ -108,22 +95,26 @@ class SignUp extends Component {
     }
   };
 
-  componentDidMount() {
+  // Callback that recieves the image from the crop dialog
+  onCrop = croppedImageFile => {
     this.setState({
-      labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth
+      openCropDialog: false,
+      image: croppedImageFile
     });
-  }
+  };
 
-  handleChange = event => {
+  // Callback that recieves the input for TextField and Select
+  onInput = event => {
     const property = event.target.id ? event.target.id : event.target.name;
     const value = event.target.value;
     if (this.state.formErrors[property]) {
-      this.validateField(property, value);
+      this.validateProperty(property, value);
     }
     this.setState({ [property]: value });
   };
 
-  handleSubmit = event => {
+  // Callback that captures the form submit
+  onSubmit = event => {
     event.preventDefault();
     if (this.state.currentPage === 0) {
       const fieldsToValidate = [
@@ -134,28 +125,21 @@ class SignUp extends Component {
         "signUpCode"
       ];
       let validated = this.validateForm(fieldsToValidate);
-      if (validated) this.setState({ currentPage: 1 });
+      // let validated = true;
+      if (validated)
+        this.setState({ currentPage: 1 }, () =>
+          this.setState({
+            labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth
+          })
+        );
+    } else if (this.state.currentPage === 1) {
+      // this.props.signUp(this.state);
     }
-    // const fieldsToValidate = [
-    //   "firstName",
-    //   "lastName",
-    //   "email",
-    //   "password",
-    //   "signUpCode"
-    // ];
-    // let validated = this.validateForm(fieldsToValidate);
-    // TODO: Use real sign up code
-    // if (validated) this.props.signUp(this.state);
   };
 
-  handleCropDialog = croppedImageFile => {
-    this.setState({
-      openCropDialog: false,
-      image: croppedImageFile
-    });
-  };
-
-  handleFileSelect = event => {
+  // Callback that recieves the file for File Input
+  onFileSelect = event => {
+    if (event.target.files.length == 0) return;
     this.setState({
       image: event.target.files[0],
       openCropDialog: true
@@ -163,15 +147,16 @@ class SignUp extends Component {
     event.target.value = null;
   };
 
-  handleBlur = event => {
+  // Callback that recieves the TextField that becomes unfocused
+  onBlur = event => {
     let property = event.currentTarget.name,
       value = this.state[property];
-    this.validateField(property, value);
+    this.validateProperty(property, value);
   };
 
-  validateField = (property, value) => {
+  // Function that validates the given property and that property's value
+  validateProperty = (property, value) => {
     let error = null;
-
     switch (property) {
       case "firstName":
         error = value === "" ? "First name is empty" : null;
@@ -203,6 +188,7 @@ class SignUp extends Component {
     });
   };
 
+  // Function that validates the form using the given properties
   validateForm = properties => {
     let formErrors = {
       firstName: null,
@@ -255,7 +241,268 @@ class SignUp extends Component {
     return true;
   };
 
-  renderForm = () => {};
+  // Function the renders the form given the current page
+  renderForm = () => {
+    const { classes } = this.props;
+    return (
+      <Fragment>
+        <Fade
+          in={this.state.currentPage === 0}
+          unmountOnExit
+          timeout={{
+            enter: 500,
+            exit: this.state.currentPage === 0 ? 1 : 500
+          }}
+          style={{
+            transitionDelay: this.state.currentPage === 1 ? "0ms" : "499ms"
+          }}
+        >
+          <form className={classes.form} noValidate onSubmit={this.onSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  error={Boolean(this.state.formErrors.firstName)}
+                  helperText={this.state.formErrors.firstName}
+                  onBlur={this.onBlur}
+                  onChange={this.onInput}
+                  autoComplete="fname"
+                  name="firstName"
+                  variant="outlined"
+                  required
+                  value={this.state.firstName}
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  error={Boolean(this.state.formErrors.lastName)}
+                  helperText={this.state.formErrors.lastName}
+                  onBlur={this.onBlur}
+                  onChange={this.onInput}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={this.state.lastName}
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  autoComplete="lname"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={Boolean(this.state.formErrors.email)}
+                  helperText={this.state.formErrors.email}
+                  onBlur={this.onBlur}
+                  onChange={this.onInput}
+                  variant="outlined"
+                  required
+                  value={this.state.email}
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={Boolean(this.state.formErrors.password)}
+                  helperText={this.state.formErrors.password}
+                  onBlur={this.onBlur}
+                  onChange={this.onInput}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={this.state.password}
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={Boolean(this.state.formErrors.signUpCode)}
+                  helperText={this.state.formErrors.signUpCode}
+                  onBlur={this.onBlur}
+                  onChange={this.onInput}
+                  variant="outlined"
+                  value={this.state.signUpCode}
+                  required
+                  fullWidth
+                  id="signUpCode"
+                  label="Sign Up Code"
+                  name="signUpCode"
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  className={classes.submit}
+                >
+                  Next
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Link to="signin" component={LinkTemplate} variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
+        </Fade>
+        <Fade
+          in={this.state.currentPage === 1}
+          mountOnEnter
+          unmountOnExit
+          timeout={{
+            enter: 500,
+            exit: 0
+          }}
+          style={{
+            transitionDelay: this.state.currentPage === 1 ? "499ms" : "0ms"
+          }}
+        >
+          <form className={classes.form} noValidate onSubmit={this.onSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <input
+                  accept="image/*"
+                  className={classes.input}
+                  id="raised-button-file"
+                  multiple
+                  onClick={() => (this.value = null)}
+                  type="file"
+                  onChange={this.onFileSelect}
+                />
+                {!this.state.image ? (
+                  <label htmlFor={"raised-button-file"}>
+                    <Button
+                      component="span"
+                      color="default"
+                      fullWidth
+                      size="large"
+                      variant="contained"
+                      startIcon={<PhotoLibrary />}
+                    >
+                      Add Profile Picture
+                    </Button>
+                  </label>
+                ) : (
+                  <Button
+                    size="large"
+                    onClick={() =>
+                      this.setState({
+                        image: null
+                      })
+                    }
+                    component="span"
+                    color={"secondary"}
+                    fullWidth
+                    variant="contained"
+                    startIcon={<Close />}
+                  >
+                    Clear Profile Picture
+                  </Button>
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl variant="outlined" fullWidth>
+                  <InputLabel
+                    ref={ref => {
+                      this.InputLabelRef = ref;
+                    }}
+                    htmlFor="skills"
+                  >
+                    Skills
+                  </InputLabel>
+                  <Select
+                    multiple
+                    value={this.state.skills}
+                    onChange={this.onInput}
+                    input={
+                      <OutlinedInput
+                        labelWidth={this.state.labelWidth}
+                        name="skills"
+                      />
+                    }
+                    renderValue={selected => selected.join(", ")}
+                    MenuProps={MenuProps}
+                  >
+                    {names.map(name => (
+                      <MenuItem key={name} value={name}>
+                        <Checkbox
+                          checked={this.state.skills.indexOf(name) > -1}
+                        />
+                        <ListItemText primary={name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  value={this.state.description}
+                  onChange={this.onInput}
+                  name="description"
+                  label="Description"
+                  id="description"
+                  rows={6}
+                  rowsMax={6}
+                  multiline={true}
+                  placeholder="Elaborate on your skills and self"
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  className={classes.submit}
+                  onClick={() => this.setState({ currentPage: 0 })}
+                >
+                  Back
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  className={classes.submit}
+                >
+                  Sign Up
+                </Button>
+              </Grid>
+              <Grid container justify="flex-end">
+                <Grid item>
+                  <Link to="signin" component={LinkTemplate} variant="body2">
+                    Already have an account? Sign in
+                  </Link>
+                </Grid>
+              </Grid>
+            </Grid>
+          </form>
+        </Fade>
+      </Fragment>
+    );
+  };
 
   render() {
     if (this.props.auth.uid) return <Redirect to="/"></Redirect>;
@@ -271,274 +518,15 @@ class SignUp extends Component {
             <Typography component="h1" variant="h5">
               Sign up
             </Typography>
-            <form
-              className={classes.form}
-              noValidate
-              onSubmit={this.handleSubmit}
-            >
-              <Grid container spacing={2}>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  className={
-                    this.state.currentPage === 0 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    error={Boolean(this.state.formErrors.firstName)}
-                    helperText={this.state.formErrors.firstName}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    autoComplete="fname"
-                    name="firstName"
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="firstName"
-                    label="First Name"
-                    autoFocus
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  className={
-                    this.state.currentPage === 0 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    error={Boolean(this.state.formErrors.lastName)}
-                    helperText={this.state.formErrors.lastName}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    name="lastName"
-                    autoComplete="lname"
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 0 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    error={Boolean(this.state.formErrors.email)}
-                    helperText={this.state.formErrors.email}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 0 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    error={Boolean(this.state.formErrors.password)}
-                    helperText={this.state.formErrors.password}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    variant="outlined"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 0 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    error={Boolean(this.state.formErrors.signUpCode)}
-                    helperText={this.state.formErrors.signUpCode}
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="signUpCode"
-                    label="Sign Up Code"
-                    name="signUpCode"
-                  />
-                </Grid>
-
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 1 ? null : classes.input
-                  }
-                >
-                  <input
-                    accept="image/*"
-                    className={classes.input}
-                    id="raised-button-file"
-                    multiple
-                    onClick={() => (this.value = null)}
-                    type="file"
-                    onChange={this.handleFileSelect}
-                  />
-                  {!this.state.image ? (
-                    <label htmlFor={"raised-button-file"}>
-                      <Button
-                        component="span"
-                        color="default"
-                        fullWidth
-                        size="large"
-                        variant="contained"
-                        startIcon={<PhotoLibrary />}
-                      >
-                        Add Profile Picture
-                      </Button>
-                    </label>
-                  ) : (
-                    <Button
-                      size="large"
-                      onClick={() =>
-                        this.setState({
-                          image: null
-                        })
-                      }
-                      component="span"
-                      color={"secondary"}
-                      fullWidth
-                      variant="contained"
-                      startIcon={<Close />}
-                    >
-                      Clear Profile Picture
-                    </Button>
-                  )}
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 1 ? null : classes.input
-                  }
-                >
-                  <FormControl variant="outlined" fullWidth>
-                    <InputLabel
-                      ref={ref => {
-                        this.InputLabelRef = ref;
-                      }}
-                      htmlFor="skills"
-                    >
-                      Skills
-                    </InputLabel>
-                    <Select
-                      multiple
-                      value={this.state.skills}
-                      onChange={this.handleChange}
-                      input={
-                        <OutlinedInput
-                          labelWidth={this.state.labelWidth}
-                          name="skills"
-                        />
-                      }
-                      renderValue={selected => selected.join(", ")}
-                      MenuProps={MenuProps}
-                    >
-                      {names.map(name => (
-                        <MenuItem key={name} value={name}>
-                          <Checkbox
-                            checked={this.state.skills.indexOf(name) > -1}
-                          />
-                          <ListItemText primary={name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={
-                    this.state.currentPage === 1 ? null : classes.input
-                  }
-                >
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    onChange={this.handleChange}
-                    name="description"
-                    label="Description"
-                    id="description"
-                    multiline={true}
-                    placeholder="Elaborate on your skills and self"
-                  />
-                </Grid>
-              </Grid>
-              {authError ? (
-                <Typography variant="body1" gutterBottom color="error">
-                  {authError}
-                </Typography>
-              ) : null}
-              <Grid container spacing={2}>
-                <Grid
-                  item
-                  xs={6}
-                  className={
-                    this.state.currentPage === 0 ? classes.input : null
-                  }
-                >
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    className={classes.submit}
-                    onClick={() => this.setState({ currentPage: 0 })}
-                  >
-                    Back
-                  </Button>
-                </Grid>
-                <Grid item xs={this.state.currentPage === 0 ? 12 : 6}>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    className={classes.submit}
-                  >
-                    {this.state.currentPage === 0 ? "Next" : "Sign Up"}
-                  </Button>
-                </Grid>
-              </Grid>
-              <Grid container justify="flex-end">
-                <Grid item>
-                  <Link to="signin" component={LinkTemplate} variant="body2">
-                    Already have an account? Sign in
-                  </Link>
-                </Grid>
-              </Grid>
-            </form>
+            {this.renderForm()}
+            <Typography variant="body1" gutterBottom color="error">
+              {authError}
+            </Typography>
           </div>
         </Container>
         <ImageCropper
           open={this.state.openCropDialog}
-          onClose={this.handleCropDialog}
+          onClose={this.onCrop}
           image={this.state.image}
         />
       </Fragment>
