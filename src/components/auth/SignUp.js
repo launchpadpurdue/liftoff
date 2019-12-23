@@ -139,7 +139,7 @@ class SignUp extends Component {
 
   // Callback that recieves the file for File Input
   onFileSelect = event => {
-    if (event.target.files.length == 0) return;
+    if (event.target.files.length === 0) return;
     this.setState({
       image: event.target.files[0],
       openCropDialog: true

@@ -1,18 +1,15 @@
 import React from "react";
 import {
-  CircularProgress,
-  Grid,
-  makeStyles,
   Box,
-  CssBaseline,
+  CircularProgress,
+  makeStyles,
   Typography
 } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   root: {
     height: "100vh",
-    background: theme.palette.primary.main,
-    margin: 0
+    background: theme.palette.primary.main
   },
   loadingText: {
     color: "white",
