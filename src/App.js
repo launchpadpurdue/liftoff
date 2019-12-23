@@ -20,13 +20,22 @@ import OrganizerGallery from "./components/dashboard/OrganizerGallery";
 import Profile from "./components/auth/Profile";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
+import { Loading } from "./components/general/Loading";
 
 function App(props) {
+  const theme = createMuiTheme(props.theme);
+
   // TODO: Make a prettier loading page
   // Waits for firebase to initialize before loading any page
-  if (!isLoaded(props.auth)) return <h1>Loading</h1>;
+  if (!isLoaded(props.auth))
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Loading />
+      </ThemeProvider>
+    );
+
   // Load dynamic theme
-  const theme = createMuiTheme(props.theme);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

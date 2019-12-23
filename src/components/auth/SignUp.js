@@ -10,6 +10,7 @@ import {
   Button,
   Container,
   Checkbox,
+  Fade,
   FormControl,
   Grid,
   InputLabel,
@@ -19,8 +20,7 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  Fade
+  Typography
 } from "@material-ui/core";
 import { LockOutlined, PhotoLibrary, Close } from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
