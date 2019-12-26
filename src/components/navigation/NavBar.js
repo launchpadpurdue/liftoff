@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2)
   },
   icon: {
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing(1)
   },
   sectionDesktop: {
     display: "none",

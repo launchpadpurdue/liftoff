@@ -20,11 +20,11 @@ const useStyles = makeStyles(theme => ({
     color: "#fff",
     cursor: "pointer",
     [theme.breakpoints.up("md")]: {
-      marginLeft: theme.spacing.unit
+      marginLeft: theme.spacing(1)
     }
   },
   icon: {
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing(1)
   }
 }));
 
