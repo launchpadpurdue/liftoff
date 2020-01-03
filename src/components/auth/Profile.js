@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { getFirebase } from "react-redux-firebase";
 
 import NavBar from "../navigation/NavBar";
 import { connect } from "react-redux";
@@ -10,7 +11,13 @@ import {
   Typography,
   Chip,
   Divider,
-  Button
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  TextField
 } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,7 +29,8 @@ import {
   faGlobe
 } from "@fortawesome/free-solid-svg-icons";
 import { faApple, faAndroid } from "@fortawesome/free-brands-svg-icons";
-import { Edit, DeleteForever, Lock } from "@material-ui/icons";
+import { Edit, DeleteForever, Lock, ExitToApp } from "@material-ui/icons";
+import { signOut } from "../../store/actions/authActions";
 
 const styles = theme => ({
   paper: {
@@ -85,6 +93,15 @@ function mapSkillToIcon(skill) {
   }
 }
 
+function mapReauthCode(code) {
+  switch (code) {
+    case "auth/wrong-password":
+      return "Password is invalid for this account";
+    default:
+      return null;
+  }
+}
+
 const skills = [
   "Android",
   "IOS",
@@ -95,17 +112,78 @@ const skills = [
 ];
 
 class Profile extends Component {
+  state = {
+    email: "",
+    password: "",
+    showPasswordReset: false,
+    showDeleteAccount: false,
+    reauthenticateError: ""
+  };
+
   renderChip = skill => {
     const { classes } = this.props;
     return (
-      <Chip
-        key={skill}
-        className={classes.skill}
-        icon={<FontAwesomeIcon icon={mapSkillToIcon(skill)} />}
-        label={skill}
-        color="secondary"
-      />
+      <Grid item key={skill}>
+        <Chip
+          className={classes.skill}
+          icon={<FontAwesomeIcon icon={mapSkillToIcon(skill)} />}
+          label={skill}
+          color="secondary"
+        />
+      </Grid>
     );
+  };
+
+  resetPassword = () => {
+    let firebase = getFirebase().auth();
+    console.log(firebase.currentUser.email);
+    firebase
+      .sendPasswordResetEmail(firebase.currentUser.email)
+      .then(() => this.setState({ showPasswordReset: true }));
+  };
+
+  hidePasswordReset = () => {
+    this.setState({ showPasswordReset: false });
+  };
+
+  showDeleteAccount = () => {
+    this.setState({ showDeleteAccount: true });
+  };
+
+  hideDeleteAccount = () => {
+    this.setState({
+      showDeleteAccount: false,
+      email: "",
+      password: "",
+      reauthenticateError: ""
+    });
+  };
+
+  onInput = event => {
+    this.setState({ [event.target.id]: event.target.value });
+  };
+
+  onSubmit = event => {
+    event.preventDefault();
+    const firebase = getFirebase();
+    const user = firebase.auth().currentUser;
+    if (this.state.email !== user.email) {
+      this.setState({
+        reauthenticateError: "Email does not match signed in account"
+      });
+      return;
+    }
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      this.state.email,
+      this.state.password
+    );
+    user
+      .reauthenticateWithCredential(credential)
+      .then(_ => console.log(_))
+      .catch(error =>
+        this.setState({ reauthenticateError: mapReauthCode(error.code) })
+      );
+    // this.hideDeleteAccount();
   };
 
   render() {
@@ -135,16 +213,14 @@ class Profile extends Component {
                 </Grid>
                 <Grid item className={classes.profile} xs>
                   <Typography variant="h3" className={classes.name}>
-                    {profile.firstName + " " + profile.lastName}
+                    {`${profile.firstName} ${profile.lastName}`}
                   </Typography>
                   <Divider className={classes.divider} />
                   <Grid item container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="h6">Skills</Typography>{" "}
+                      <Typography variant="h6">Skills</Typography>
                       <Grid item container spacing={1}>
-                        {skills.map(skill => (
-                          <Grid item>{this.renderChip(skill)}</Grid>
-                        ))}
+                        {skills.map(skill => this.renderChip(skill))}
                       </Grid>
                     </Grid>
 
@@ -162,27 +238,43 @@ class Profile extends Component {
           <Container maxWidth="lg">
             <Paper className={classes.paper}>
               <Grid container spacing={1}>
-                <Grid item>
+                <Grid item xs={12} sm={6} lg={3}>
                   <Button
                     color="primary"
+                    fullWidth
                     variant="contained"
                     startIcon={<Edit />}
                   >
                     Edit Profile
                   </Button>
                 </Grid>
-                <Grid item>
+                <Grid item xs={12} sm={6} lg={3}>
                   <Button
-                    color="secondary"
+                    color="primary"
+                    fullWidth
                     variant="contained"
                     startIcon={<Lock />}
+                    onClick={this.resetPassword}
                   >
                     Reset Password
                   </Button>
                 </Grid>
-                <Grid item>
+                <Grid item xs={12} sm={6} lg={3}>
+                  <Button
+                    color="primary"
+                    fullWidth
+                    variant="contained"
+                    onClick={this.props.signOut}
+                    startIcon={<ExitToApp />}
+                  >
+                    Sign Out
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={6} lg={3}>
                   <Button
                     color="secondary"
+                    onClick={this.showDeleteAccount}
+                    fullWidth
                     variant="contained"
                     startIcon={<DeleteForever />}
                   >
@@ -193,16 +285,79 @@ class Profile extends Component {
             </Paper>
           </Container>
         </main>
+        <Dialog
+          open={this.state.showPasswordReset}
+          onClose={this.hidePasswordReset}
+        >
+          <DialogTitle>Password Reset Email Sent</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              An email to reset your password has been sent to {auth.email}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.hidePasswordReset} color="primary" autoFocus>
+              Okay
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={this.state.showDeleteAccount}
+          onClose={this.hideDeleteAccount}
+        >
+          <DialogTitle>Reauthenticate</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              In order to delete your account, please reauthenticate with your
+              credentials
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Email Address"
+              type="email"
+              fullWidth
+              id="email"
+              onChange={this.onInput}
+            />
+            <TextField
+              margin="dense"
+              label="Password"
+              type="password"
+              fullWidth
+              id="password"
+              onChange={this.onInput}
+            />
+            {this.state.reauthenticateError && (
+              <Typography variant="body1" gutterBottom color="error">
+                {this.state.reauthenticateError}
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.hideDeleteAccount} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.onSubmit} color="primary">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Fragment>
     );
   }
 }
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth, profile: state.firebase.profile };
+  return {
+    auth: state.firebase.auth,
+    profile: state.firebase.profile
+  };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    signOut: () => dispatch(signOut())
+  };
 };
 
 export default connect(

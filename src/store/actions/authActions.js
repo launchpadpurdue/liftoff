@@ -38,7 +38,6 @@ export const signUp = accountDetails => {
       skills: accountDetails.skills,
       description: accountDetails.description
     };
-    console.log(profile);
 
     let userImage = accountDetails.image;
 
@@ -69,3 +68,5 @@ export const signUp = accountDetails => {
       .catch(error => dispatch({ type: "SIGNUP_ERROR", error }));
   };
 };
+
+export const deleteAccount = accountDetails => {};

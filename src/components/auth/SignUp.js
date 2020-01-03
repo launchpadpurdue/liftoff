@@ -133,7 +133,7 @@ class SignUp extends Component {
           })
         );
     } else if (this.state.currentPage === 1) {
-      // this.props.signUp(this.state);
+      this.props.signUp(this.state);
     }
   };
 
