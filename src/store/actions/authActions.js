@@ -22,11 +22,13 @@ export const signUp = accountDetails => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
-    console.log(accountDetails);
+
     let credentials = {
       email: accountDetails.email,
       password: accountDetails.password
     };
+
+    accountDetails.role = "Mentor";
 
     let profile = {
       firstName: accountDetails.firstName,
@@ -36,7 +38,8 @@ export const signUp = accountDetails => {
         accountDetails.lastName[0].toUpperCase(),
       profilePicture: "",
       skills: accountDetails.skills,
-      description: accountDetails.description
+      description: accountDetails.description,
+      role: accountDetails.role
     };
 
     let userImage = accountDetails.image;
@@ -69,4 +72,22 @@ export const signUp = accountDetails => {
   };
 };
 
-export const deleteAccount = accountDetails => {};
+export const deleteAccount = () => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    const firestore = getFirestore();
+    const storage = firebase.storage().ref();
+    const user = firebase.auth().currentUser;
+
+    const promises = [
+      storage.child(`/userImages/${user.uid}/profilePicture`).delete(),
+      firestore
+        .collection("users")
+        .doc(user.uid)
+        .delete()
+    ];
+    Promise.allSettled(promises).then(() => {
+      user.delete();
+    });
+  };
+};

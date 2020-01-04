@@ -30,7 +30,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faApple, faAndroid } from "@fortawesome/free-brands-svg-icons";
 import { Edit, DeleteForever, Lock, ExitToApp } from "@material-ui/icons";
-import { signOut } from "../../store/actions/authActions";
+import { signOut, deleteAccount } from "../../store/actions/authActions";
 
 const styles = theme => ({
   paper: {
@@ -102,15 +102,6 @@ function mapReauthCode(code) {
   }
 }
 
-const skills = [
-  "Android",
-  "IOS",
-  "Web",
-  "Desktop",
-  "Machine Learning",
-  "Gaming"
-];
-
 class Profile extends Component {
   state = {
     email: "",
@@ -136,7 +127,6 @@ class Profile extends Component {
 
   resetPassword = () => {
     let firebase = getFirebase().auth();
-    console.log(firebase.currentUser.email);
     firebase
       .sendPasswordResetEmail(firebase.currentUser.email)
       .then(() => this.setState({ showPasswordReset: true }));
@@ -179,7 +169,7 @@ class Profile extends Component {
     );
     user
       .reauthenticateWithCredential(credential)
-      .then(_ => console.log(_))
+      .then(_ => this.props.deleteAccount())
       .catch(error =>
         this.setState({ reauthenticateError: mapReauthCode(error.code) })
       );
@@ -189,6 +179,22 @@ class Profile extends Component {
   render() {
     const { classes, auth, profile } = this.props;
     if (!auth.uid) return <Redirect to="/signin"></Redirect>;
+    // Assign profile info
+    let {
+      firstName,
+      lastName,
+      skills,
+      description,
+      profilePicture,
+      role
+    } = profile;
+    // Fill in missing values
+    firstName = firstName ? firstName : "";
+    lastName = lastName ? lastName : "";
+    role = role ? role : "";
+    skills = skills ? skills.sort() : [];
+    description = description ? description : "No description";
+    profilePicture = profilePicture ? profilePicture : "./profile.jpg";
     return (
       <Fragment>
         <NavBar />
@@ -208,15 +214,18 @@ class Profile extends Component {
                     border={5}
                     className={classes.image}
                     alt="avatar"
-                    src={profile.profilePicture}
+                    src={profilePicture}
                   />
                 </Grid>
                 <Grid item className={classes.profile} xs>
                   <Typography variant="h3" className={classes.name}>
-                    {`${profile.firstName} ${profile.lastName}`}
+                    {`${firstName} ${lastName}`}
                   </Typography>
                   <Divider className={classes.divider} />
                   <Grid item container direction="column" spacing={1}>
+                    <Grid item container alignItems="center">
+                      <Typography variant="body1">Role: {role}</Typography>
+                    </Grid>
                     <Grid item>
                       <Typography variant="h6">Skills</Typography>
                       <Grid item container spacing={1}>
@@ -225,10 +234,8 @@ class Profile extends Component {
                     </Grid>
 
                     <Grid item>
-                      <Typography variant="h6">Description</Typography>{" "}
-                      <Typography variant="body1">
-                        {profile.description}
-                      </Typography>
+                      <Typography variant="h6">Description</Typography>
+                      <Typography variant="body1">{description}</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -289,7 +296,7 @@ class Profile extends Component {
           open={this.state.showPasswordReset}
           onClose={this.hidePasswordReset}
         >
-          <DialogTitle>Password Reset Email Sent</DialogTitle>
+          <DialogTitle>Password Reset</DialogTitle>
           <DialogContent>
             <DialogContentText>
               An email to reset your password has been sent to {auth.email}
@@ -339,7 +346,7 @@ class Profile extends Component {
               Cancel
             </Button>
             <Button onClick={this.onSubmit} color="primary">
-              Confirm
+              Delete Account
             </Button>
           </DialogActions>
         </Dialog>
@@ -356,6 +363,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    deleteAccount: () => dispatch(deleteAccount()),
     signOut: () => dispatch(signOut())
   };
 };
