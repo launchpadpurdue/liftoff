@@ -20,13 +20,13 @@ import OrganizerGallery from "./components/directories/OrganizerGallery";
 import Profile from "./components/auth/Profile";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
-import { Loading } from "./components/general/Loading";
+import Loading from "./components/general/Loading";
 
 function App(props) {
   // Load in the dynamic theme
   const { preferences = { theme: "light" } } = props.profile;
-  props.theme.palette.type = preferences.theme;
-  const theme = createMuiTheme(props.theme);
+  props.preferences.theme.palette.type = preferences.theme;
+  const theme = createMuiTheme(props.preferences.theme);
 
   // Wait for firebase to initialize then load the site
   return (
@@ -54,7 +54,7 @@ function App(props) {
 const mapStateToProps = state => {
   return {
     auth: state.firebase.auth,
-    theme: state.theme,
+    preferences: state.preferences,
     profile: state.firebase.profile
   };
 };

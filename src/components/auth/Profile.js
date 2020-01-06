@@ -1,33 +1,38 @@
 import React, { Component, Fragment } from "react";
 
+// React Router Imports
+import { Redirect } from "react-router-dom";
+
 // Material UI Imports
 import {
-  withStyles,
-  Paper,
-  Container,
-  Grid,
-  Typography,
   Button,
+  Container,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  TextField,
+  DialogTitle,
   FormControl,
+  Grid,
   InputLabel,
+  MenuItem,
+  Paper,
   Select,
-  MenuItem
+  TextField,
+  Typography,
+  withStyles
 } from "@material-ui/core";
-import { Edit, DeleteForever, Lock, ExitToApp } from "@material-ui/icons";
+import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
 
-import { getFirebase } from "react-redux-firebase";
-import NavBar from "../navigation/NavBar";
+// Redux Imports
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
-import { signOut, deleteAccount } from "../../store/actions/authActions";
+import { getFirebase } from "react-redux-firebase";
+import { deleteAccount, signOut } from "../../store/actions/authActions";
+import { setTheme } from "../../store/actions/preferenceActions";
+
+// Local Imports
+import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
-import { setTheme } from "../../store/actions/themeActions";
 
 const styles = theme => ({
   paper: {
@@ -53,10 +58,6 @@ function mapReauthCode(code) {
 
 class Profile extends Component {
   state = {
-    //Preferences State
-    preferences: {
-      theme: "light"
-    },
     // Password State
     showPasswordReset: false,
     // Delete Account State
@@ -118,11 +119,12 @@ class Profile extends Component {
   };
 
   setTheme = event => {
-    const { preferences } = this.state;
-    preferences.theme = event.target.value;
-    this.setState({ preferences: preferences });
-    console.log(preferences.theme);
-    this.props.setTheme(preferences.theme);
+    const {
+      profile: { preferences }
+    } = this.props;
+    if (preferences.theme !== event.target.value) {
+      this.props.setTheme(event.target.value);
+    }
   };
 
   render() {
@@ -162,7 +164,6 @@ class Profile extends Component {
               </Grid>
             </Paper>
           </Container>
-
           <Container maxWidth="lg">
             <Paper className={classes.paper}>
               <Typography variant="h6" gutterBottom>
