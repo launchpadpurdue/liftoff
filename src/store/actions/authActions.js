@@ -39,7 +39,8 @@ export const signUp = accountDetails => {
       profilePicture: "",
       skills: accountDetails.skills,
       description: accountDetails.description,
-      role: accountDetails.role
+      role: accountDetails.role,
+      preferences: { theme: "light" }
     };
 
     let userImage = accountDetails.image;

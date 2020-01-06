@@ -13,19 +13,12 @@ import {
   Toolbar,
   Typography
 } from "@material-ui/core";
-import {
-  ColorLens,
-  FolderShared,
-  Info,
-  MoreVert,
-  PersonAdd
-} from "@material-ui/icons";
+import { FolderShared, Info, MoreVert, PersonAdd } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Redux Imports
 import { connect } from "react-redux";
 import { signOut } from "../../store/actions/authActions";
-import { toggleTheme } from "../../store/actions/themeActions";
 
 // Local Imports
 import SignedInLinks from "./SignedInLinks";
@@ -123,10 +116,6 @@ function NavBar(props) {
         <Info className={classes.icon} />
         About
       </MenuItem>
-      <MenuItem onClick={props.toggleTheme}>
-        <ColorLens className={classes.icon} />
-        Theme
-      </MenuItem>
       {!auth.uid && (
         <MenuItem onClick={closeMobileMenu} component={Link} to="/signin">
           <PersonAdd className={classes.icon} />
@@ -170,14 +159,6 @@ function NavBar(props) {
             >
               About
             </Button>
-            <Button
-              color="inherit"
-              onClick={props.toggleTheme}
-              startIcon={<ColorLens />}
-            >
-              Theme
-            </Button>
-
             {!auth.uid && <SignedOutLinks />}
           </div>
           <div className={classes.sectionMobile}>
@@ -201,8 +182,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signOut: () => dispatch(signOut()),
-    toggleTheme: () => dispatch(toggleTheme())
+    signOut: () => dispatch(signOut())
   };
 };
 

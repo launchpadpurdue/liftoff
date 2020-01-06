@@ -1,36 +1,33 @@
 import React, { Component, Fragment } from "react";
-import { getFirebase } from "react-redux-firebase";
 
-import NavBar from "../navigation/NavBar";
-import { connect } from "react-redux";
+// Material UI Imports
 import {
   withStyles,
   Paper,
   Container,
   Grid,
   Typography,
-  Chip,
-  Divider,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
-  TextField
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@material-ui/core";
-import { Redirect } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDesktop,
-  faGamepad,
-  faBug,
-  faRobot,
-  faGlobe
-} from "@fortawesome/free-solid-svg-icons";
-import { faApple, faAndroid } from "@fortawesome/free-brands-svg-icons";
 import { Edit, DeleteForever, Lock, ExitToApp } from "@material-ui/icons";
+
+import { getFirebase } from "react-redux-firebase";
+import NavBar from "../navigation/NavBar";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { signOut, deleteAccount } from "../../store/actions/authActions";
+import ProfileCard from "./ProfileCard";
+import { setTheme } from "../../store/actions/themeActions";
 
 const styles = theme => ({
   paper: {
@@ -42,56 +39,8 @@ const styles = theme => ({
       marginBottom: theme.spacing(4),
       padding: theme.spacing(3)
     }
-  },
-  image: {
-    width: "75%",
-    height: "auto",
-    [theme.breakpoints.up("sm")]: {
-      width: "100%",
-      height: "auto"
-    },
-    borderColor: theme.palette.primary.main,
-    borderRadius: "50%",
-    objectFit: "contain"
-  },
-  edit: { position: "absolute", top: 0 },
-  profile: {
-    [theme.breakpoints.up("xs")]: {
-      marginLeft: theme.spacing(2)
-    }
-  },
-  divider: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
-  },
-  name: {
-    [theme.breakpoints.down("xs")]: {
-      textAlign: "center"
-    }
-  },
-  skill: {
-    padding: theme.spacing(1)
   }
 });
-
-function mapSkillToIcon(skill) {
-  switch (skill) {
-    case "Android":
-      return faAndroid;
-    case "IOS":
-      return faApple;
-    case "Machine Learning":
-      return faRobot;
-    case "Gaming":
-      return faGamepad;
-    case "Desktop":
-      return faDesktop;
-    case "Web":
-      return faGlobe;
-    default:
-      return faBug;
-  }
-}
 
 function mapReauthCode(code) {
   switch (code) {
@@ -104,25 +53,17 @@ function mapReauthCode(code) {
 
 class Profile extends Component {
   state = {
+    //Preferences State
+    preferences: {
+      theme: "light"
+    },
+    // Password State
+    showPasswordReset: false,
+    // Delete Account State
     email: "",
     password: "",
-    showPasswordReset: false,
     showDeleteAccount: false,
     reauthenticateError: ""
-  };
-
-  renderChip = skill => {
-    const { classes } = this.props;
-    return (
-      <Grid item key={skill}>
-        <Chip
-          className={classes.skill}
-          icon={<FontAwesomeIcon icon={mapSkillToIcon(skill)} />}
-          label={skill}
-          color="secondary"
-        />
-      </Grid>
-    );
   };
 
   resetPassword = () => {
@@ -176,74 +117,57 @@ class Profile extends Component {
     // this.hideDeleteAccount();
   };
 
+  setTheme = event => {
+    const { preferences } = this.state;
+    preferences.theme = event.target.value;
+    this.setState({ preferences: preferences });
+    console.log(preferences.theme);
+    this.props.setTheme(preferences.theme);
+  };
+
   render() {
     const { classes, auth, profile } = this.props;
     if (!auth.uid) return <Redirect to="/signin"></Redirect>;
-    // Assign profile info
-    let {
-      firstName,
-      lastName,
-      skills,
-      description,
-      profilePicture,
-      role
-    } = profile;
-    // Fill in missing values
-    firstName = firstName ? firstName : "";
-    lastName = lastName ? lastName : "";
-    role = role ? role : "";
-    skills = skills ? skills.sort() : [];
-    description = description ? description : "No description";
-    profilePicture = profilePicture ? profilePicture : "./profile.jpg";
+
+    const { preferences = { theme: "light" } } = profile;
+
     return (
       <Fragment>
         <NavBar />
         <main className={classes.layout}>
           <Container maxWidth="lg">
             <Paper className={classes.paper}>
-              <Grid container>
-                <Grid
-                  item
-                  sm={3}
-                  xs={12}
-                  container
-                  justify="center"
-                  alignItems="center"
-                >
-                  <img
-                    border={5}
-                    className={classes.image}
-                    alt="avatar"
-                    src={profilePicture}
-                  />
-                </Grid>
-                <Grid item className={classes.profile} xs>
-                  <Typography variant="h3" className={classes.name}>
-                    {`${firstName} ${lastName}`}
-                  </Typography>
-                  <Divider className={classes.divider} />
-                  <Grid item container direction="column" spacing={1}>
-                    <Grid item container alignItems="center">
-                      <Typography variant="body1">Role: {role}</Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h6">Skills</Typography>
-                      <Grid item container spacing={1}>
-                        {skills.map(skill => this.renderChip(skill))}
-                      </Grid>
-                    </Grid>
-
-                    <Grid item>
-                      <Typography variant="h6">Description</Typography>
-                      <Typography variant="body1">{description}</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
+              <ProfileCard profile={profile} />
             </Paper>
           </Container>
           <Container maxWidth="lg">
             <Paper className={classes.paper}>
+              <Typography variant="h6" gutterBottom>
+                Preferences
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} lg={3}>
+                  <FormControl className={classes.formControl} fullWidth>
+                    <InputLabel id="theme-select">Theme Type</InputLabel>
+                    <Select
+                      labelId="theme-select"
+                      value={preferences.theme}
+                      onChange={this.setTheme}
+                    >
+                      <MenuItem value={"light"}>Light</MenuItem>
+                      <MenuItem value={"dark"}>Dark</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Container>
+
+          <Container maxWidth="lg">
+            <Paper className={classes.paper}>
+              <Typography variant="h6" gutterBottom>
+                Account Actions
+              </Typography>
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={6} lg={3}>
                   <Button
@@ -354,6 +278,7 @@ class Profile extends Component {
     );
   }
 }
+
 const mapStateToProps = state => {
   return {
     auth: state.firebase.auth,
@@ -364,6 +289,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     deleteAccount: () => dispatch(deleteAccount()),
+    setTheme: theme => dispatch(setTheme(theme)),
     signOut: () => dispatch(signOut())
   };
 };

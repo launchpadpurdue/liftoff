@@ -10,10 +10,9 @@ const initState = {
 
 const themeReducer = (state = initState, action) => {
   switch (action.type) {
-    case "TOGGLE_THEME":
+    case "SET_THEME":
       const new_state = { ...state };
-      new_state.palette.type =
-        state.palette.type === "light" ? "dark" : "light";
+      new_state.palette.type = action.theme;
       return new_state;
     default:
       return state;

@@ -23,39 +23,40 @@ import SignUp from "./components/auth/SignUp";
 import { Loading } from "./components/general/Loading";
 
 function App(props) {
+  // Load in the dynamic theme
+  const { preferences = { theme: "light" } } = props.profile;
+  props.theme.palette.type = preferences.theme;
   const theme = createMuiTheme(props.theme);
 
-  // TODO: Make a prettier loading page
-  // Waits for firebase to initialize before loading any page
-  if (!isLoaded(props.auth))
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Loading />
-      </ThemeProvider>
-    );
-
-  // Load dynamic theme
+  // Wait for firebase to initialize then load the site
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Landing}></Route>
-          <Route path="/signin" component={SignIn}></Route>
-          <Route path="/signup" component={SignUp}></Route>
-          <Route path="/profile" component={Profile}></Route>
-          <Route path="/mentees" component={MenteeGallery}></Route>
-          <Route path="/mentors" component={MentorGallery}></Route>
-          <Route path="/organizers" component={OrganizerGallery}></Route>
-        </Switch>
-      </Router>
+      {isLoaded(props.auth) ? (
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Landing}></Route>
+            <Route path="/signin" component={SignIn}></Route>
+            <Route path="/signup" component={SignUp}></Route>
+            <Route path="/profile" component={Profile}></Route>
+            <Route path="/mentees" component={MenteeGallery}></Route>
+            <Route path="/mentors" component={MentorGallery}></Route>
+            <Route path="/organizers" component={OrganizerGallery}></Route>
+          </Switch>
+        </Router>
+      ) : (
+        <Loading />
+      )}
     </ThemeProvider>
   );
 }
 
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth, theme: state.theme };
+  return {
+    auth: state.firebase.auth,
+    theme: state.theme,
+    profile: state.firebase.profile
+  };
 };
 
 export default connect(mapStateToProps)(App);
