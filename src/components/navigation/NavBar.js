@@ -131,7 +131,7 @@ function NavBar(props) {
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.log}
+            className={classes.logo}
             color="inherit"
             component={Link}
             to="/"
