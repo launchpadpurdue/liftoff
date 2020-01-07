@@ -82,18 +82,42 @@ export const updateProfile = newProfile => {
     const firebase = getFirebase();
     const uid = firebase.auth().currentUser.uid;
     const firestore = getFirestore();
+    const storage = firebase.storage().ref();
+
+    const updateInfo = {
+      firstName: newProfile.firstName,
+      lastName: newProfile.lastName,
+      initials:
+        newProfile.firstName[0].toUpperCase() +
+        newProfile.lastName[0].toUpperCase(),
+      description: newProfile.description,
+      skills: newProfile.skills
+    };
+
+    let newImage = newProfile.image;
 
     firestore
       .collection("users")
       .doc(uid)
-      .update({
-        firstName: newProfile.firstName,
-        lastName: newProfile.lastName,
-        initials:
-          newProfile.firstName[0].toUpperCase() +
-          newProfile.lastName[0].toUpperCase(),
-        description: newProfile.description,
-        skills: newProfile.skills
+      .update(updateInfo)
+      .then(() => {
+        if (newImage) {
+          return firebase
+            .uploadFile(`/userImages/${uid}`, newProfile.image, null, {
+              name: "profilePicture"
+            })
+            .then(() =>
+              storage
+                .child(`/userImages/${uid}/profilePicture`)
+                .getDownloadURL()
+                .then(downloadURL =>
+                  firestore
+                    .collection("users")
+                    .doc(uid)
+                    .update({ profilePicture: downloadURL })
+                )
+            );
+        }
       })
       .then(() => dispatch({ type: "EDIT_PROFILE_SUCCESS" }));
   };

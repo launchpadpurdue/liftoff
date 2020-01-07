@@ -21,11 +21,18 @@ import {
   Select,
   TextField,
   Typography,
-  withStyles,
   Input,
-  ListItemText
+  ListItemText,
+  withStyles
 } from "@material-ui/core";
-import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
+import {
+  DeleteForever,
+  Edit,
+  ExitToApp,
+  Lock,
+  Close,
+  PhotoLibrary
+} from "@material-ui/icons";
 
 // Redux Imports
 import { connect } from "react-redux";
@@ -40,7 +47,7 @@ import { setTheme } from "../../store/actions/preferenceActions";
 // Local Imports
 import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
-
+import ImageCropper from "../utils/ImageCropper";
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing(3),
@@ -51,6 +58,13 @@ const styles = theme => ({
       marginBottom: theme.spacing(4),
       padding: theme.spacing(3)
     }
+  },
+  imageInput: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
+  },
+  hidden: {
+    display: "none"
   }
 });
 
@@ -84,6 +98,7 @@ class Profile extends Component {
   state = {
     // Edit Profile State
     showEditProfile: false,
+    showImageCrop: false,
     editDetails: { ...emptyProfile },
     // Password State
     showPasswordReset: false,
@@ -129,6 +144,26 @@ class Profile extends Component {
     const details = this.state.editDetails;
     details.skills = event.target.value;
     this.setState({ editDetails: { ...details } });
+  };
+
+  onFileSelect = event => {
+    if (event.target.files.length === 0) return;
+    const { editDetails } = this.state;
+    editDetails.image = event.target.files[0];
+    this.setState({
+      editDetails: editDetails,
+      showImageCrop: true
+    });
+    event.target.value = null;
+  };
+
+  onCrop = croppedImageFile => {
+    const { editDetails } = this.state;
+    editDetails.image = croppedImageFile;
+    this.setState({
+      showImageCrop: false,
+      editDetails: editDetails
+    });
   };
 
   updateProfile = () => {
@@ -385,6 +420,47 @@ class Profile extends Component {
               onChange={this.onEditProfileInput}
               value={this.state.editDetails.description}
             />
+            <div>
+              <input
+                accept="image/*"
+                className={classes.hidden}
+                id="raised-button-file"
+                multiple
+                onClick={() => (this.value = null)}
+                type="file"
+                onChange={this.onFileSelect}
+              />
+              {!this.state.editDetails.image ? (
+                <label htmlFor={"raised-button-file"}>
+                  <Button
+                    component="span"
+                    color="default"
+                    fullWidth
+                    className={classes.imageInput}
+                    variant="contained"
+                    startIcon={<PhotoLibrary />}
+                  >
+                    Add Profile Picture
+                  </Button>
+                </label>
+              ) : (
+                <Button
+                  onClick={() =>
+                    this.setState({
+                      editDetails: { ...this.state.editDetails, image: null }
+                    })
+                  }
+                  component="span"
+                  color={"secondary"}
+                  fullWidth
+                  className={classes.imageInput}
+                  variant="contained"
+                  startIcon={<Close />}
+                >
+                  Clear Profile Picture
+                </Button>
+              )}
+            </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.hideEditProfile} color="primary">
@@ -395,6 +471,11 @@ class Profile extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <ImageCropper
+          open={this.state.showImageCrop}
+          onClose={this.onCrop}
+          image={this.state.editDetails.image}
+        ></ImageCropper>
       </Fragment>
     );
   }
