@@ -70,7 +70,7 @@ const MenuProps = {
 
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-const names = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
+const skills = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
 
 class SignUp extends Component {
   state = {
@@ -304,6 +304,7 @@ class SignUp extends Component {
                   value={this.state.email}
                   fullWidth
                   id="email"
+                  type="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
@@ -442,12 +443,12 @@ class SignUp extends Component {
                     renderValue={selected => selected.join(", ")}
                     MenuProps={MenuProps}
                   >
-                    {names.map(name => (
-                      <MenuItem key={name} value={name}>
+                    {skills.map(skill => (
+                      <MenuItem key={skill} value={skill}>
                         <Checkbox
-                          checked={this.state.skills.indexOf(name) > -1}
+                          checked={this.state.skills.indexOf(skill) > -1}
                         />
-                        <ListItemText primary={name} />
+                        <ListItemText primary={skill} />
                       </MenuItem>
                     ))}
                   </Select>

@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 // Material UI Imports
 import {
   Button,
+  Checkbox,
   Container,
   Dialog,
   DialogActions,
@@ -20,14 +21,20 @@ import {
   Select,
   TextField,
   Typography,
-  withStyles
+  withStyles,
+  Input,
+  ListItemText
 } from "@material-ui/core";
 import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
 
 // Redux Imports
 import { connect } from "react-redux";
 import { getFirebase } from "react-redux-firebase";
-import { deleteAccount, signOut } from "../../store/actions/authActions";
+import {
+  deleteAccount,
+  signOut,
+  updateProfile
+} from "../../store/actions/authActions";
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
@@ -55,9 +62,29 @@ function mapReauthCode(code) {
       return null;
   }
 }
+const skills = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+const emptyProfile = {
+  firstName: "",
+  lastName: "",
+  skills: [],
+  description: ""
+};
 
 class Profile extends Component {
   state = {
+    // Edit Profile State
+    showEditProfile: false,
+    editDetails: { ...emptyProfile },
     // Password State
     showPasswordReset: false,
     // Delete Account State
@@ -91,8 +118,37 @@ class Profile extends Component {
     });
   };
 
+  showEditProfile = () => {
+    this.setState({
+      showEditProfile: true,
+      editDetails: { ...this.props.profile }
+    });
+  };
+
+  editSkill = event => {
+    const details = this.state.editDetails;
+    details.skills = event.target.value;
+    this.setState({ editDetails: { ...details } });
+  };
+
+  updateProfile = () => {
+    // TODO: Validate the first and last names
+    this.props.updateProfile(this.state.editDetails);
+    this.hideEditProfile();
+  };
+
+  hideEditProfile = () => {
+    this.setState({ showEditProfile: false, editDetails: emptyProfile });
+  };
+
   onInput = event => {
     this.setState({ [event.target.id]: event.target.value });
+  };
+
+  onEditProfileInput = event => {
+    const editDetails = this.state.editDetails;
+    editDetails[event.target.id] = event.target.value;
+    this.setState({ editDetails: editDetails });
   };
 
   onSubmit = event => {
@@ -111,18 +167,14 @@ class Profile extends Component {
     );
     user
       .reauthenticateWithCredential(credential)
-      .then(_ => this.props.deleteAccount())
+      .then(() => this.props.deleteAccount())
       .catch(error =>
         this.setState({ reauthenticateError: mapReauthCode(error.code) })
       );
-    // this.hideDeleteAccount();
   };
 
   setTheme = event => {
-    const {
-      profile: { preferences }
-    } = this.props;
-    if (preferences.theme !== event.target.value) {
+    if (this.props.profile.preferences.theme !== event.target.value) {
       this.props.setTheme(event.target.value);
     }
   };
@@ -132,7 +184,6 @@ class Profile extends Component {
     if (!auth.uid) return <Redirect to="/signin"></Redirect>;
 
     const { preferences = { theme: "light" } } = profile;
-
     return (
       <Fragment>
         <NavBar />
@@ -149,7 +200,7 @@ class Profile extends Component {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} lg={3}>
-                  <FormControl className={classes.formControl} fullWidth>
+                  <FormControl fullWidth>
                     <InputLabel id="theme-select">Theme Type</InputLabel>
                     <Select
                       labelId="theme-select"
@@ -175,6 +226,7 @@ class Profile extends Component {
                     color="primary"
                     fullWidth
                     variant="contained"
+                    onClick={this.showEditProfile}
                     startIcon={<Edit />}
                   >
                     Edit Profile
@@ -275,6 +327,74 @@ class Profile extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <Dialog
+          open={this.state.showEditProfile}
+          onClose={this.hideEditProfile}
+        >
+          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Edit the details of your profile
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="firstName"
+              label="First Name"
+              fullWidth
+              onChange={this.onEditProfileInput}
+              value={this.state.editDetails.firstName}
+            />
+            <TextField
+              margin="dense"
+              id="lastName"
+              label="Last Name"
+              fullWidth
+              onChange={this.onEditProfileInput}
+              value={this.state.editDetails.lastName}
+            />
+            <FormControl fullWidth>
+              <InputLabel>Skills</InputLabel>
+              <Select
+                multiple
+                value={this.state.editDetails.skills}
+                onChange={this.editSkill}
+                input={<Input />}
+                renderValue={selected => selected.join(", ")}
+                MenuProps={MenuProps}
+              >
+                {skills.map(skill => (
+                  <MenuItem key={skill} value={skill}>
+                    <Checkbox
+                      checked={this.state.editDetails.skills.includes(skill)}
+                    />
+                    <ListItemText primary={skill} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              margin="dense"
+              fullWidth
+              name="description"
+              label="Description"
+              id="description"
+              rowsMax={6}
+              multiline={true}
+              placeholder="Elaborate on your skills and self"
+              onChange={this.onEditProfileInput}
+              value={this.state.editDetails.description}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.hideEditProfile} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.updateProfile} color="primary" autoFocus>
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Fragment>
     );
   }
@@ -291,7 +411,8 @@ const mapDispatchToProps = dispatch => {
   return {
     deleteAccount: () => dispatch(deleteAccount()),
     setTheme: theme => dispatch(setTheme(theme)),
-    signOut: () => dispatch(signOut())
+    signOut: () => dispatch(signOut()),
+    updateProfile: profile => dispatch(updateProfile(profile))
   };
 };
 

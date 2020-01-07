@@ -77,6 +77,28 @@ export const signUp = accountDetails => {
   };
 };
 
+export const updateProfile = newProfile => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    const uid = firebase.auth().currentUser.uid;
+    const firestore = getFirestore();
+
+    firestore
+      .collection("users")
+      .doc(uid)
+      .update({
+        firstName: newProfile.firstName,
+        lastName: newProfile.lastName,
+        initials:
+          newProfile.firstName[0].toUpperCase() +
+          newProfile.lastName[0].toUpperCase(),
+        description: newProfile.description,
+        skills: newProfile.skills
+      })
+      .then(() => dispatch({ type: "EDIT_PROFILE_SUCCESS" }));
+  };
+};
+
 export const deleteAccount = () => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
