@@ -87,6 +87,10 @@ function ProfileCard(props) {
     profilePicture = "./profile.jpg",
     role = ""
   } = props.profile;
+  if (profilePicture === "") profilePicture = "./profile.jpg";
+  if (description === "")
+    description = `${firstName} ${lastName} has not added a description yet`;
+
   return (
     <Grid container>
       <Grid item sm={3} xs={12} container justify="center" alignItems="center">
@@ -109,7 +113,13 @@ function ProfileCard(props) {
           <Grid item>
             <Typography variant="h6">Skills</Typography>
             <Grid item container spacing={1}>
-              {skills.sort().map(skill => renderChip(classes, skill))}
+              {skills.length ? (
+                skills.sort().map(skill => renderChip(classes, skill))
+              ) : (
+                <Grid item>
+                  <Typography variant="body1">{`${firstName} ${lastName} has not listed any skills yet`}</Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
 

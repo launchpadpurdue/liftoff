@@ -20,7 +20,8 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography
+  Typography,
+  Box
 } from "@material-ui/core";
 import { LockOutlined, PhotoLibrary, Close } from "@material-ui/icons";
 import { withStyles } from "@material-ui/styles";
@@ -519,9 +520,11 @@ class SignUp extends Component {
               Sign up
             </Typography>
             {this.renderForm()}
-            <Typography variant="body1" gutterBottom color="error">
-              {authError}
-            </Typography>
+            <Box mt={2}>
+              <Typography variant="body1" color="error">
+                {authError}
+              </Typography>
+            </Box>
           </div>
         </Container>
         <ImageCropper

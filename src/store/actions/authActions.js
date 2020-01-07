@@ -22,13 +22,16 @@ export const signUp = accountDetails => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
+    const functions = firebase.functions();
+
+    const getRole = functions.httpsCallable("getRole");
 
     let credentials = {
       email: accountDetails.email,
       password: accountDetails.password
     };
 
-    accountDetails.role = "Mentor";
+    // accountDetails.role = "Mentor";
 
     let profile = {
       firstName: accountDetails.firstName,
@@ -39,34 +42,35 @@ export const signUp = accountDetails => {
       profilePicture: "",
       skills: accountDetails.skills,
       description: accountDetails.description,
-      role: accountDetails.role,
       preferences: { theme: "light" }
     };
 
     let userImage = accountDetails.image;
 
-    firebase
-      .createUser(credentials, profile)
-      .then(() => {
-        let uid = firebase.auth().currentUser.uid;
-        if (userImage)
-          return firebase
-            .uploadFile(`/userImages/${uid}`, userImage, null, {
-              name: "profilePicture"
-            })
-            .then(() =>
-              firebase
-                .storage()
-                .ref()
-                .child(`/userImages/${uid}/profilePicture`)
-                .getDownloadURL()
-                .then(downloadURL =>
-                  firestore
-                    .collection("users")
-                    .doc(uid)
-                    .update({ profilePicture: downloadURL })
-                )
-            );
+    getRole({ signUpCode: accountDetails.signUpCode })
+      .then(result => {
+        profile.role = result.data.role;
+        return firebase.createUser(credentials, profile).then(() => {
+          let uid = firebase.auth().currentUser.uid;
+          if (userImage)
+            return firebase
+              .uploadFile(`/userImages/${uid}`, userImage, null, {
+                name: "profilePicture"
+              })
+              .then(() =>
+                firebase
+                  .storage()
+                  .ref()
+                  .child(`/userImages/${uid}/profilePicture`)
+                  .getDownloadURL()
+                  .then(downloadURL =>
+                    firestore
+                      .collection("users")
+                      .doc(uid)
+                      .update({ profilePicture: downloadURL })
+                  )
+              );
+        });
       })
       .then(() => dispatch({ type: "SIGNUP_SUCCESS" }))
       .catch(error => dispatch({ type: "SIGNUP_ERROR", error }));

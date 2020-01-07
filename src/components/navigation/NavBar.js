@@ -159,14 +159,14 @@ function NavBar(props) {
             >
               About
             </Button>
-            {!auth.uid && <SignedOutLinks />}
+            {!auth.uid && <SignedOutLinks />} {auth.uid && <SignedInLinks />}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton onClick={openMobileMenu} color="inherit">
               <MoreVert />
             </IconButton>
+            {auth.uid && <SignedInLinks />}
           </div>
-          {auth.uid && <SignedInLinks />}
         </Toolbar>
       </AppBar>
 
