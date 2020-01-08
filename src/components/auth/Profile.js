@@ -6,7 +6,6 @@ import { Redirect } from "react-router-dom";
 // Material UI Imports
 import {
   Button,
-  Checkbox,
   Container,
   Dialog,
   DialogActions,
@@ -21,18 +20,9 @@ import {
   Select,
   TextField,
   Typography,
-  Input,
-  ListItemText,
   withStyles
 } from "@material-ui/core";
-import {
-  DeleteForever,
-  Edit,
-  ExitToApp,
-  Lock,
-  Close,
-  PhotoLibrary
-} from "@material-ui/icons";
+import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
 
 // Redux Imports
 import { connect } from "react-redux";
@@ -45,7 +35,7 @@ import {
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
-import CropDialog from "../utils/CropDialog";
+import EditProfileDialog from "../utils/EditProfileDialog";
 import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
 
@@ -59,13 +49,6 @@ const styles = theme => ({
       marginBottom: theme.spacing(4),
       padding: theme.spacing(3)
     }
-  },
-  imageInput: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
-  },
-  hidden: {
-    display: "none"
   }
 });
 
@@ -77,30 +60,11 @@ function mapReauthCode(code) {
       return null;
   }
 }
-const skills = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
-const emptyProfile = {
-  firstName: "",
-  lastName: "",
-  skills: [],
-  description: ""
-};
 
 class Profile extends Component {
   state = {
     // Edit Profile State
     showEditProfile: false,
-    showImageCrop: false,
-    editDetails: { ...emptyProfile },
     // Password State
     showPasswordReset: false,
     // Delete Account State
@@ -136,50 +100,17 @@ class Profile extends Component {
 
   showEditProfile = () => {
     this.setState({
-      showEditProfile: true,
-      editDetails: { ...this.props.profile }
+      showEditProfile: true
     });
   };
 
-  editSkill = event => {
-    const details = this.state.editDetails;
-    details.skills = event.target.value;
-    this.setState({ editDetails: { ...details } });
-  };
-
-  onFileSelect = event => {
-    if (event.target.files.length === 0) return;
-    const { editDetails } = this.state;
-    editDetails.image = URL.createObjectURL(event.target.files[0]);
-    this.setState({ editDetails: editDetails, showImageCrop: true });
-    event.target.value = null;
-  };
-
-  onCrop = croppedImageFile => {
-    console.log(croppedImageFile);
-    const { editDetails } = this.state;
-    editDetails.image = croppedImageFile;
-    this.setState({ editDetails: editDetails, showImageCrop: false });
-  };
-
-  updateProfile = () => {
-    // TODO: Validate the first and last names
-    this.props.updateProfile(this.state.editDetails);
-    this.hideEditProfile();
-  };
-
-  hideEditProfile = () => {
-    this.setState({ showEditProfile: false, editDetails: emptyProfile });
+  hideEditProfile = profile => {
+    if (profile) this.props.updateProfile(this.props.auth.uid, profile);
+    this.setState({ showEditProfile: false });
   };
 
   onInput = event => {
     this.setState({ [event.target.id]: event.target.value });
-  };
-
-  onEditProfileInput = event => {
-    const editDetails = this.state.editDetails;
-    editDetails[event.target.id] = event.target.value;
-    this.setState({ editDetails: editDetails });
   };
 
   onSubmit = event => {
@@ -358,120 +289,13 @@ class Profile extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <Dialog
-          open={this.state.showEditProfile}
-          onClose={this.hideEditProfile}
-        >
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Edit the details of your profile
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="firstName"
-              label="First Name"
-              fullWidth
-              onChange={this.onEditProfileInput}
-              value={this.state.editDetails.firstName}
-            />
-            <TextField
-              margin="dense"
-              id="lastName"
-              label="Last Name"
-              fullWidth
-              onChange={this.onEditProfileInput}
-              value={this.state.editDetails.lastName}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Skills</InputLabel>
-              <Select
-                multiple
-                value={this.state.editDetails.skills}
-                onChange={this.editSkill}
-                input={<Input />}
-                renderValue={selected => selected.join(", ")}
-                MenuProps={MenuProps}
-              >
-                {skills.map(skill => (
-                  <MenuItem key={skill} value={skill}>
-                    <Checkbox
-                      checked={this.state.editDetails.skills.includes(skill)}
-                    />
-                    <ListItemText primary={skill} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              margin="dense"
-              fullWidth
-              name="description"
-              label="Description"
-              id="description"
-              rowsMax={6}
-              multiline={true}
-              placeholder="Elaborate on your skills and self"
-              onChange={this.onEditProfileInput}
-              value={this.state.editDetails.description}
-            />
-            <div>
-              <input
-                accept="image/*"
-                className={classes.hidden}
-                id="raised-button-file"
-                multiple
-                onClick={() => (this.value = null)}
-                type="file"
-                onChange={this.onFileSelect}
-              />
-              {!this.state.editDetails.image ? (
-                <label htmlFor={"raised-button-file"}>
-                  <Button
-                    component="span"
-                    color="default"
-                    fullWidth
-                    className={classes.imageInput}
-                    variant="contained"
-                    startIcon={<PhotoLibrary />}
-                  >
-                    Add Profile Picture
-                  </Button>
-                </label>
-              ) : (
-                <Button
-                  onClick={() =>
-                    this.setState({
-                      editDetails: { ...this.state.editDetails, image: null }
-                    })
-                  }
-                  component="span"
-                  color={"secondary"}
-                  fullWidth
-                  className={classes.imageInput}
-                  variant="contained"
-                  startIcon={<Close />}
-                >
-                  Clear Profile Picture
-                </Button>
-              )}
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.hideEditProfile} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.updateProfile} color="primary" autoFocus>
-              Update
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <CropDialog
-          open={this.state.showImageCrop}
-          onClose={this.onCrop}
-          srcImage={this.state.editDetails.image}
-        />
+        {profile.isLoaded && this.state.showEditProfile && (
+          <EditProfileDialog
+            open={this.state.showEditProfile}
+            onClose={this.hideEditProfile}
+            profile={profile}
+          ></EditProfileDialog>
+        )}
       </Fragment>
     );
   }
@@ -489,7 +313,7 @@ const mapDispatchToProps = dispatch => {
     deleteAccount: () => dispatch(deleteAccount()),
     setTheme: theme => dispatch(setTheme(theme)),
     signOut: () => dispatch(signOut()),
-    updateProfile: profile => dispatch(updateProfile(profile))
+    updateProfile: (uid, profile) => dispatch(updateProfile(uid, profile))
   };
 };
 

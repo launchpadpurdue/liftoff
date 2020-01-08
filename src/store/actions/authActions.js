@@ -77,14 +77,13 @@ export const signUp = accountDetails => {
   };
 };
 
-export const updateProfile = newProfile => {
+export const updateProfile = (uid, newProfile) => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
-    const firebase = getFirebase();
-    const uid = firebase.auth().currentUser.uid;
-    const firestore = getFirestore();
-    const storage = firebase.storage().ref();
+    const firebase = getFirebase(),
+      firestore = getFirestore(),
+      storage = firebase.storage().ref();
 
-    const updateInfo = {
+    const profileUpdate = {
       firstName: newProfile.firstName,
       lastName: newProfile.lastName,
       initials:
@@ -94,14 +93,14 @@ export const updateProfile = newProfile => {
       skills: newProfile.skills
     };
 
-    let newImage = newProfile.image;
+    if (!newProfile.profilePicture) profileUpdate.profilePicture = "";
 
     firestore
       .collection("users")
       .doc(uid)
-      .update(updateInfo)
+      .update(profileUpdate)
       .then(() => {
-        if (newImage) {
+        if (newProfile.image) {
           return firebase
             .uploadFile(`/userImages/${uid}`, newProfile.image, null, {
               name: "profilePicture"
@@ -110,12 +109,12 @@ export const updateProfile = newProfile => {
               storage
                 .child(`/userImages/${uid}/profilePicture`)
                 .getDownloadURL()
-                .then(downloadURL =>
-                  firestore
-                    .collection("users")
-                    .doc(uid)
-                    .update({ profilePicture: downloadURL })
-                )
+            )
+            .then(downloadURL =>
+              firestore
+                .collection("users")
+                .doc(uid)
+                .update({ profilePicture: downloadURL })
             );
         }
       })
