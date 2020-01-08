@@ -38,6 +38,7 @@ import { setTheme } from "../../store/actions/preferenceActions";
 import EditProfileDialog from "../utils/EditProfileDialog";
 import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
+import AlertDialog from "../utils/AlertDialog";
 
 const styles = theme => ({
   paper: {
@@ -231,22 +232,13 @@ class Profile extends Component {
             </Paper>
           </Container>
         </main>
-        <Dialog
+        <AlertDialog
           open={this.state.showPasswordReset}
           onClose={this.hidePasswordReset}
-        >
-          <DialogTitle>Password Reset</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              An email to reset your password has been sent to {auth.email}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.hidePasswordReset} color="primary" autoFocus>
-              Okay
-            </Button>
-          </DialogActions>
-        </Dialog>
+          title="Password Reset"
+          message={` An email to reset your password has been sent to ${auth.email}`}
+        />
+
         <Dialog
           open={this.state.showDeleteAccount}
           onClose={this.hideDeleteAccount}
