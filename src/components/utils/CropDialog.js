@@ -1,5 +1,3 @@
-import "react-image-crop/dist/ReactCrop.css";
-
 import React, { Component } from "react";
 
 import {
