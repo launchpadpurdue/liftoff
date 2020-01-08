@@ -31,7 +31,7 @@ import { connect } from "react-redux";
 import { signUp } from "../../store/actions/authActions";
 
 // Local Imports
-import ImageCropper from "../utils/ImageCropper";
+import CropDialog from "../utils/CropDialog";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -142,7 +142,7 @@ class SignUp extends Component {
   onFileSelect = event => {
     if (event.target.files.length === 0) return;
     this.setState({
-      image: event.target.files[0],
+      image: URL.createObjectURL(event.target.files[0]),
       openCropDialog: true
     });
     event.target.value = null;
@@ -528,10 +528,10 @@ class SignUp extends Component {
             </Box>
           </div>
         </Container>
-        <ImageCropper
-          open={this.state.openCropDialog}
+        <CropDialog
           onClose={this.onCrop}
-          image={this.state.image}
+          open={this.state.openCropDialog}
+          srcImage={this.state.image}
         />
       </Fragment>
     );

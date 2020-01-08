@@ -45,9 +45,10 @@ import {
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
+import CropDialog from "../utils/CropDialog";
 import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
-import ImageCropper from "../utils/ImageCropper";
+
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing(3),
@@ -149,21 +150,15 @@ class Profile extends Component {
   onFileSelect = event => {
     if (event.target.files.length === 0) return;
     const { editDetails } = this.state;
-    editDetails.image = event.target.files[0];
-    this.setState({
-      editDetails: editDetails,
-      showImageCrop: true
-    });
+    editDetails.image = URL.createObjectURL(event.target.files[0]);
+    this.setState({ editDetails: editDetails, showImageCrop: true });
     event.target.value = null;
   };
 
   onCrop = croppedImageFile => {
     const { editDetails } = this.state;
     editDetails.image = croppedImageFile;
-    this.setState({
-      showImageCrop: false,
-      editDetails: editDetails
-    });
+    this.setState({ editDetails: editDetails, showImageCrop: false });
   };
 
   updateProfile = () => {
@@ -471,11 +466,11 @@ class Profile extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <ImageCropper
+        <CropDialog
           open={this.state.showImageCrop}
           onClose={this.onCrop}
-          image={this.state.editDetails.image}
-        ></ImageCropper>
+          srcImage={this.state.editDetails.image}
+        />
       </Fragment>
     );
   }
