@@ -1,22 +1,21 @@
 import React, { Component } from "react";
 
+// Material UI Imports
 import {
-  Slide,
-  withStyles,
-  Dialog,
   AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
   Button,
-  DialogContent
+  Dialog,
+  DialogContent,
+  IconButton,
+  Slide,
+  Toolbar,
+  Typography,
+  withStyles
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
-import Cropper from "react-easy-crop";
 
-const DialogTransition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// React Easy Crop Imports
+import Cropper from "react-easy-crop";
 
 const styles = theme => ({
   appBar: {
@@ -28,27 +27,37 @@ const styles = theme => ({
   }
 });
 
+const DialogTransition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 class CropDialog extends Component {
   state = {
-    cropSettings: { x: 0, y: 0 },
     crop: null,
-    zoom: 1,
-    aspect: 1
+    aspect: 1,
+    cropPosition: { x: 0, y: 0 },
+    zoom: 1
   };
 
+  // Crops the source image and returns it to the caller
   completeCrop = () => {
-    const srcImage = this.props.srcImage,
-      crop = this.state.crop;
+    // Get the image blob to crop and crop information
+    const srcImage = this.props.srcImage;
+    const crop = this.state.crop;
+
+    // Store the blob in an image and get the scale
     const image = new Image();
     image.src = srcImage;
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
 
+    // Create a canvas and drawing context
     const canvas = document.createElement("canvas");
-    const scaleX = image.naturalWidth / image.width,
-      scaleY = image.naturalHeight / image.height,
-      ctx = canvas.getContext("2d");
     canvas.width = 500;
     canvas.height = 500;
+    const ctx = canvas.getContext("2d");
 
+    // Draw the cropped image on the canvas
     ctx.drawImage(
       image,
       crop.x * scaleX,
@@ -60,6 +69,8 @@ class CropDialog extends Component {
       500,
       500
     );
+
+    // Convert the canvas back to a blob and close the dialog
     canvas.toBlob(blob => {
       if (!blob) this.props.onClose();
       const file = new File([blob], "image.png", { type: "image/png" });
@@ -67,8 +78,10 @@ class CropDialog extends Component {
     }, "image/png");
   };
 
-  onCropChange = cropSettings => {
-    this.setState({ cropSettings });
+  // Metadata Functions for react-easy-crop
+
+  onCropChange = cropPosition => {
+    this.setState({ cropPosition });
   };
 
   onCropComplete = (croppedArea, croppedAreaPixels) => {
@@ -87,12 +100,12 @@ class CropDialog extends Component {
       <Dialog
         fullScreen
         open={open}
-        onClose={onClose}
+        onClose={() => onClose()}
         TransitionComponent={DialogTransition}
       >
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={onClose}>
+            <IconButton edge="start" color="inherit" onClick={() => onClose()}>
               <Close />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
@@ -110,9 +123,9 @@ class CropDialog extends Component {
         <DialogContent>
           <Cropper
             image={srcImage}
-            crop={this.state.cropSettings}
-            zoom={this.state.zoom}
+            crop={this.state.cropPosition}
             aspect={this.state.aspect}
+            zoom={this.state.zoom}
             onCropChange={this.onCropChange}
             onCropComplete={this.onCropComplete}
             onZoomChange={this.onZoomChange}

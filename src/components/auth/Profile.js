@@ -156,6 +156,7 @@ class Profile extends Component {
   };
 
   onCrop = croppedImageFile => {
+    console.log(croppedImageFile);
     const { editDetails } = this.state;
     editDetails.image = croppedImageFile;
     this.setState({ editDetails: editDetails, showImageCrop: false });
