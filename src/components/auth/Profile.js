@@ -7,18 +7,12 @@ import { Redirect } from "react-router-dom";
 import {
   Button,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Paper,
   Select,
-  TextField,
   Typography,
   withStyles
 } from "@material-ui/core";
@@ -27,18 +21,15 @@ import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
 // Redux Imports
 import { connect } from "react-redux";
 import { getFirebase } from "react-redux-firebase";
-import {
-  deleteAccount,
-  signOut,
-  updateProfile
-} from "../../store/actions/authActions";
+import { signOut, updateProfile } from "../../store/actions/authActions";
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
+import AlertDialog from "../utils/AlertDialog";
+import DeleteAccountDialog from "../utils/DeleteAccountDialog";
 import EditProfileDialog from "../utils/EditProfileDialog";
 import NavBar from "../navigation/NavBar";
 import ProfileCard from "./ProfileCard";
-import AlertDialog from "../utils/AlertDialog";
 
 const styles = theme => ({
   paper: {
@@ -53,26 +44,11 @@ const styles = theme => ({
   }
 });
 
-function mapReauthCode(code) {
-  switch (code) {
-    case "auth/wrong-password":
-      return "Password is invalid for this account";
-    default:
-      return null;
-  }
-}
-
 class Profile extends Component {
   state = {
-    // Edit Profile State
-    showEditProfile: false,
-    // Password State
-    showPasswordReset: false,
-    // Delete Account State
-    email: "",
-    password: "",
     showDeleteAccount: false,
-    reauthenticateError: ""
+    showEditProfile: false,
+    showPasswordReset: false
   };
 
   resetPassword = () => {
@@ -92,10 +68,7 @@ class Profile extends Component {
 
   hideDeleteAccount = () => {
     this.setState({
-      showDeleteAccount: false,
-      email: "",
-      password: "",
-      reauthenticateError: ""
+      showDeleteAccount: false
     });
   };
 
@@ -108,32 +81,6 @@ class Profile extends Component {
   hideEditProfile = profile => {
     if (profile) this.props.updateProfile(this.props.auth.uid, profile);
     this.setState({ showEditProfile: false });
-  };
-
-  onInput = event => {
-    this.setState({ [event.target.id]: event.target.value });
-  };
-
-  onSubmit = event => {
-    event.preventDefault();
-    const firebase = getFirebase();
-    const user = firebase.auth().currentUser;
-    if (this.state.email !== user.email) {
-      this.setState({
-        reauthenticateError: "Email does not match signed in account"
-      });
-      return;
-    }
-    const credential = firebase.auth.EmailAuthProvider.credential(
-      this.state.email,
-      this.state.password
-    );
-    user
-      .reauthenticateWithCredential(credential)
-      .then(() => this.props.deleteAccount())
-      .catch(error =>
-        this.setState({ reauthenticateError: mapReauthCode(error.code) })
-      );
   };
 
   setTheme = event => {
@@ -188,9 +135,9 @@ class Profile extends Component {
                   <Button
                     color="primary"
                     fullWidth
-                    variant="contained"
                     onClick={this.showEditProfile}
                     startIcon={<Edit />}
+                    variant="contained"
                   >
                     Edit Profile
                   </Button>
@@ -199,9 +146,9 @@ class Profile extends Component {
                   <Button
                     color="primary"
                     fullWidth
-                    variant="contained"
-                    startIcon={<Lock />}
                     onClick={this.resetPassword}
+                    startIcon={<Lock />}
+                    variant="contained"
                   >
                     Reset Password
                   </Button>
@@ -210,9 +157,9 @@ class Profile extends Component {
                   <Button
                     color="primary"
                     fullWidth
-                    variant="contained"
                     onClick={this.props.signOut}
                     startIcon={<ExitToApp />}
+                    variant="contained"
                   >
                     Sign Out
                   </Button>
@@ -220,10 +167,10 @@ class Profile extends Component {
                 <Grid item xs={12} sm={6} lg={3}>
                   <Button
                     color="secondary"
-                    onClick={this.showDeleteAccount}
                     fullWidth
-                    variant="contained"
+                    onClick={this.showDeleteAccount}
                     startIcon={<DeleteForever />}
+                    variant="contained"
                   >
                     Delete Account
                   </Button>
@@ -232,55 +179,6 @@ class Profile extends Component {
             </Paper>
           </Container>
         </main>
-        <AlertDialog
-          open={this.state.showPasswordReset}
-          onClose={this.hidePasswordReset}
-          title="Password Reset"
-          message={` An email to reset your password has been sent to ${auth.email}`}
-        />
-
-        <Dialog
-          open={this.state.showDeleteAccount}
-          onClose={this.hideDeleteAccount}
-        >
-          <DialogTitle>Reauthenticate</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              In order to delete your account, please reauthenticate with your
-              credentials
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Email Address"
-              type="email"
-              fullWidth
-              id="email"
-              onChange={this.onInput}
-            />
-            <TextField
-              margin="dense"
-              label="Password"
-              type="password"
-              fullWidth
-              id="password"
-              onChange={this.onInput}
-            />
-            {this.state.reauthenticateError && (
-              <Typography variant="body1" gutterBottom color="error">
-                {this.state.reauthenticateError}
-              </Typography>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.hideDeleteAccount} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.onSubmit} color="primary">
-              Delete Account
-            </Button>
-          </DialogActions>
-        </Dialog>
         {profile.isLoaded && this.state.showEditProfile && (
           <EditProfileDialog
             open={this.state.showEditProfile}
@@ -288,6 +186,16 @@ class Profile extends Component {
             profile={profile}
           ></EditProfileDialog>
         )}
+        <AlertDialog
+          open={this.state.showPasswordReset}
+          onClose={this.hidePasswordReset}
+          title="Password Reset"
+          message={` An email to reset your password has been sent to ${auth.email}`}
+        />
+        <DeleteAccountDialog
+          open={this.state.showDeleteAccount}
+          onClose={this.hideDeleteAccount}
+        />
       </Fragment>
     );
   }
@@ -302,7 +210,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteAccount: () => dispatch(deleteAccount()),
     setTheme: theme => dispatch(setTheme(theme)),
     signOut: () => dispatch(signOut()),
     updateProfile: (uid, profile) => dispatch(updateProfile(uid, profile))
