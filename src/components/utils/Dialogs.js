@@ -27,4 +27,4 @@ function AlertDialog(props) {
   );
 }
 
-export default AlertDialog;
+export { AlertDialog };

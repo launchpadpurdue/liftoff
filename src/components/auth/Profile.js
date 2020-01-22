@@ -25,7 +25,7 @@ import { signOut, updateProfile } from "../../store/actions/authActions";
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
-import AlertDialog from "../utils/AlertDialog";
+import { AlertDialog } from "../utils/Dialogs";
 import DeleteAccountDialog from "../utils/DeleteAccountDialog";
 import EditProfileDialog from "../utils/EditProfileDialog";
 import NavBar from "../navigation/NavBar";
