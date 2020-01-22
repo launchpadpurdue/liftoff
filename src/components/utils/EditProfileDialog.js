@@ -18,7 +18,7 @@ import {
   ListItemText
 } from "@material-ui/core";
 import { PhotoLibrary, Close } from "@material-ui/icons";
-import CropDialog from "./CropDialog";
+import { CropDialog } from "../utils/Dialogs";
 
 const allSkills = [
   "Web",

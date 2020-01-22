@@ -31,7 +31,7 @@ import { connect } from "react-redux";
 import { signUp } from "../../store/actions/authActions";
 
 // Local Imports
-import CropDialog from "../utils/CropDialog";
+import { CropDialog } from "../utils/Dialogs";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
