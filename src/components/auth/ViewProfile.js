@@ -28,7 +28,7 @@ function ViewProfile(props) {
 
   return (
     <Fragment>
-      <NavBar />
+      <NavBar img="../logo.png" />
       <main>
         <Container maxWidth="lg">
           <Paper className={classes.paper}>

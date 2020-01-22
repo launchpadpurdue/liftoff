@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function NavBar(props) {
-  const { auth } = props;
+  const { auth, img } = props;
   const classes = useStyles();
   const [directoryAnchorEl, setDirectoryAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -136,7 +136,7 @@ function NavBar(props) {
             component={Link}
             to="/"
           >
-            <img src="./logo.png" alt="Logo" height={32} />
+            <img src={img ? img : "./logo.png"} alt="Logo" height={32} />
           </IconButton>
           <Typography variant="h6" noWrap>
             Liftoff
