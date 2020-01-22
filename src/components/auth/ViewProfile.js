@@ -4,7 +4,13 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import ProfileCard from "./ProfileCard";
-import { makeStyles, Container, Paper } from "@material-ui/core";
+import {
+  makeStyles,
+  Container,
+  Paper,
+  CircularProgress,
+  Box
+} from "@material-ui/core";
 import NavBar from "../navigation/NavBar";
 
 const useStyles = makeStyles(theme => ({
@@ -23,16 +29,19 @@ const useStyles = makeStyles(theme => ({
 function ViewProfile(props) {
   const { user } = props;
   const classes = useStyles();
-
-  if (!user) return null;
-
+  console.log(user);
   return (
     <Fragment>
-      <NavBar img="../logo.png" />
+      <NavBar />
       <main>
         <Container maxWidth="lg">
           <Paper className={classes.paper}>
-            <ProfileCard profile={user} />
+            {!user && (
+              <Box display="flex" justifyContent="center" my={16}>
+                <CircularProgress />
+              </Box>
+            )}
+            {user && <ProfileCard profile={user} />}
           </Paper>
         </Container>
       </main>
