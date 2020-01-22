@@ -90,7 +90,7 @@ class EditProfileDialog extends Component {
 
     return (
       <Fragment>
-        <Dialog maxWidth="sm" open={open} onClose={onClose}>
+        <Dialog maxWidth="sm" open={open} onClose={() => this.closeDialog()}>
           <DialogTitle>Edit Profile</DialogTitle>
           <DialogContent>
             <DialogContentText>
