@@ -29,7 +29,7 @@ import AlertDialog from "../utils/AlertDialog";
 import DeleteAccountDialog from "../utils/DeleteAccountDialog";
 import EditProfileDialog from "../utils/EditProfileDialog";
 import NavBar from "../navigation/NavBar";
-import ProfileCard from "./ProfileCard";
+import { ProfileCard } from "../utils/Cards";
 
 const styles = theme => ({
   paper: {

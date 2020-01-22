@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
-import ProfileCard from "./ProfileCard";
+import { ProfileCard } from "../utils/Cards";
 import {
   makeStyles,
   Container,
@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
 function ViewProfile(props) {
   const { user } = props;
   const classes = useStyles();
-  console.log(user);
   return (
     <Fragment>
       <NavBar />
