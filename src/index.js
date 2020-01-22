@@ -8,7 +8,11 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import firebase from "./config/firebaseConfig";
 import { ReactReduxFirebaseProvider, getFirebase } from "react-redux-firebase";
-import { getFirestore, reduxFirestore } from "redux-firestore";
+import {
+  getFirestore,
+  reduxFirestore,
+  createFirestoreInstance
+} from "redux-firestore";
 
 // Create the redux store
 const store = createStore(
@@ -24,13 +28,15 @@ const rrfConfig = {
   attachAuthIsReady: true,
   userProfile: "users",
   useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+
   // enableClaims: true // Get custom claims along with the profile
 };
 
 const rrfProps = {
   firebase,
   config: rrfConfig,
-  dispatch: store.dispatch
+  dispatch: store.dispatch,
+  createFirestoreInstance
 };
 
 // Render the app using a provider to store the redux and firebase state

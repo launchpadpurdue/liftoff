@@ -97,7 +97,7 @@ class Profile extends Component {
     return (
       <Fragment>
         <NavBar />
-        <main className={classes.layout}>
+        <main>
           <Container maxWidth="lg">
             <Paper className={classes.paper}>
               <ProfileCard profile={profile} />

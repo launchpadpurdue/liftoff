@@ -21,6 +21,7 @@ import Profile from "./components/auth/Profile";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import Loading from "./components/general/Loading";
+import ViewProfile from "./components/auth/ViewProfile";
 
 function App(props) {
   // Load in the dynamic theme
@@ -35,10 +36,11 @@ function App(props) {
       {isLoaded(props.auth) ? (
         <Router>
           <Switch>
-            <Route exact path="/" component={Landing}></Route>
+            <Route path="/" component={Landing} exact></Route>
             <Route path="/signin" component={SignIn}></Route>
             <Route path="/signup" component={SignUp}></Route>
-            <Route path="/profile" component={Profile}></Route>
+            <Route path="/profile" component={Profile} exact></Route>
+            <Route path="/profile/:id" component={ViewProfile}></Route>
             <Route path="/mentees" component={MenteeGallery}></Route>
             <Route path="/mentors" component={MentorGallery}></Route>
             <Route path="/organizers" component={OrganizerGallery}></Route>

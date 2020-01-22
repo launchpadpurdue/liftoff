@@ -9,7 +9,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
+import { Link as RouterLink } from "react-router-dom";
+
 import NavBar from "../navigation/NavBar";
+
+import { firestoreConnect } from "react-redux-firebase";
+import { connect } from "react-redux";
+import { compose } from "redux";
 
 function Copyright() {
   return (
@@ -45,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column"
   },
   cardMedia: {
-    paddingTop: "56.25%" // 16:9
+    paddingTop: "100%" // 1:1
   },
   cardContent: {
     flexGrow: 1
@@ -56,11 +62,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-export default function OrganizerGallery() {
+function OrganizerGallery(props) {
   const classes = useStyles();
-
+  const { organizers } = props;
   return (
     <React.Fragment>
       <NavBar />
@@ -106,17 +110,17 @@ export default function OrganizerGallery() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map(card => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {organizers.map(organizer => (
+              <Grid item key={organizer.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
-                    title="Image title"
+                    image={organizer.profilePicture}
+                    title={`${organizer.firstName} ${organizer.lastName} Picture`}
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {`${organizer.firstName} ${organizer.lastName}`}
                     </Typography>
                     <Typography>
                       This is a media card. You can use this section to describe
@@ -124,11 +128,13 @@ export default function OrganizerGallery() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
-                      View
-                    </Button>
-                    <Button size="small" color="primary">
-                      Edit
+                    <Button
+                      size="small"
+                      color="primary"
+                      component={RouterLink}
+                      to={`/profile/${organizer.id}`}
+                    >
+                      View Profile
                     </Button>
                   </CardActions>
                 </Card>
@@ -156,3 +162,19 @@ export default function OrganizerGallery() {
     </React.Fragment>
   );
 }
+
+const mapStateToProps = state => {
+  let organizers = state.firestore.ordered.users;
+  organizers = organizers
+    ? organizers.filter(member => member.role === "Organizer")
+    : [];
+  console.log(organizers);
+  return {
+    organizers
+  };
+};
+
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([{ collection: "users" }])
+)(OrganizerGallery);
