@@ -10,13 +10,13 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Chip,
+  Divider,
   Grid,
   makeStyles,
-  Typography,
-  Divider,
-  Chip
+  Typography
 } from "@material-ui/core";
-import Skeleton from "@material-ui/lab/Skeleton";
+import { Skeleton } from "@material-ui/lab";
 
 // FontAwesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -119,15 +119,15 @@ function MemberCard(props) {
           title={`${firstName} ${lastName} Picture`}
         />
         <CardContent className={classes.cardContent}>
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom component="h2" variant="h5">
             {`${firstName} ${lastName}`}
           </Typography>
           <Grid container spacing={1}>
             {skills.map(skill => (
               <Grid item key={skill}>
                 <FontAwesomeIcon
-                  icon={mapSkillToIcon(skill)}
                   fixedWidth
+                  icon={mapSkillToIcon(skill)}
                   size="lg"
                 />
               </Grid>
@@ -136,8 +136,8 @@ function MemberCard(props) {
         </CardContent>
         <CardActions>
           <Button
-            size="small"
             color="primary"
+            size="small"
             component={Link}
             to={`/profile/${id}`}
           >
@@ -152,29 +152,28 @@ function MemberCard(props) {
 function ProfileCard(props) {
   const classes = profileStyles();
   let {
-    firstName = "",
-    lastName = "",
-    skills = [],
-    description = "User has not added a description",
-    profilePicture = "./profile.jpg",
-    role = ""
+    firstName,
+    lastName,
+    skills,
+    description,
+    profilePicture,
+    role
   } = props.profile;
-  if (profilePicture === "") profilePicture = "./profile.jpg";
-  if (description === "")
-    description = `${firstName} ${lastName} has not added a description yet`;
+  if (description === "") description = "User has not added a description yet";
+  if (profilePicture === "") profilePicture = "/profile.jpg";
 
   return (
     <Grid container>
-      <Grid item sm={3} xs={12} container justify="center" alignItems="center">
+      <Grid item xs={12} sm={3} container alignItems="center" justify="center">
         <img
           border={5}
           className={classes.image}
-          alt="avatar"
+          alt="User"
           src={profilePicture}
         />
       </Grid>
       <Grid item className={classes.profile} xs>
-        <Typography variant="h3" className={classes.name}>
+        <Typography className={classes.name} variant="h3">
           {`${firstName} ${lastName}`}
         </Typography>
         <Divider className={classes.divider} />
@@ -185,16 +184,17 @@ function ProfileCard(props) {
           <Grid item>
             <Typography variant="h6">Skills</Typography>
             <Grid item container spacing={1}>
-              {skills.length ? (
+              {skills && skills.length ? (
                 skills.sort().map(skill => renderChip(classes, skill))
               ) : (
                 <Grid item>
-                  <Typography variant="body1">{`${firstName} ${lastName} has not listed any skills yet`}</Typography>
+                  <Typography variant="body1">
+                    User has not listed any skills yet
+                  </Typography>
                 </Grid>
               )}
             </Grid>
           </Grid>
-
           <Grid item>
             <Typography variant="h6">Description</Typography>
             <Typography variant="body1">{description}</Typography>
@@ -210,40 +210,40 @@ function SkeletonCard() {
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card className={classes.card}>
-        <Skeleton variant="rect" className={classes.cardMedia} />
+        <Skeleton className={classes.cardMedia} variant="rect" />
         <CardContent className={classes.cardContent}>
-          <Typography gutterBottom variant="h5" component="h2">
-            <Skeleton variant="text" animation="wave" />
+          <Typography gutterBottom component="h2" variant="h5">
+            <Skeleton animation="wave" variant="text" />
           </Typography>
           <Grid container spacing={1}>
             <Grid item>
               <Skeleton
-                variant="circle"
                 width={32}
                 height={32}
                 animation="wave"
+                variant="circle"
               />
             </Grid>
             <Grid item>
               <Skeleton
-                variant="circle"
                 width={32}
                 height={32}
                 animation="wave"
+                variant="circle"
               />
             </Grid>
             <Grid item>
               <Skeleton
-                variant="circle"
                 width={32}
                 height={32}
                 animation="wave"
+                variant="circle"
               />
             </Grid>
           </Grid>
         </CardContent>
         <CardActions>
-          <Skeleton width="40%" animation="wave" />
+          <Skeleton animation="wave" width="40%" />
         </CardActions>
       </Card>
     </Grid>
