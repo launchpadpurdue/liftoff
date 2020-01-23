@@ -14,6 +14,7 @@ import {
 
 // Local Imports
 import NavBar from "../navigation/NavBar";
+import { Footer, ImageGridList } from "../utils/Utlities";
 
 const useStyles = makeStyles(theme => ({
   about: {
@@ -26,19 +27,14 @@ const useStyles = makeStyles(theme => ({
   heroButtons: {
     marginTop: theme.spacing(1)
   },
+  photos: {
+    padding: theme.spacing(2, 0, 2)
+  },
   footer: {
     // backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2, 0, 3)
   }
 }));
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {`Copyright © LaunchPad ${new Date().getFullYear()}.`}
-    </Typography>
-  );
-}
 
 export default function Landing() {
   const classes = useStyles();
@@ -135,17 +131,10 @@ export default function Landing() {
           </div>
         </Container>
       </div>
-      <footer className={classes.footer}>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="textSecondary"
-          component="p"
-        >
-          Preparing students for launch
-        </Typography>
-        <Copyright />
-      </footer>
+      <Container maxWidth="sm" className={classes.photos}>
+        <ImageGridList />
+      </Container>
+      <Footer />
     </Fragment>
   );
 }
