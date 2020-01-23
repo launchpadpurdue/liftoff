@@ -25,8 +25,11 @@ import { signOut, updateProfile } from "../../store/actions/authActions";
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
-import { AlertDialog, EditProfileDialog } from "../utils/Dialogs";
-import DeleteAccountDialog from "../utils/DeleteAccountDialog";
+import {
+  AlertDialog,
+  DeleteAccountDialog,
+  EditProfileDialog
+} from "../utils/Dialogs";
 import NavBar from "../navigation/NavBar";
 import { ProfileCard } from "../utils/Cards";
 
