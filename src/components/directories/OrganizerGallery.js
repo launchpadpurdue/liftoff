@@ -37,17 +37,6 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8)
   },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column"
-  },
-  cardMedia: {
-    paddingTop: "100%" // 1:1
-  },
-  cardContent: {
-    flexGrow: 1
-  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6)
@@ -61,7 +50,6 @@ function OrganizerGallery(props) {
     <React.Fragment>
       <NavBar />
       <main>
-        {/* Hero unit */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography
@@ -106,7 +94,6 @@ function OrganizerGallery(props) {
           </Grid>
         </Container>
       </main>
-      {/* Footer */}
       <footer className={classes.footer}>
         <Typography variant="h6" align="center" gutterBottom>
           Footer
@@ -121,7 +108,6 @@ function OrganizerGallery(props) {
         </Typography>
         <Copyright />
       </footer>
-      {/* End footer */}
     </React.Fragment>
   );
 }

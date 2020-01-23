@@ -14,6 +14,7 @@ import {
   Divider,
   Grid,
   makeStyles,
+  Tooltip,
   Typography
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
@@ -40,7 +41,9 @@ const cardStyles = makeStyles(theme => ({
   },
   cardContent: {
     flexGrow: 1
-  }
+  },
+  chipLabel: { paddingRight: 0 },
+  chipRoot: { maxHeight: 32 }
 }));
 
 const profileStyles = makeStyles(theme => ({
@@ -106,6 +109,26 @@ function renderChip(classes, skill) {
   );
 }
 
+function renderIconChip(classes, skill) {
+  return (
+    <Grid item key={skill}>
+      <Tooltip arrow title={skill}>
+        <Chip
+          color="secondary"
+          classes={{ label: classes.chipLabel, root: classes.chipRoot }}
+          icon={
+            <FontAwesomeIcon
+              fixedWidth
+              icon={mapSkillToIcon(skill)}
+              size="lg"
+            />
+          }
+        ></Chip>
+      </Tooltip>
+    </Grid>
+  );
+}
+
 function MemberCard(props) {
   const classes = cardStyles();
   const { member } = props;
@@ -123,15 +146,7 @@ function MemberCard(props) {
             {`${firstName} ${lastName}`}
           </Typography>
           <Grid container spacing={1}>
-            {skills.map(skill => (
-              <Grid item key={skill}>
-                <FontAwesomeIcon
-                  fixedWidth
-                  icon={mapSkillToIcon(skill)}
-                  size="lg"
-                />
-              </Grid>
-            ))}
+            {skills.sort().map(skill => renderIconChip(classes, skill))}
           </Grid>
         </CardContent>
         <CardActions>
