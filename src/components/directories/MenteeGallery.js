@@ -88,8 +88,8 @@ function MenteeGallery(props) {
               </Grid>
               <Grid item>
                 <Typography variant="h6" align="center">
-                  No mentees have signed up yet but come back soon to meet all
-                  them all!
+                  No mentees have signed up yet but come back soon to meet them
+                  all!
                 </Typography>
               </Grid>
             </Grid>
