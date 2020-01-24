@@ -47,7 +47,6 @@ function generateTileData(numTiles) {
       cols: 1
     });
     if (i % 6 === 0) {
-      tileData[i].img = "https://dummyimage.com/600x300/";
       tileData[i].cols = 2;
     }
   }
@@ -61,7 +60,7 @@ function ImageGridList() {
     <GridList cellHeight={200} cols={3}>
       {generateTileData(10).map(tile => (
         <GridListTile key={tile.img} cols={tile.cols || 1}>
-          <img src={tile.img} alt={tile.title} />
+          <img src={tile.img} alt={tile.title}  />
         </GridListTile>
       ))}
     </GridList>

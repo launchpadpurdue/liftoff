@@ -1,15 +1,20 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import NavBar from "../navigation/NavBar";
 
-import { firestoreConnect } from "react-redux-firebase";
-import { connect } from "react-redux";
+// Material UI Imports
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+
+// FontAwesome Imports
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
+
+// Redux Imports
 import { compose } from "redux";
+import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
+
+// Local Imports
 import { SkeletonCard, MemberCard } from "../utils/Cards";
+import NavBar from "../navigation/NavBar";
 import { Footer } from "../utils/Utlities";
 
 const useStyles = makeStyles(theme => ({
@@ -17,12 +22,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(8, 0, 6)
   },
-  heroButtons: {
-    marginTop: theme.spacing(4)
-  },
   cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8)
+    padding: theme.spacing(8, 0, 8)
   }
 }));
 
@@ -54,27 +55,45 @@ function OrganizerGallery(props) {
               contents, the creator, etc. Make it short and sweet, but not too
               short so folks don&apos;t simply skip over it entirely.
             </Typography>
-            <div className={classes.heroButtons}>
-              <Grid container spacing={2} justify="center">
-                <Grid item>
-                  <Button variant="contained" color="primary">
-                    Main call to action
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button variant="outlined" color="primary">
-                    Secondary action
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
             {!organizers && [1, 2, 3].map(num => <SkeletonCard key={num} />)}
-            {organizers && organizers.map(user => <MemberCard member={user} />)}
+            {organizers &&
+              organizers.length > 0 &&
+              organizers.map(user => <MemberCard key={user} member={user} />)}
           </Grid>
+
+          {organizers && organizers.length === 0 && (
+            <Grid
+              container
+              align="center"
+              direction="column"
+              justify="center"
+              spacing={4}
+            >
+              <Grid item>
+                <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+              </Grid>
+              <Grid item>
+                <Typography
+                  variant="h3"
+                  align="center"
+                  color="textPrimary"
+                  gutterBottom
+                >
+                  Come back soon!
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6" align="center">
+                  No organizers have signed up yet but come back soon to meet all
+                  them all!
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         </Container>
       </main>
       <Footer />
@@ -83,16 +102,17 @@ function OrganizerGallery(props) {
 }
 
 const mapStateToProps = state => {
-  let organizers = state.firestore.ordered.users;
-  organizers = organizers
-    ? organizers.filter(member => member.role === "Organizer")
-    : null;
   return {
-    organizers
+    organizers: state.firestore.ordered.users
   };
 };
 
 export default compose(
   connect(mapStateToProps),
-  firestoreConnect([{ collection: "users" }])
+  firestoreConnect([
+    {
+      collection: "users",
+      where: ["role", "==", "Organizer"]
+    }
+  ])
 )(OrganizerGallery);
