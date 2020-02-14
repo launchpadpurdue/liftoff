@@ -14,7 +14,7 @@ import {
 
 // Local Imports
 import NavBar from "../navigation/NavBar";
-import { Footer, ImageGridList } from "../utils/Utlities";
+import { Footer, ImageGridList, ImageGrid } from "../utils/Utlities";
 
 const useStyles = makeStyles(theme => ({
   about: {
@@ -132,7 +132,8 @@ export default function Landing() {
         </Container>
       </div>
       <Container maxWidth="sm" className={classes.photos}>
-        <ImageGridList />
+        {/* <ImageGridList /> */}
+        <ImageGrid></ImageGrid>
       </Container>
       <Footer />
     </Fragment>
