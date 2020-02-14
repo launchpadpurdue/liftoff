@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import NavBar from "../navigation/NavBar";
+import Loading from "./Loading";
 import { Code, School, Work, Slideshow, Group, Flag } from "@material-ui/icons";
 import {
   VerticalTimelineElement,
@@ -8,6 +9,10 @@ import {
 import "react-vertical-timeline-component/style.min.css";
 import { Footer, Header } from "../utils/Utlities";
 import { withStyles, useTheme, Typography } from "@material-ui/core";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
+import { compose } from "redux";
+import { firestoreConnect, isLoaded } from "react-redux-firebase";
 
 const styles = theme => ({
   paper: {
@@ -71,9 +76,31 @@ function TimelineElement(props) {
   );
 }
 
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+
 class Events extends Component {
+  timestampToDate = (timestamp, duration) => {
+    const startTime = timestamp.toDate(),
+      endTime = new Date(startTime.getTime() + duration * 60000);
+    let dateString = `${
+      days[startTime.getDay()]
+    }, ${startTime.getMonth()}/${startTime.getDate()}/${startTime.getFullYear()} @ ${startTime.getHours()}`;
+    return dateString;
+  };
+
   render() {
-    const { classes } = this.props;
+    const { auth, classes, events, profile } = this.props;
+    if (!isLoaded(profile)) return <Loading />;
+    if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
+
     return (
       <Fragment>
         <NavBar />
@@ -99,7 +126,20 @@ class Events extends Component {
           </Typography>
         </Header>
         <VerticalTimeline className={classes.paper}>
-          <TimelineElement date="2011 - present" eventType="social">
+          {events.map(event => {
+            return (
+              <TimelineElement
+                key={event.id}
+                date={this.timestampToDate(event.time)}
+                eventType={event.type}
+              >
+                <h3>{event.title}</h3>
+                <h4>{event.location}</h4>
+                <p>{event.description}</p>
+              </TimelineElement>
+            );
+          })}
+          {/* <TimelineElement date="2011 - present" eventType="social">
             <h3 className="vertical-timeline-element-title">
               Creative Director
             </h3>
@@ -162,7 +202,7 @@ class Events extends Component {
               Bachelor Degree
             </h4>
             <p>Creative Direction, Visual Design</p>
-          </TimelineElement>
+          </TimelineElement>*/}
           <TimelineElement
             iconStyle={{ background: "green", color: "#fff" }}
             icon={<Flag />}
@@ -175,4 +215,20 @@ class Events extends Component {
   }
 }
 
-export default withStyles(styles)(Events);
+const mapStateToProps = state => {
+  return {
+    auth: state.firebase.auth,
+    events: state.firestore.ordered.events,
+    profile: state.firebase.profile
+  };
+};
+
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([
+    {
+      collection: "events",
+      orderBy: ["time", "asc"]
+    }
+  ])
+)(withStyles(styles)(Events));
