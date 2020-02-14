@@ -22,6 +22,7 @@ import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import Loading from "./components/general/Loading";
 import ViewProfile from "./components/auth/ViewProfile";
+import Events from "./components/general/Events";
 
 function App(props) {
   // Load in the dynamic theme
@@ -44,6 +45,7 @@ function App(props) {
             <Route path="/mentees" component={MenteeGallery}></Route>
             <Route path="/mentors" component={MentorGallery}></Route>
             <Route path="/organizers" component={OrganizerGallery}></Route>
+            <Route path="/events" component={Events}></Route>
           </Switch>
         </Router>
       ) : (
