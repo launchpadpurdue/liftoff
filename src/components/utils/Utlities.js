@@ -3,10 +3,18 @@ import {
   Typography,
   makeStyles,
   GridList,
-  GridListTile
+  GridListTile,
+  Container
 } from "@material-ui/core";
 import firebase from "../../config/firebaseConfig";
 import { Skeleton } from "@material-ui/lab";
+
+const headerStyles = makeStyles(theme => ({
+  header: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(8, 0, 6)
+  }
+}));
 
 const footerStyles = makeStyles(theme => ({
   footer: {
@@ -14,6 +22,16 @@ const footerStyles = makeStyles(theme => ({
     padding: theme.spacing(6)
   }
 }));
+
+function Header(props) {
+  const classes = headerStyles();
+
+  return (
+    <header className={classes.header}>
+      <Container maxWidth="md" {...props}></Container>
+    </header>
+  );
+}
 
 function Copyright() {
   return (
@@ -89,4 +107,4 @@ class ImageGrid extends Component {
   }
 }
 
-export { Footer, ImageGrid };
+export { Footer, Header, ImageGrid };
