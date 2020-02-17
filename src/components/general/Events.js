@@ -88,8 +88,8 @@ const days = [
 
 class Events extends Component {
   timestampToDate = (timestamp, duration) => {
-    const startTime = timestamp.toDate(),
-      endTime = new Date(startTime.getTime() + duration * 60000);
+    const startTime = timestamp.toDate();
+    // endTime = new Date(startTime.getTime() + duration * 60000);
     let dateString = `${
       days[startTime.getDay()]
     }, ${startTime.getMonth()}/${startTime.getDate()}/${startTime.getFullYear()} @ ${startTime.getHours()}`;
