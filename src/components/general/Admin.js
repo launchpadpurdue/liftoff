@@ -2,19 +2,15 @@ import React, { Component, Fragment } from "react";
 import NavBar from "../navigation/NavBar";
 import { Footer } from "../utils/Utlities";
 import {
-  Typography,
   Container,
-  List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
   IconButton,
   ListItemAvatar,
   Avatar,
-  Paper,
   Grid,
   Box,
-  Divider,
   Button
 } from "@material-ui/core";
 import { connect } from "react-redux";
@@ -33,6 +29,7 @@ import {
   BugReport,
   Add
 } from "@material-ui/icons";
+import { ListCard } from "../utils/Cards";
 
 class Admin extends Component {
   mapEventToIcon = eventType => {
@@ -52,6 +49,41 @@ class Admin extends Component {
     }
   };
 
+  renderEventItem = event => {
+    return (
+      <ListItem key={event.id}>
+        <ListItemAvatar>
+          <Avatar>{this.mapEventToIcon(event.type)}</Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={event.title} secondary={event.location} />
+        <ListItemSecondaryAction>
+          <IconButton>
+            <Edit />
+          </IconButton>
+          <IconButton edge="end">
+            <Delete />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  };
+
+  renderMemberItem = member => {
+    return (
+      <ListItem key={member.id}>
+        <ListItemAvatar>
+          <Avatar src={member.profilePicture}>{member.initials}</Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={`${member.firstName}  ${member.lastName}`} />
+        <ListItemSecondaryAction>
+          <IconButton edge="end">
+            <Delete />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
+  };
+
   render() {
     const { auth, profile, events, mentees, mentors, organizers } = this.props;
     if (!isLoaded(profile)) return <Loading />;
@@ -68,160 +100,37 @@ class Admin extends Component {
               justify="space-around"
             >
               <Grid item>
-                <Paper>
-                  <Box py={2} px={4}>
-                    <Typography variant="h5">Mentees</Typography>
-                  </Box>
-                  <Divider />
-                  <Box px={2}>
-                    {mentees.length > 0 && (
-                      <List>
-                        {mentees.map(mentee => (
-                          <ListItem key={mentee.id}>
-                            <ListItemAvatar>
-                              <Avatar src={mentee.profilePicture}>
-                                {mentee.initials}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={`${mentee.firstName}  ${mentee.lastName}`}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton edge="end">
-                                <Delete />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
-                    {mentees.length === 0 && (
-                      <Box py={2}>
-                        <Typography variant="body1" align="center">
-                          No mentee profiles exist
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </Paper>
+                <ListCard
+                  title="Mentees"
+                  list={mentees}
+                  emptyListText="No mentee profiles exist"
+                  renderListItem={this.renderMemberItem}
+                />
               </Grid>
               <Grid item>
-                <Paper>
-                  <Box py={2} px={4}>
-                    <Typography variant="h5">Mentors</Typography>
-                  </Box>
-                  <Divider />
-                  <Box px={2}>
-                    {mentors.length > 0 && (
-                      <List>
-                        {mentors.map(mentor => (
-                          <ListItem key={mentor.id}>
-                            <ListItemAvatar>
-                              <Avatar src={mentor.profilePicture}>
-                                {mentor.initials}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={`${mentor.firstName}  ${mentor.lastName}`}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton edge="end">
-                                <Delete />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
-                    {mentors.length === 0 && (
-                      <Box py={2}>
-                        <Typography variant="body1" align="center">
-                          No mentor profiles exist
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </Paper>
+                <ListCard
+                  title="Mentors"
+                  list={mentors}
+                  emptyListText="No mentor profiles exist"
+                  renderListItem={this.renderMemberItem}
+                />
               </Grid>
               <Grid item>
-                <Paper>
-                  <Box py={2} px={4}>
-                    <Typography variant="h5">Organizers</Typography>
-                  </Box>
-                  <Divider />
-                  <Box px={2}>
-                    {organizers.length > 0 && (
-                      <List>
-                        {organizers.map(organizer => (
-                          <ListItem key={organizer.id}>
-                            <ListItemAvatar>
-                              <Avatar src={organizer.profilePicture}>
-                                {organizer.initials}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={`${organizer.firstName}  ${organizer.lastName}`}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton edge="end">
-                                <Delete />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
-                    {organizers.length === 0 && (
-                      <Box py={2}>
-                        <Typography variant="body1" align="center">
-                          No organizer profiles exist
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </Paper>
+                <ListCard
+                  title="Organizers"
+                  list={organizers}
+                  emptyListText="No organizer profiles exist"
+                  renderListItem={this.renderMemberItem}
+                />
               </Grid>
 
               <Grid item>
-                <Paper>
-                  <Box py={2} px={4}>
-                    <Typography variant="h5">Events</Typography>
-                  </Box>
-                  <Divider />
-                  <Box px={2}>
-                    {events.length > 0 && (
-                      <List>
-                        {events.map(event => (
-                          <ListItem key={event.id}>
-                            <ListItemAvatar>
-                              <Avatar>{this.mapEventToIcon(event.type)}</Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={event.title}
-                              secondary={event.location}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton>
-                                <Edit />
-                              </IconButton>
-                              <IconButton edge="end">
-                                <Delete />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
-                    {events.length === 0 && (
-                      <Box py={2}>
-                        <Typography variant="body1" align="center">
-                          No events profiles exist
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                  <Divider />
-                  <Box py={2} display="flex" justifyContent="center">
+                <ListCard
+                  title="Events"
+                  list={events}
+                  emptyListText="No events exist"
+                  renderListItem={this.renderEventItem}
+                  footer={
                     <Button
                       variant="contained"
                       color="primary"
@@ -229,8 +138,8 @@ class Admin extends Component {
                     >
                       Create Event
                     </Button>
-                  </Box>
-                </Paper>
+                  }
+                />
               </Grid>
             </Grid>
           </Container>

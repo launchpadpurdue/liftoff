@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 // React Router Imports
 import { Link } from "react-router-dom";
@@ -15,7 +15,10 @@ import {
   Grid,
   makeStyles,
   Tooltip,
-  Typography
+  Typography,
+  Paper,
+  Box,
+  List
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 
@@ -74,6 +77,12 @@ const profileStyles = makeStyles(theme => ({
   },
   skill: {
     padding: theme.spacing(1)
+  }
+}));
+
+const listCardStyles = makeStyles(theme => ({
+  list: {
+    overflow: "auto"
   }
 }));
 
@@ -265,4 +274,44 @@ function SkeletonCard() {
   );
 }
 
-export { MemberCard, ProfileCard, SkeletonCard };
+function ListCard(props) {
+  const { list = [], title, emptyListText, footer, renderListItem } = props;
+  const classes = listCardStyles();
+  return (
+    <Paper>
+      {title && (
+        <Fragment>
+          <Box py={2} px={4}>
+            <Typography variant="h5">{title}</Typography>
+          </Box>
+          <Divider />
+        </Fragment>
+      )}
+
+      <Box px={2}>
+        {list.length > 0 && (
+          <List className={classes.list}>
+            {list.map(item => renderListItem(item))}
+          </List>
+        )}
+        {list.length === 0 && (
+          <Box py={2}>
+            <Typography variant="body1" align="center">
+              {emptyListText}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+      {footer && (
+        <Fragment>
+          <Divider />
+          <Box py={2} display="flex" justifyContent="center">
+            {footer}
+          </Box>
+        </Fragment>
+      )}
+    </Paper>
+  );
+}
+
+export { ListCard, MemberCard, ProfileCard, SkeletonCard };
