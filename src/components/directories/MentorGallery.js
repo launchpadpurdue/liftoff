@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(8, 0, 6)
   },
   cardGrid: {
-    padding: theme.spacing(8, 0, 8)
+    padding: theme.spacing(8, 4, 8, 4)
   }
 }));
 

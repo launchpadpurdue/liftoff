@@ -1,7 +1,13 @@
 import React from "react";
 
 // Material UI Imports
-import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+import {
+  Container,
+  Grid,
+  makeStyles,
+  Typography,
+  Box
+} from "@material-ui/core";
 
 // FontAwesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(8, 0, 6)
   },
   cardGrid: {
-    padding: theme.spacing(8, 0, 8)
+    padding: theme.spacing(8, 4, 8, 4)
   }
 }));
 
