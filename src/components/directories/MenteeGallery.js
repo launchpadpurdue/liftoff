@@ -1,13 +1,7 @@
 import React from "react";
 
 // Material UI Imports
-import {
-  Container,
-  Grid,
-  makeStyles,
-  Typography,
-  Box
-} from "@material-ui/core";
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 
 // FontAwesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

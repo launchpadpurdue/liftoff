@@ -14,7 +14,8 @@ import {
   Paper,
   Grid,
   Box,
-  Divider
+  Divider,
+  Button
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
@@ -29,7 +30,8 @@ import {
   Code,
   Slideshow,
   Group,
-  BugReport
+  BugReport,
+  Add
 } from "@material-ui/icons";
 
 class Admin extends Component {
@@ -58,135 +60,180 @@ class Admin extends Component {
       <Fragment>
         <NavBar />
         <Box p={4}>
-          <Grid container direction="column" spacing={4} justify="space-around">
-            <Grid item>
-              <Container maxWidth="md">
+          <Container maxWidth="md">
+            <Grid
+              container
+              direction="column"
+              spacing={4}
+              justify="space-around"
+            >
+              <Grid item>
                 <Paper>
                   <Box py={2} px={4}>
                     <Typography variant="h5">Mentees</Typography>
                   </Box>
                   <Divider />
                   <Box px={2}>
-                    <List>
-                      {mentees.map(mentee => (
-                        <ListItem key={mentee.id}>
-                          <ListItemAvatar>
-                            <Avatar src={mentee.profilePicture}>
-                              {mentee.initials}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`${mentee.firstName}  ${mentee.lastName}`}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end">
-                              <Delete />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                    {mentees.length > 0 && (
+                      <List>
+                        {mentees.map(mentee => (
+                          <ListItem key={mentee.id}>
+                            <ListItemAvatar>
+                              <Avatar src={mentee.profilePicture}>
+                                {mentee.initials}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={`${mentee.firstName}  ${mentee.lastName}`}
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton edge="end">
+                                <Delete />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                    {mentees.length === 0 && (
+                      <Box py={2}>
+                        <Typography variant="body1" align="center">
+                          No mentee profiles exist
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Paper>
-              </Container>
-            </Grid>
-            <Grid item>
-              <Container maxWidth="md">
+              </Grid>
+              <Grid item>
                 <Paper>
                   <Box py={2} px={4}>
                     <Typography variant="h5">Mentors</Typography>
                   </Box>
                   <Divider />
                   <Box px={2}>
-                    <List>
-                      {mentors.map(mentor => (
-                        <ListItem key={mentor.id}>
-                          <ListItemAvatar>
-                            <Avatar src={mentor.profilePicture}>
-                              {mentor.initials}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`${mentor.firstName}  ${mentor.lastName}`}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end">
-                              <Delete />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                    {mentors.length > 0 && (
+                      <List>
+                        {mentors.map(mentor => (
+                          <ListItem key={mentor.id}>
+                            <ListItemAvatar>
+                              <Avatar src={mentor.profilePicture}>
+                                {mentor.initials}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={`${mentor.firstName}  ${mentor.lastName}`}
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton edge="end">
+                                <Delete />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                    {mentors.length === 0 && (
+                      <Box py={2}>
+                        <Typography variant="body1" align="center">
+                          No mentor profiles exist
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Paper>
-              </Container>
-            </Grid>
-            <Grid item>
-              <Container maxWidth="md">
+              </Grid>
+              <Grid item>
                 <Paper>
                   <Box py={2} px={4}>
                     <Typography variant="h5">Organizers</Typography>
                   </Box>
                   <Divider />
                   <Box px={2}>
-                    <List>
-                      {organizers.map(organizer => (
-                        <ListItem key={organizer.id}>
-                          <ListItemAvatar>
-                            <Avatar src={organizer.profilePicture}>
-                              {organizer.initials}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`${organizer.firstName}  ${organizer.lastName}`}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end">
-                              <Delete />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                    {organizers.length > 0 && (
+                      <List>
+                        {organizers.map(organizer => (
+                          <ListItem key={organizer.id}>
+                            <ListItemAvatar>
+                              <Avatar src={organizer.profilePicture}>
+                                {organizer.initials}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={`${organizer.firstName}  ${organizer.lastName}`}
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton edge="end">
+                                <Delete />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                    {organizers.length === 0 && (
+                      <Box py={2}>
+                        <Typography variant="body1" align="center">
+                          No organizer profiles exist
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Paper>
-              </Container>
-            </Grid>
+              </Grid>
 
-            <Grid item>
-              <Container maxWidth="md">
+              <Grid item>
                 <Paper>
                   <Box py={2} px={4}>
                     <Typography variant="h5">Events</Typography>
                   </Box>
                   <Divider />
                   <Box px={2}>
-                    <List>
-                      {events.map(event => (
-                        <ListItem key={event.id}>
-                          <ListItemAvatar>
-                            <Avatar>{this.mapEventToIcon(event.type)}</Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={event.title}
-                            secondary={event.location}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton>
-                              <Edit />
-                            </IconButton>
-                            <IconButton edge="end">
-                              <Delete />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
+                    {events.length > 0 && (
+                      <List>
+                        {events.map(event => (
+                          <ListItem key={event.id}>
+                            <ListItemAvatar>
+                              <Avatar>{this.mapEventToIcon(event.type)}</Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={event.title}
+                              secondary={event.location}
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton>
+                                <Edit />
+                              </IconButton>
+                              <IconButton edge="end">
+                                <Delete />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                    {events.length === 0 && (
+                      <Box py={2}>
+                        <Typography variant="body1" align="center">
+                          No events profiles exist
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                  <Divider />
+                  <Box py={2} display="flex" justifyContent="center">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<Add />}
+                    >
+                      Create Event
+                    </Button>
                   </Box>
                 </Paper>
-              </Container>
+              </Grid>
             </Grid>
-          </Grid>
+          </Container>
         </Box>
         <Footer />
       </Fragment>
