@@ -107,6 +107,10 @@ function NavBar(props) {
       keepMounted
       open={isMobileMenuOpen}
       onClose={closeMobileMenu}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right"
+      }}
     >
       <MenuItem onClick={openDirectoryMenu}>
         <FolderShared className={classes.icon} />

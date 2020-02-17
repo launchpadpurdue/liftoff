@@ -23,6 +23,7 @@ import SignUp from "./components/auth/SignUp";
 import Loading from "./components/general/Loading";
 import ViewProfile from "./components/auth/ViewProfile";
 import Events from "./components/general/Events";
+import Admin from "./components/general/Admin";
 
 function App(props) {
   // Load in the dynamic theme
@@ -46,6 +47,7 @@ function App(props) {
             <Route path="/mentors" component={MentorGallery}></Route>
             <Route path="/organizers" component={OrganizerGallery}></Route>
             <Route path="/events" component={Events}></Route>
+            <Route path="/admin" component={Admin}></Route>
           </Switch>
         </Router>
       ) : (

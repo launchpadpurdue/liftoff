@@ -65,6 +65,10 @@ const SignedInLinks = props => {
         keepMounted
         open={Boolean(profileAnchorEl)}
         onClose={closeProfileMenu}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
       >
         <MenuItem onClick={closeProfileMenu} component={Link} to="/profile">
           <AccountCircle className={classes.icon} />
