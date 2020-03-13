@@ -30,6 +30,7 @@ import {
   Add
 } from "@material-ui/icons";
 import { ListCard } from "../utils/Cards";
+import { deleteUser } from "../../store/actions/authActions";
 
 class Admin extends Component {
   mapEventToIcon = eventType => {
@@ -76,7 +77,7 @@ class Admin extends Component {
         </ListItemAvatar>
         <ListItemText primary={`${member.firstName}  ${member.lastName}`} />
         <ListItemSecondaryAction>
-          <IconButton edge="end">
+          <IconButton edge="end" onClick={()=>this.props.deleteUser(member.id)}>
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>
@@ -162,8 +163,14 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    deleteUser: (uid) => dispatch(deleteUser(uid))
+  };
+};
+
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   firestoreConnect([
     {
       collection: "events",

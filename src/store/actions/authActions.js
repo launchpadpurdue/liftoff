@@ -141,3 +141,26 @@ export const deleteAccount = () => {
     });
   };
 };
+
+export const deleteUser = (uid) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    const firestore = getFirestore();
+    const storage = firebase.storage().ref();
+    const functions = firebase.functions();
+
+    const deleteUser = functions.httpsCallable("deleteUser");
+
+    const promises = [
+      storage.child(`/userImages/${uid}/profilePicture`).delete(),
+      firestore
+        .collection("users")
+        .doc(uid)
+        .delete()
+    ];
+    Promise.allSettled(promises).then(async () => {
+      await deleteUser({uid: uid});
+      dispatch({ type: "DELETE_USER_SUCCESS" });
+    });
+  }
+}

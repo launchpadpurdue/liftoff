@@ -1,4 +1,30 @@
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./launchpadliftoff-firebase-adminsdk-oz2zu-c50c51134e.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://launchpadliftoff.firebaseio.com"
+});
+
+exports.deleteUser = functions.https.onCall((data, context) => {
+  if (!data || !data.uid)
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "No UID was provided"
+    );
+  return admin
+    .auth()
+    .deleteUser(data.uid)
+    .then(() => {
+      console.log(`"Successfully deleted user-${data.uid}`);
+      return;
+    })
+    .catch(error => {
+      console.log("Error deleting user :", error);
+    });
+});
 
 exports.getRole = functions.https.onCall((data, context) => {
   if (!data || !data.signUpCode)
