@@ -32,11 +32,13 @@ import {
 import { ListCard } from "../utils/Cards";
 import { deleteUser } from "../../store/actions/authActions";
 import { EventDialog } from "../utils/Dialogs";
+import { createEvent, deleteEvent } from "../../store/actions/eventActions";
 
 class Admin extends Component {
   state = { showEventDialog: false, currentEvent: null };
 
-  hideEventDialog = () => {
+  hideEventDialog = result => {
+    if (result) this.props.createEvent(result);
     this.setState({ showEventDialog: false, currentEvent: null });
   };
 
@@ -72,7 +74,10 @@ class Admin extends Component {
           <IconButton onClick={() => this.showEventDialog(event)}>
             <Edit />
           </IconButton>
-          <IconButton edge="end">
+          <IconButton
+            onClick={() => this.props.deleteEvent(event.id)}
+            edge="end"
+          >
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>
@@ -162,11 +167,13 @@ class Admin extends Component {
           </Container>
         </Box>
         <Footer />
-        <EventDialog
-          open={showEventDialog}
-          onClose={this.hideEventDialog}
-          event={this.state.currentEvent}
-        />
+        {showEventDialog && (
+          <EventDialog
+            open={showEventDialog}
+            onClose={this.hideEventDialog}
+            event={this.state.currentEvent}
+          />
+        )}
       </Fragment>
     );
   }
@@ -186,7 +193,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteUser: uid => dispatch(deleteUser(uid))
+    deleteUser: uid => dispatch(deleteUser(uid)),
+    createEvent: event => dispatch(createEvent(event)),
+    deleteEvent: eventID => dispatch(deleteEvent(eventID))
   };
 };
 

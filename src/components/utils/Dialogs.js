@@ -13,7 +13,8 @@ import {
   Slide,
   Toolbar,
   Typography,
-  withStyles
+  withStyles,
+  Grid
 } from "@material-ui/core";
 import { Close, PhotoLibrary } from "@material-ui/icons";
 import {
@@ -32,6 +33,8 @@ import {
   Checkbox,
   ListItemText
 } from "@material-ui/core";
+
+import { eventTypes } from "../../constants";
 
 // Redux Imports
 import { connect } from "react-redux";
@@ -471,22 +474,29 @@ class EventDialog extends Component {
     title: "",
     description: "",
     location: "",
-    time: null
+    time: null,
+    type: "",
+    ...this.props.event
   };
 
-  closeDialog = () => {
-    this.props.onClose();
+  onInput = event => {
+    const property = event.target.id ? event.target.id : event.target.name,
+      value = event.target.value;
+    this.setState({ [property]: value });
+  };
+
+  closeDialog = event => {
+    if (event) delete event["id"];
+    this.props.onClose(event);
     this.setState({ title: "", description: "", location: "", time: null });
   };
 
   render() {
-    const { open } = this.props;
-    if (!open) return null;
-    let { event } = this.props;
-    if (!event) event = { ...this.state, newEvent: true };
-    const dialogVersion = event.newEvent ? "Create" : "Edit";
+    const { open, event } = this.props;
+    const { title, description, time, location, type, duration } = this.state;
+    const dialogVersion = event ? "Edit" : "Create";
     return (
-      <Dialog fullWidth open={open} onClose={this.closeDialog}>
+      <Dialog fullWidth open={open} onClose={() => this.closeDialog(null)}>
         <DialogTitle>{dialogVersion} Event Details</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -497,7 +507,7 @@ class EventDialog extends Component {
             fullWidth
             id="title"
             margin="dense"
-            defaultValue={event.title}
+            defaultValue={title}
             label="Event Name"
             placeholder="ex. Pairing Night"
             onChange={this.onInput}
@@ -505,9 +515,9 @@ class EventDialog extends Component {
           <TextField
             autoFocus
             fullWidth
-            id="description"
+            id="location"
             margin="dense"
-            defaultValue={event.location}
+            defaultValue={location}
             label="Event Location"
             placeholder="ex. LWSN B155"
             onChange={this.onInput}
@@ -517,40 +527,63 @@ class EventDialog extends Component {
               fullWidth
               placeholder="MM/DD/YYYY hh:mm"
               variant="inline"
+              id="time"
               label="Event Date and Time"
-              value={
-                this.state.time
-                  ? this.state.time
-                  : event.time
-                  ? event.time.toDate()
-                  : null
-              }
+              value={time instanceof Date ? time : time ? time.toDate() : null}
               autoOk
               margin="dense"
               onChange={time => {
                 this.setState({ time });
               }}
-              onError={console.log}
               format="MM/dd/yyyy HH:mm"
             />
           </MuiPickersUtilsProvider>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth margin="dense">
+                <InputLabel>Event Type</InputLabel>
+                <Select defaultValue={type}>
+                  {eventTypes.map(type => (
+                    <MenuItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                margin="dense"
+                fullWidth
+                label="Duration (minutes)"
+                id="duration"
+                type="number"
+                onInput={this.onInput}
+                defaultValue={duration}
+              />
+            </Grid>
+          </Grid>
           <TextField
             id="description"
             label="Event Description"
             margin="dense"
             placeholder="Add a description of the event"
             onChange={this.onInput}
-            defaultValue={event.description}
+            defaultValue={description}
             fullWidth
             rowsMax="4"
             multiline
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.closeDialog} color="primary">
+          <Button onClick={() => this.closeDialog(null)} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.closeDialog} color="primary" autoFocus>
+          <Button
+            onClick={() => this.closeDialog(this.state)}
+            color="primary"
+            autoFocus
+          >
             {dialogVersion}
           </Button>
         </DialogActions>
