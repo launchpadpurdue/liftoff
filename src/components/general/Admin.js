@@ -31,8 +31,19 @@ import {
 } from "@material-ui/icons";
 import { ListCard } from "../utils/Cards";
 import { deleteUser } from "../../store/actions/authActions";
+import { EventDialog } from "../utils/Dialogs";
 
 class Admin extends Component {
+  state = { showEventDialog: false, currentEvent: null };
+
+  hideEventDialog = () => {
+    this.setState({ showEventDialog: false, currentEvent: null });
+  };
+
+  showEventDialog = event => {
+    this.setState({ showEventDialog: true, currentEvent: event });
+  };
+
   mapEventToIcon = eventType => {
     switch (eventType) {
       case "meeting":
@@ -58,7 +69,7 @@ class Admin extends Component {
         </ListItemAvatar>
         <ListItemText primary={event.title} secondary={event.location} />
         <ListItemSecondaryAction>
-          <IconButton>
+          <IconButton onClick={() => this.showEventDialog(event)}>
             <Edit />
           </IconButton>
           <IconButton edge="end">
@@ -77,7 +88,10 @@ class Admin extends Component {
         </ListItemAvatar>
         <ListItemText primary={`${member.firstName}  ${member.lastName}`} />
         <ListItemSecondaryAction>
-          <IconButton edge="end" onClick={()=>this.props.deleteUser(member.id)}>
+          <IconButton
+            edge="end"
+            onClick={() => this.props.deleteUser(member.id)}
+          >
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>
@@ -89,6 +103,7 @@ class Admin extends Component {
     const { auth, profile, events, mentees, mentors, organizers } = this.props;
     if (!isLoaded(profile)) return <Loading />;
     if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
+    const { showEventDialog } = this.state;
     return (
       <Fragment>
         <NavBar />
@@ -136,6 +151,7 @@ class Admin extends Component {
                       variant="contained"
                       color="primary"
                       startIcon={<Add />}
+                      onClick={() => this.showEventDialog(null)}
                     >
                       Create Event
                     </Button>
@@ -146,6 +162,11 @@ class Admin extends Component {
           </Container>
         </Box>
         <Footer />
+        <EventDialog
+          open={showEventDialog}
+          onClose={this.hideEventDialog}
+          event={this.state.currentEvent}
+        />
       </Fragment>
     );
   }
@@ -165,7 +186,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    deleteUser: (uid) => dispatch(deleteUser(uid))
+    deleteUser: uid => dispatch(deleteUser(uid))
   };
 };
 

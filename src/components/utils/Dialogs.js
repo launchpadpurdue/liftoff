@@ -16,6 +16,10 @@ import {
   withStyles
 } from "@material-ui/core";
 import { Close, PhotoLibrary } from "@material-ui/icons";
+import {
+  KeyboardDateTimePicker,
+  MuiPickersUtilsProvider
+} from "@material-ui/pickers";
 
 // Material UI Imports
 import {
@@ -33,7 +37,7 @@ import {
 import { connect } from "react-redux";
 import { getFirebase } from "react-redux-firebase";
 import { deleteAccount } from "../../store/actions/authActions";
-
+import DateFnsUtils from "@date-io/date-fns"; // choose your lib
 // React Easy Crop Imports
 import Cropper from "react-easy-crop";
 
@@ -194,7 +198,6 @@ class DeleteAccountDialog extends Component {
     const firebase = getFirebase(),
       user = firebase.auth().currentUser;
     const { email, password } = this.state;
-    console.log("HERE");
     if (email !== user.email) {
       this.setState({
         authError: "Email does not match signed in account"
@@ -463,4 +466,103 @@ class EditProfileDialog extends Component {
   }
 }
 
-export { AlertDialog, CropDialog, DeleteAccountDialog, EditProfileDialog };
+class EventDialog extends Component {
+  state = {
+    title: "",
+    description: "",
+    location: "",
+    time: null
+  };
+
+  closeDialog = () => {
+    this.props.onClose();
+    this.setState({ title: "", description: "", location: "", time: null });
+  };
+
+  render() {
+    const { open } = this.props;
+    if (!open) return null;
+    let { event } = this.props;
+    if (!event) event = { ...this.state, newEvent: true };
+    const dialogVersion = event.newEvent ? "Create" : "Edit";
+    return (
+      <Dialog fullWidth open={open} onClose={this.closeDialog}>
+        <DialogTitle>{dialogVersion} Event Details</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {dialogVersion} the details of the event
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            id="title"
+            margin="dense"
+            defaultValue={event.title}
+            label="Event Name"
+            placeholder="ex. Pairing Night"
+            onChange={this.onInput}
+          />
+          <TextField
+            autoFocus
+            fullWidth
+            id="description"
+            margin="dense"
+            defaultValue={event.location}
+            label="Event Location"
+            placeholder="ex. LWSN B155"
+            onChange={this.onInput}
+          />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDateTimePicker
+              fullWidth
+              placeholder="MM/DD/YYYY hh:mm"
+              variant="inline"
+              label="Event Date and Time"
+              value={
+                this.state.time
+                  ? this.state.time
+                  : event.time
+                  ? event.time.toDate()
+                  : null
+              }
+              autoOk
+              margin="dense"
+              onChange={time => {
+                this.setState({ time });
+              }}
+              onError={console.log}
+              format="MM/dd/yyyy HH:mm"
+            />
+          </MuiPickersUtilsProvider>
+          <TextField
+            id="description"
+            label="Event Description"
+            margin="dense"
+            placeholder="Add a description of the event"
+            onChange={this.onInput}
+            defaultValue={event.description}
+            fullWidth
+            rowsMax="4"
+            multiline
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.closeDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={this.closeDialog} color="primary" autoFocus>
+            {dialogVersion}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+}
+
+export {
+  AlertDialog,
+  CropDialog,
+  DeleteAccountDialog,
+  EditProfileDialog,
+  EventDialog
+};

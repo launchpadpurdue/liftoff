@@ -1,4 +1,4 @@
-export const signIn = credentials => {
+export const signIn = (credentials) => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase();
     firebase
@@ -18,7 +18,7 @@ export const signOut = () => {
   };
 };
 
-export const signUp = accountDetails => {
+export const signUp = (accountDetails) => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
@@ -142,7 +142,7 @@ export const deleteAccount = () => {
   };
 };
 
-export const deleteUser = (uid) => {
+export const deleteUser = uid => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
@@ -159,8 +159,8 @@ export const deleteUser = (uid) => {
         .delete()
     ];
     Promise.allSettled(promises).then(async () => {
-      await deleteUser({uid: uid});
+      await deleteUser({ uid: uid });
       dispatch({ type: "DELETE_USER_SUCCESS" });
     });
-  }
-}
+  };
+};
