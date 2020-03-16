@@ -62,6 +62,25 @@ function AlertDialog(props) {
   );
 }
 
+// Confirm Dialog Definition
+function ConfirmDialog(props) {
+  const { open, onConfirm, onDismiss, title, message } = props;
+  return (
+    <Dialog open={open} onClose={onDismiss}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{message}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onDismiss}>Cancel</Button>
+        <Button autoFocus color="primary" onClick={onConfirm}>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 // CropDialog Definition
 class CropDialog extends Component {
   state = {
@@ -597,6 +616,7 @@ class EventDialog extends Component {
 
 export {
   AlertDialog,
+  ConfirmDialog,
   CropDialog,
   DeleteAccountDialog,
   EditProfileDialog,

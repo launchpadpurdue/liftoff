@@ -21,7 +21,7 @@ import { compose } from "redux";
 import { Add, Delete, Edit } from "@material-ui/icons";
 import { ListCard } from "../utils/Cards";
 import { deleteUser } from "../../store/actions/authActions";
-import { EventDialog } from "../utils/Dialogs";
+import { ConfirmDialog, EventDialog } from "../utils/Dialogs";
 import {
   createEvent,
   deleteEvent,
@@ -30,10 +30,19 @@ import {
 import { eventIcon } from "../../constants";
 
 class Admin extends Component {
-  state = { showEventDialog: false, currentEvent: null };
+  state = {
+    currentEvent: null,
+    currentUser: null,
+    showDeleteEventDialog: false,
+    showDeleteUserDialog: false,
+    showEventDialog: false
+  };
+
+  showEventDialog = event => {
+    this.setState({ showEventDialog: true, currentEvent: event });
+  };
 
   hideEventDialog = (event, eventID) => {
-    console.log(event, eventID);
     if (event) {
       if (eventID) this.props.editEvent(event, eventID);
       else this.props.createEvent(event);
@@ -41,8 +50,30 @@ class Admin extends Component {
     this.setState({ showEventDialog: false, currentEvent: null });
   };
 
-  showEventDialog = event => {
-    this.setState({ showEventDialog: true, currentEvent: event });
+  showDeleteEventDialog = event => {
+    this.setState({ showDeleteEventDialog: true, currentEvent: event });
+  };
+
+  onDeleteEvent = () => {
+    this.props.deleteEvent(this.state.currentEvent.id);
+    this.hideDeleteEventDialog();
+  };
+
+  hideDeleteEventDialog = () => {
+    this.setState({ showDeleteEventDialog: false, currentEvent: null });
+  };
+
+  showDeleteUserDialog = user => {
+    this.setState({ showDeleteUserDialog: true, currentUser: user });
+  };
+
+  onDeleteUser = () => {
+    this.props.deleteUser(this.state.currentUser.id);
+    this.hideDeleteUserDialog();
+  };
+
+  hideDeleteUserDialog = () => {
+    this.setState({ showDeleteUserDialog: false, currentUser: null });
   };
 
   renderEventItem = event => {
@@ -57,7 +88,7 @@ class Admin extends Component {
             <Edit />
           </IconButton>
           <IconButton
-            onClick={() => this.props.deleteEvent(event.id)}
+            onClick={() => this.showDeleteEventDialog(event)}
             edge="end"
           >
             <Delete />
@@ -75,10 +106,7 @@ class Admin extends Component {
         </ListItemAvatar>
         <ListItemText primary={`${member.firstName}  ${member.lastName}`} />
         <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            onClick={() => this.props.deleteUser(member.id)}
-          >
+          <IconButton edge="end" onClick={this.showDeleteUserDialog}>
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>
@@ -90,7 +118,11 @@ class Admin extends Component {
     const { auth, profile, events, mentees, mentors, organizers } = this.props;
     if (!isLoaded(profile)) return <Loading />;
     if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
-    const { showEventDialog } = this.state;
+    const {
+      showEventDialog,
+      showDeleteEventDialog,
+      showDeleteUserDialog
+    } = this.state;
     return (
       <Fragment>
         <NavBar />
@@ -156,6 +188,20 @@ class Admin extends Component {
             event={this.state.currentEvent}
           />
         )}
+        <ConfirmDialog
+          open={showDeleteEventDialog}
+          onConfirm={this.onDeleteEvent}
+          onDismiss={this.hideDeleteEventDialog}
+          title="Delete Event"
+          message="Are you sure you want to delete this event?"
+        />
+        <ConfirmDialog
+          open={showDeleteUserDialog}
+          onConfirm={this.onDeleteUser}
+          onDismiss={this.hideDeleteUserDialog}
+          title="Delete User"
+          message="Are you sure you want to delete this user?"
+        />
       </Fragment>
     );
   }
