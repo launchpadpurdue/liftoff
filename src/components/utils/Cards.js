@@ -24,14 +24,7 @@ import { Skeleton } from "@material-ui/lab";
 
 // FontAwesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAndroid, faApple } from "@fortawesome/free-brands-svg-icons";
-import {
-  faBug,
-  faDesktop,
-  faGamepad,
-  faGlobe,
-  faRobot
-} from "@fortawesome/free-solid-svg-icons";
+import { skillIcon } from "../../constants";
 
 const cardStyles = makeStyles(theme => ({
   card: {
@@ -86,32 +79,13 @@ const listCardStyles = makeStyles(theme => ({
   }
 }));
 
-function mapSkillToIcon(skill) {
-  switch (skill) {
-    case "Android":
-      return faAndroid;
-    case "IOS":
-      return faApple;
-    case "Machine Learning":
-      return faRobot;
-    case "Gaming":
-      return faGamepad;
-    case "Desktop":
-      return faDesktop;
-    case "Web":
-      return faGlobe;
-    default:
-      return faBug;
-  }
-}
-
 function renderChip(classes, skill) {
   return (
     <Grid item key={skill}>
       <Chip
         className={classes.skill}
         color="secondary"
-        icon={<FontAwesomeIcon icon={mapSkillToIcon(skill)} />}
+        icon={<FontAwesomeIcon icon={skillIcon(skill)} />}
         label={skill}
       />
     </Grid>
@@ -126,11 +100,7 @@ function renderIconChip(classes, skill) {
           color="secondary"
           classes={{ label: classes.chipLabel, root: classes.chipRoot }}
           icon={
-            <FontAwesomeIcon
-              fixedWidth
-              icon={mapSkillToIcon(skill)}
-              size="lg"
-            />
+            <FontAwesomeIcon fixedWidth icon={skillIcon(skill)} size="lg" />
           }
         ></Chip>
       </Tooltip>

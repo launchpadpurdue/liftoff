@@ -9,6 +9,18 @@ export const createEvent = eventDetails => {
   };
 };
 
+export const editEvent = (eventDetails, eventID) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firestore = getFirestore();
+    firestore
+      .collection("events")
+      .doc(eventID)
+      .set(eventDetails, { merge: true })
+      .then(() => dispatch({ type: "EVENT_EDIT_SUCCESS" }))
+      .catch(error => dispatch({ type: "EVENT_EDIT_ERROR", error }));
+  };
+};
+
 export const deleteEvent = eventID => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firestore = getFirestore();

@@ -32,6 +32,7 @@ import { signUp } from "../../store/actions/authActions";
 
 // Local Imports
 import { CropDialog } from "../utils/Dialogs";
+import { skillTypes } from "../../constants";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -69,8 +70,6 @@ const MenuProps = {
 };
 
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
-const skills = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
 
 class SignUp extends Component {
   state = {
@@ -443,7 +442,7 @@ class SignUp extends Component {
                     renderValue={selected => selected.join(", ")}
                     MenuProps={MenuProps}
                   >
-                    {skills.map(skill => (
+                    {skillTypes.map(skill => (
                       <MenuItem key={skill} value={skill}>
                         <Checkbox
                           checked={this.state.skills.indexOf(skill) > -1}

@@ -34,7 +34,7 @@ import {
   ListItemText
 } from "@material-ui/core";
 
-import { eventTypes } from "../../constants";
+import { eventTypes, skillTypes } from "../../constants";
 
 // Redux Imports
 import { connect } from "react-redux";
@@ -284,15 +284,6 @@ const mapDispatchToProps = dispatch => {
 DeleteAccountDialog = connect(null, mapDispatchToProps)(DeleteAccountDialog);
 
 // EditProfileDialog Definition
-const allSkills = [
-  "Android",
-  "Gaming",
-  "IOS",
-  "Machine Learning",
-  "Web",
-  "Other"
-];
-
 const MenuProps = {
   PaperProps: {
     style: {
@@ -427,7 +418,7 @@ class EditProfileDialog extends Component {
                 renderValue={selected => selected.join(", ")}
                 value={skills}
               >
-                {allSkills.map(skill => (
+                {skillTypes.map(skill => (
                   <MenuItem key={skill} value={skill}>
                     <Checkbox checked={skills.includes(skill)} />
                     <ListItemText primary={skill} />
@@ -476,31 +467,45 @@ class EventDialog extends Component {
     location: "",
     time: null,
     type: "",
+    duration: 1,
     ...this.props.event
   };
 
   onInput = event => {
-    const property = event.target.id ? event.target.id : event.target.name,
+    let property = event.target.id ? event.target.id : event.target.name,
       value = event.target.value;
+    if (property === "duration") {
+      value = value.replace(/\D/, "");
+      event.target.value = value;
+    }
     this.setState({ [property]: value });
   };
 
   closeDialog = event => {
-    if (event) delete event["id"];
-    this.props.onClose(event);
-    this.setState({ title: "", description: "", location: "", time: null });
+    let eventID;
+    if (event) {
+      eventID = event.id;
+      delete event["id"];
+    }
+    this.props.onClose(event, eventID);
+    this.setState({
+      title: "",
+      description: "",
+      location: "",
+      time: null,
+      duration: 1
+    });
   };
 
   render() {
     const { open, event } = this.props;
     const { title, description, time, location, type, duration } = this.state;
-    const dialogVersion = event ? "Edit" : "Create";
     return (
       <Dialog fullWidth open={open} onClose={() => this.closeDialog(null)}>
-        <DialogTitle>{dialogVersion} Event Details</DialogTitle>
+        <DialogTitle>{event ? "Edit" : "Create"} Event Details</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {dialogVersion} the details of the event
+            {event ? "Edit" : "Create"} details for the event
           </DialogContentText>
           <TextField
             autoFocus
@@ -542,7 +547,7 @@ class EventDialog extends Component {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth margin="dense">
                 <InputLabel>Event Type</InputLabel>
-                <Select defaultValue={type}>
+                <Select defaultValue={type} onChange={this.onInput} name="type">
                   {eventTypes.map(type => (
                     <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -553,13 +558,14 @@ class EventDialog extends Component {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                inputProps={{ min: 1 }}
                 margin="dense"
                 fullWidth
                 label="Duration (minutes)"
                 id="duration"
                 type="number"
                 onInput={this.onInput}
-                defaultValue={duration}
+                value={duration}
               />
             </Grid>
           </Grid>
@@ -584,7 +590,7 @@ class EventDialog extends Component {
             color="primary"
             autoFocus
           >
-            {dialogVersion}
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

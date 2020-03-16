@@ -18,27 +18,26 @@ import { Redirect } from "react-router-dom";
 import { isLoaded, firestoreConnect } from "react-redux-firebase";
 import Loading from "./Loading";
 import { compose } from "redux";
-import {
-  Delete,
-  Edit,
-  Work,
-  School,
-  Code,
-  Slideshow,
-  Group,
-  BugReport,
-  Add
-} from "@material-ui/icons";
+import { Add, Delete, Edit } from "@material-ui/icons";
 import { ListCard } from "../utils/Cards";
 import { deleteUser } from "../../store/actions/authActions";
 import { EventDialog } from "../utils/Dialogs";
-import { createEvent, deleteEvent } from "../../store/actions/eventActions";
+import {
+  createEvent,
+  deleteEvent,
+  editEvent
+} from "../../store/actions/eventActions";
+import { eventIcon } from "../../constants";
 
 class Admin extends Component {
   state = { showEventDialog: false, currentEvent: null };
 
-  hideEventDialog = result => {
-    if (result) this.props.createEvent(result);
+  hideEventDialog = (event, eventID) => {
+    console.log(event, eventID);
+    if (event) {
+      if (eventID) this.props.editEvent(event, eventID);
+      else this.props.createEvent(event);
+    }
     this.setState({ showEventDialog: false, currentEvent: null });
   };
 
@@ -46,28 +45,11 @@ class Admin extends Component {
     this.setState({ showEventDialog: true, currentEvent: event });
   };
 
-  mapEventToIcon = eventType => {
-    switch (eventType) {
-      case "meeting":
-        return <Work />;
-      case "workshop":
-        return <School />;
-      case "hacknight":
-        return <Code />;
-      case "demo":
-        return <Slideshow />;
-      case "social":
-        return <Group />;
-      default:
-        return <BugReport />;
-    }
-  };
-
   renderEventItem = event => {
     return (
       <ListItem key={event.id}>
         <ListItemAvatar>
-          <Avatar>{this.mapEventToIcon(event.type)}</Avatar>
+          <Avatar>{eventIcon(event.type)}</Avatar>
         </ListItemAvatar>
         <ListItemText primary={event.title} secondary={event.location} />
         <ListItemSecondaryAction>
@@ -195,7 +177,8 @@ const mapDispatchToProps = dispatch => {
   return {
     deleteUser: uid => dispatch(deleteUser(uid)),
     createEvent: event => dispatch(createEvent(event)),
-    deleteEvent: eventID => dispatch(deleteEvent(eventID))
+    deleteEvent: eventID => dispatch(deleteEvent(eventID)),
+    editEvent: (event, eventID) => dispatch(editEvent(event, eventID))
   };
 };
 
