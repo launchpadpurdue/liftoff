@@ -474,10 +474,7 @@ class EventDialog extends Component {
   onInput = event => {
     let property = event.target.id ? event.target.id : event.target.name,
       value = event.target.value;
-    if (property === "duration") {
-      value = value.replace(/\D/, "");
-      event.target.value = value;
-    }
+    if (property === "duration" && value === "") return;
     this.setState({ [property]: value });
   };
 
