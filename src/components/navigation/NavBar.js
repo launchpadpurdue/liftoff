@@ -13,7 +13,14 @@ import {
   Toolbar,
   Typography
 } from "@material-ui/core";
-import { FolderShared, Info, MoreVert, PersonAdd } from "@material-ui/icons";
+import {
+  FolderShared,
+  Info,
+  MoreVert,
+  PersonAdd,
+  Event,
+  SupervisorAccount
+} from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Redux Imports
@@ -49,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function NavBar(props) {
-  const { auth, img } = props;
+  const { auth, profile } = props;
   const classes = useStyles();
   const [directoryAnchorEl, setDirectoryAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -112,10 +119,22 @@ function NavBar(props) {
         horizontal: "right"
       }}
     >
+      {profile.admin && (
+        <MenuItem onClick={closeMobileMenu} component={Link} to="/admin">
+          <SupervisorAccount className={classes.icon} />
+          Admin
+        </MenuItem>
+      )}
       <MenuItem onClick={openDirectoryMenu}>
         <FolderShared className={classes.icon} />
         Directory
       </MenuItem>
+      {auth.uid && (
+        <MenuItem onClick={closeMobileMenu} component={Link} to="/events">
+          <Event className={classes.icon} />
+          Events
+        </MenuItem>
+      )}
       <MenuItem onClick={closeMobileMenu} component={Link} to="/">
         <Info className={classes.icon} />
         About
@@ -148,6 +167,16 @@ function NavBar(props) {
 
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            {profile.admin && (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/admin"
+                startIcon={<SupervisorAccount />}
+              >
+                Admin
+              </Button>
+            )}
             <Button
               color="inherit"
               onClick={openDirectoryMenu}
@@ -155,6 +184,16 @@ function NavBar(props) {
             >
               Directory
             </Button>
+            {auth.uid && (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/events"
+                startIcon={<Event />}
+              >
+                Events
+              </Button>
+            )}
             <Button
               color="inherit"
               component={Link}
@@ -181,7 +220,11 @@ function NavBar(props) {
 }
 
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth, firebase: state.firebase };
+  return {
+    auth: state.firebase.auth,
+    firebase: state.firebase,
+    profile: state.firebase.profile
+  };
 };
 
 const mapDispatchToProps = dispatch => {
