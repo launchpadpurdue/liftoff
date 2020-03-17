@@ -22,7 +22,7 @@ import React, { Fragment, FunctionComponent } from "react";
 
 import { Link } from "react-router-dom";
 
-import { skillIcon, Member, FixMeLater } from "../../constants";
+import { skillIcon, Member } from "../../constants";
 
 const cardStyles = makeStyles(theme => ({
   card: {
@@ -242,7 +242,7 @@ function SkeletonCard() {
 }
 
 type ListCardProps = {
-  list: Array<FixMeLater>;
+  list: Array<any>;
   title: string;
   emptyListText: string;
   footer: string;
@@ -265,7 +265,7 @@ const ListCard: FunctionComponent<ListCardProps> = props => {
       <Box px={2}>
         {list.length > 0 && (
           <List className={classes.list}>
-            {list.map((item: FixMeLater) => renderListItem(item))}
+            {list.map((item: any) => renderListItem(item))}
           </List>
         )}
         {list.length === 0 && (
