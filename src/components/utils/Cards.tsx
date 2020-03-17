@@ -1,9 +1,5 @@
-import React, { Fragment } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-// React Router Imports
-import { Link } from "react-router-dom";
-
-// Material UI Imports
 import {
   Button,
   Card,
@@ -22,9 +18,11 @@ import {
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 
-// FontAwesome Imports
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { skillIcon } from "../../constants";
+import React, { Fragment, FunctionComponent } from "react";
+
+import { Link } from "react-router-dom";
+
+import { skillIcon, Member, FixMeLater } from "../../constants";
 
 const cardStyles = makeStyles(theme => ({
   card: {
@@ -48,7 +46,7 @@ const profileStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   image: {
-    borderColor: theme.palette.primary.main,
+    border: `5px solid ${theme.palette.primary.main}`,
     borderRadius: "50%",
     objectFit: "contain",
     height: "auto",
@@ -79,38 +77,11 @@ const listCardStyles = makeStyles(theme => ({
   }
 }));
 
-function renderChip(classes, skill) {
-  return (
-    <Grid item key={skill}>
-      <Chip
-        className={classes.skill}
-        color="secondary"
-        icon={<FontAwesomeIcon icon={skillIcon(skill)} />}
-        label={skill}
-      />
-    </Grid>
-  );
-}
-
-function renderIconChip(classes, skill) {
-  return (
-    <Grid item key={skill}>
-      <Tooltip arrow title={skill}>
-        <Chip
-          color="secondary"
-          classes={{ label: classes.chipLabel, root: classes.chipRoot }}
-          icon={
-            <FontAwesomeIcon fixedWidth icon={skillIcon(skill)} size="lg" />
-          }
-        ></Chip>
-      </Tooltip>
-    </Grid>
-  );
-}
-
-function MemberCard(props) {
+type MemberCardProps = {
+  member: Member;
+};
+const MemberCard: FunctionComponent<MemberCardProps> = ({ member }) => {
   const classes = cardStyles();
-  const { member } = props;
   const { firstName, lastName, profilePicture, skills, id } = member;
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -125,7 +96,26 @@ function MemberCard(props) {
             {`${firstName} ${lastName}`}
           </Typography>
           <Grid container spacing={1}>
-            {skills.sort().map(skill => renderIconChip(classes, skill))}
+            {skills.sort().map(skill => (
+              <Grid item key={skill}>
+                <Tooltip arrow title={skill}>
+                  <Chip
+                    color="secondary"
+                    classes={{
+                      label: classes.chipLabel,
+                      root: classes.chipRoot
+                    }}
+                    icon={
+                      <FontAwesomeIcon
+                        fixedWidth
+                        icon={skillIcon(skill)}
+                        size="lg"
+                      />
+                    }
+                  ></Chip>
+                </Tooltip>
+              </Grid>
+            ))}
           </Grid>
         </CardContent>
         <CardActions>
@@ -141,9 +131,12 @@ function MemberCard(props) {
       </Card>
     </Grid>
   );
-}
+};
 
-function ProfileCard(props) {
+type ProfileCardProps = {
+  profile: Member;
+};
+const ProfileCard: FunctionComponent<ProfileCardProps> = ({ profile }) => {
   const classes = profileStyles();
   let {
     firstName,
@@ -152,19 +145,14 @@ function ProfileCard(props) {
     description,
     profilePicture,
     role
-  } = props.profile;
+  } = profile;
   if (description === "") description = "User has not added a description yet";
   if (profilePicture === "") profilePicture = "/profile.jpg";
 
   return (
     <Grid container>
       <Grid item xs={12} sm={3} container alignItems="center" justify="center">
-        <img
-          border={5}
-          className={classes.image}
-          alt="User"
-          src={profilePicture}
-        />
+        <img className={classes.image} alt="User" src={profilePicture} />
       </Grid>
       <Grid item className={classes.profile} xs>
         <Typography className={classes.name} variant="h3">
@@ -179,7 +167,16 @@ function ProfileCard(props) {
             <Typography variant="h6">Skills</Typography>
             <Grid item container spacing={1}>
               {skills && skills.length ? (
-                skills.sort().map(skill => renderChip(classes, skill))
+                skills.sort().map(skill => (
+                  <Grid item key={skill}>
+                    <Chip
+                      className={classes.skill}
+                      color="secondary"
+                      icon={<FontAwesomeIcon icon={skillIcon(skill)} />}
+                      label={skill}
+                    />
+                  </Grid>
+                ))
               ) : (
                 <Grid item>
                   <Typography variant="body1">
@@ -197,7 +194,7 @@ function ProfileCard(props) {
       </Grid>
     </Grid>
   );
-}
+};
 
 function SkeletonCard() {
   const classes = cardStyles();
@@ -244,7 +241,14 @@ function SkeletonCard() {
   );
 }
 
-function ListCard(props) {
+type ListCardProps = {
+  list: Array<FixMeLater>;
+  title: string;
+  emptyListText: string;
+  footer: string;
+  renderListItem: Function;
+};
+const ListCard: FunctionComponent<ListCardProps> = props => {
   const { list = [], title, emptyListText, footer, renderListItem } = props;
   const classes = listCardStyles();
   return (
@@ -261,7 +265,7 @@ function ListCard(props) {
       <Box px={2}>
         {list.length > 0 && (
           <List className={classes.list}>
-            {list.map(item => renderListItem(item))}
+            {list.map((item: FixMeLater) => renderListItem(item))}
           </List>
         )}
         {list.length === 0 && (
@@ -282,6 +286,6 @@ function ListCard(props) {
       )}
     </Paper>
   );
-}
+};
 
 export { ListCard, MemberCard, ProfileCard, SkeletonCard };
