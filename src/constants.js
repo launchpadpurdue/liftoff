@@ -15,6 +15,7 @@ import {
   faBug
 } from "@fortawesome/free-solid-svg-icons";
 import { faApple, faAndroid } from "@fortawesome/free-brands-svg-icons";
+import DateUtils from "@date-io/date-fns";
 
 const events = {
   demo: <Slideshow />,
@@ -24,7 +25,6 @@ const events = {
   workshop: <School />
 };
 
-// const skills = ["Web", "IOS", "Android", "Gaming", "Machine Learning", "Other"];
 const skills = {
   Web: faGlobe,
   IOS: faApple,
@@ -33,6 +33,28 @@ const skills = {
   "Machine Learning": faRobot,
   Desktop: faDesktop
 };
+
+const weekdaysStr = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+const dateUtils = new DateUtils();
+const convertTimestamp = timestamp => {
+  const dateTime = dateUtils.date(timestamp.toDate());
+  const weekday = weekdaysStr[dateTime.getDay()],
+    date = dateUtils.format(dateTime, dateUtils.dateFormat),
+    year = dateUtils.getYear(dateTime),
+    time = dateUtils.format(dateTime, dateUtils.time12hFormat);
+  return `${weekday}, ${date}, ${year} @ ${time}`;
+};
+
+export const weekdays = weekdaysStr;
+export const timestampString = convertTimestamp;
 
 export const skillTypes = Object.keys(skills);
 export const skillIcon = skillType => skills[skillType] ?? faBug;
