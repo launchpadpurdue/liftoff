@@ -42,16 +42,20 @@ const skills: Record<string, IconDefinition> = {
 
 const dateUtils: DateUtils = new DateUtils();
 
+export interface Preferences {
+  theme: string;
+}
+
 export interface Member {
   id: string;
   firstName: string;
   lastName: string;
   initials: string;
+  role: string;
   description: string;
   profilePicture: string;
-  role: string;
   skills: Array<string>;
-  preferences: FixMeLater;
+  preferences: Preferences;
 }
 
 export const weekdays: Array<string> = [
