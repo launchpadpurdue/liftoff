@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 
 import { skillIcon, Member } from "../../constants";
 
-const cardStyles = makeStyles(theme => ({
+const cardStyles = makeStyles({
   card: {
     height: "100%",
     display: "flex",
@@ -38,7 +38,7 @@ const cardStyles = makeStyles(theme => ({
   },
   chipLabel: { paddingRight: 0 },
   chipRoot: { maxHeight: 32 }
-}));
+});
 
 const profileStyles = makeStyles(theme => ({
   divider: {
@@ -71,11 +71,11 @@ const profileStyles = makeStyles(theme => ({
   }
 }));
 
-const listCardStyles = makeStyles(theme => ({
+const listCardStyles = makeStyles({
   list: {
     overflow: "auto"
   }
-}));
+});
 
 type MemberCardProps = {
   member: Member;
