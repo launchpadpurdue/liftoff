@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import NavBar from "../navigation/NavBar";
 import { Flag } from "@material-ui/icons";
 import {
@@ -7,12 +7,20 @@ import {
 } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
 import { Footer, Header } from "../utils/Utlities";
-import { withStyles, useTheme, Typography } from "@material-ui/core";
+import {
+  withStyles,
+  useTheme,
+  Typography,
+  Grid,
+  makeStyles
+} from "@material-ui/core";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { eventIcon, timestampString } from "../../constants";
+import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const styles = theme => ({
   paper: {
@@ -45,61 +53,90 @@ function TimelineElement(props) {
   );
 }
 
-class Events extends Component {
-  render() {
-    const { auth, classes, events } = this.props;
-    if (!auth.uid) return <Redirect to="/signin"></Redirect>;
+const useStyles = makeStyles(theme => ({
+  noEvents: {
+    padding: theme.spacing(8, 4, 8, 4)
+  }
+}));
 
-    return (
-      <Fragment>
-        <NavBar />
-        <Header>
-          <Typography
-            component="h1"
-            variant="h2"
-            align="center"
-            color="textPrimary"
-            gutterBottom
-          >
-            LaunchPad {new Date().getFullYear()} Events
-          </Typography>
-          <Typography
-            variant="h5"
-            align="center"
-            color="textSecondary"
-            paragraph
-          >
-            Something short and leading about the collection below—its contents,
-            the creator, etc. Make it short and sweet, but not too short so
-            folks don&apos;t simply skip over it entirely.
-          </Typography>
-        </Header>
-        <VerticalTimeline className={classes.paper}>
-          {events.map(event => {
-            return (
-              <TimelineElement
-                key={event.id}
-                date={timestampString(event.time)}
-                eventType={event.type}
-              >
-                <Typography variant="h6">{event.title}</Typography>
-                <Typography variant="subtitle2">
-                  {event.location} (Lasts {event.duration} minutes)
-                </Typography>
-                <Typography variant="body2">{event.description}</Typography>
-              </TimelineElement>
-            );
-          })}
+function Events(props) {
+  const { auth, events } = props;
+  const classes = useStyles();
+
+  if (!auth.uid) return <Redirect to="/signin"></Redirect>;
+  return (
+    <Fragment>
+      <NavBar />
+      <Header>
+        <Typography
+          component="h1"
+          variant="h2"
+          align="center"
+          color="textPrimary"
+          gutterBottom
+        >
+          LaunchPad {new Date().getFullYear()} Events
+        </Typography>
+        <Typography variant="h5" align="center" color="textSecondary" paragraph>
+          Something short and leading about the collection below—its contents,
+          the creator, etc. Make it short and sweet, but not too short so folks
+          don&apos;t simply skip over it entirely.
+        </Typography>
+      </Header>
+      {events.length > 0 && (
+        <VerticalTimeline>
+          {events.map(event => (
+            <TimelineElement
+              key={event.id}
+              date={timestampString(event.time)}
+              eventType={event.type}
+            >
+              <Typography variant="h6">{event.title}</Typography>
+              <Typography variant="subtitle2">
+                {event.location} (Lasts {event.duration} minutes)
+              </Typography>
+              <Typography variant="body2">{event.description}</Typography>
+            </TimelineElement>
+          ))}
           <TimelineElement
             iconStyle={{ background: "green", color: "#fff" }}
             icon={<Flag />}
             noCard
           />
         </VerticalTimeline>
-        <Footer />
-      </Fragment>
-    );
-  }
+      )}
+      {events.length === 0 && (
+        <Grid
+          className={classes.noEvents}
+          container
+          align="center"
+          direction="column"
+          justify="center"
+          spacing={4}
+        >
+          <Grid item>
+            <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+          </Grid>
+          <Grid item>
+            <Typography
+              variant="h3"
+              align="center"
+              color="textPrimary"
+              gutterBottom
+            >
+              Come back soon!
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="h6" align="center">
+              No events have been posted yet, but come back soon to view them!
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
+      <Footer />
+    </Fragment>
+  );
 }
 
 const mapStateToProps = state => {
