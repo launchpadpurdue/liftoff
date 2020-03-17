@@ -47,8 +47,8 @@ function TimelineElement(props) {
 
 class Events extends Component {
   render() {
-    const { auth, classes, events, profile } = this.props;
-    if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
+    const { auth, classes, events } = this.props;
+    if (!auth.uid) return <Redirect to="/signin"></Redirect>;
 
     return (
       <Fragment>
@@ -83,8 +83,10 @@ class Events extends Component {
                 eventType={event.type}
               >
                 <Typography variant="h6">{event.title}</Typography>
-                <Typography variant="subtitle2">{event.location} (Lasts {event.duration} minutes)</Typography>
-                <Typography variant="body2" >{event.description}</Typography>
+                <Typography variant="subtitle2">
+                  {event.location} (Lasts {event.duration} minutes)
+                </Typography>
+                <Typography variant="body2">{event.description}</Typography>
               </TimelineElement>
             );
           })}
@@ -103,8 +105,7 @@ class Events extends Component {
 const mapStateToProps = state => {
   return {
     auth: state.firebase.auth,
-    events: state.firestore.ordered.events ?? [],
-    profile: state.firebase.profile
+    events: state.firestore.ordered.events ?? []
   };
 };
 
