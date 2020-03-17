@@ -98,7 +98,6 @@ class Events extends Component {
 
   render() {
     const { auth, classes, events, profile } = this.props;
-    if (!isLoaded(profile)) return <Loading />;
     if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
 
     return (
@@ -216,9 +215,10 @@ class Events extends Component {
 }
 
 const mapStateToProps = state => {
+  console.log(state.firestore);
   return {
     auth: state.firebase.auth,
-    events: state.firestore.ordered.events,
+    events: state.firestore.ordered.events ?? [],
     profile: state.firebase.profile
   };
 };
