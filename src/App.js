@@ -30,12 +30,11 @@ function App(props) {
   const { preferences = { theme: "light" } } = props.profile;
   props.preferences.theme.palette.type = preferences.theme;
   const theme = createMuiTheme(props.preferences.theme);
-
   // Wait for firebase to initialize then load the site
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {isLoaded(props.auth) ? (
+      {isLoaded(props.auth) && isLoaded(props.profile) ? (
         <Router>
           <Switch>
             <Route path="/" component={Landing} exact></Route>

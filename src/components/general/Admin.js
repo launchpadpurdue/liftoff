@@ -15,8 +15,7 @@ import {
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { isLoaded, firestoreConnect } from "react-redux-firebase";
-import Loading from "./Loading";
+import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { Add, Delete, Edit } from "@material-ui/icons";
 import { ListCard } from "../utils/Cards";
@@ -116,7 +115,6 @@ class Admin extends Component {
 
   render() {
     const { auth, profile, events, mentees, mentors, organizers } = this.props;
-    if (!isLoaded(profile)) return <Loading />;
     if (!auth.uid || !profile.admin) return <Redirect to="/signin"></Redirect>;
     const {
       showEventDialog,
