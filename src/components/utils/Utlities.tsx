@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, ReactNode } from "react";
 import {
   Typography,
   makeStyles,
@@ -23,12 +23,14 @@ const footerStyles = makeStyles(theme => ({
   }
 }));
 
-function Header(props) {
+type HeaderProps = {
+  children: ReactNode;
+};
+function Header({ children }: HeaderProps) {
   const classes = headerStyles();
-
   return (
     <header className={classes.header}>
-      <Container maxWidth="md" {...props}></Container>
+      <Container maxWidth="md">{children}</Container>
     </header>
   );
 }
@@ -58,8 +60,17 @@ function Footer() {
   );
 }
 
-class ImageGrid extends Component {
-  state = { imageUrls: new Array(7), loaded: false };
+interface Tile {
+  url: string;
+  alt: string;
+  cols: number;
+}
+type ImageGridState = {
+  imageURLs: Array<string>;
+  loaded: boolean;
+};
+class ImageGrid extends Component<{}, ImageGridState> {
+  state = { imageURLs: new Array<string>(7), loaded: false };
 
   componentDidMount() {
     this.loadGridImages();
@@ -75,21 +86,21 @@ class ImageGrid extends Component {
     // Get the iamages from the bucket
     const gridImages = bucket.items;
     // Asynchronously get the download url's of all photos
-    const imageUrls = await Promise.all(
+    const imageURLs: Array<string> = await Promise.all(
       gridImages.map(image => image.getDownloadURL())
     );
     // Make the component aware of the loaded images
-    this.setState({ imageUrls, loaded: true });
+    this.setState({ imageURLs, loaded: true });
   };
 
-  generateTiles = () => {
-    return this.state.imageUrls.map((url, index) => {
-      return {
-        url: url ? url : index,
+  generateTiles = (): Array<Tile> => {
+    return this.state.imageURLs.map(
+      (url, index): Tile => ({
+        url: url ?? index,
         alt: "LaunchPad Photo",
         cols: index % 6 === 0 ? 2 : 1
-      };
-    });
+      })
+    );
   };
 
   render() {

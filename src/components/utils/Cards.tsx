@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 
-import React, { Fragment, FunctionComponent } from "react";
+import React, { Fragment } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -80,7 +80,7 @@ const listCardStyles = makeStyles({
 type MemberCardProps = {
   member: Member;
 };
-const MemberCard: FunctionComponent<MemberCardProps> = ({ member }) => {
+function MemberCard({ member }: MemberCardProps) {
   const classes = cardStyles();
   const { firstName, lastName, profilePicture, skills, id } = member;
   return (
@@ -131,12 +131,12 @@ const MemberCard: FunctionComponent<MemberCardProps> = ({ member }) => {
       </Card>
     </Grid>
   );
-};
+}
 
 type ProfileCardProps = {
   profile: Member;
 };
-const ProfileCard: FunctionComponent<ProfileCardProps> = ({ profile }) => {
+function ProfileCard({ profile }: ProfileCardProps) {
   const classes = profileStyles();
   let {
     firstName,
@@ -194,7 +194,7 @@ const ProfileCard: FunctionComponent<ProfileCardProps> = ({ profile }) => {
       </Grid>
     </Grid>
   );
-};
+}
 
 function SkeletonCard() {
   const classes = cardStyles();
@@ -248,7 +248,8 @@ type ListCardProps = {
   footer: string;
   renderListItem: Function;
 };
-const ListCard: FunctionComponent<ListCardProps> = props => {
+
+function ListCard(props: ListCardProps) {
   const { list = [], title, emptyListText, footer, renderListItem } = props;
   const classes = listCardStyles();
   return (
@@ -286,6 +287,6 @@ const ListCard: FunctionComponent<ListCardProps> = props => {
       )}
     </Paper>
   );
-};
+}
 
 export { ListCard, MemberCard, ProfileCard, SkeletonCard };

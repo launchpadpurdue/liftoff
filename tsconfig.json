@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "lib": [
@@ -20,7 +19,6 @@
     "noEmit": true,
     "jsx": "react",
     "noImplicitThis": true,
-    "strictNullChecks": true
   },
   "include": [
     "src"
