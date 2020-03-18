@@ -28,10 +28,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-type OrganizerGallaryProps = {
+type OrganizerGalleryProps = {
   organizers: Array<Member>;
 };
-function OrganizerGallery({ organizers }: OrganizerGallaryProps) {
+function OrganizerGallery({ organizers }: OrganizerGalleryProps) {
   const classes = useStyles();
   return (
     <React.Fragment>
@@ -105,7 +105,7 @@ function OrganizerGallery({ organizers }: OrganizerGallaryProps) {
   );
 }
 
-const mapStateToProps = (state: FixMeLater) => {
+const mapStateToProps = (state: FixMeLater): OrganizerGalleryProps => {
   return {
     organizers: state.firestore.ordered.users
   };
