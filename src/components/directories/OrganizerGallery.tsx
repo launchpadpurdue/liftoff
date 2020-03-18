@@ -16,6 +16,7 @@ import { firestoreConnect } from "react-redux-firebase";
 import { SkeletonCard, MemberCard } from "../utils/Cards";
 import NavBar from "../navigation/NavBar";
 import { Footer } from "../utils/Utlities";
+import { Member, FixMeLater } from "../../constants";
 
 const useStyles = makeStyles(theme => ({
   heroContent: {
@@ -27,9 +28,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function OrganizerGallery(props) {
+type OrganizerGallaryProps = {
+  organizers: Array<Member>;
+};
+function OrganizerGallery({ organizers }: OrganizerGallaryProps) {
   const classes = useStyles();
-  const { organizers } = props;
   return (
     <React.Fragment>
       <NavBar />
@@ -62,38 +65,39 @@ function OrganizerGallery(props) {
             {!organizers && [1, 2, 3].map(num => <SkeletonCard key={num} />)}
             {organizers &&
               organizers.length > 0 &&
-              organizers.map(user => <MemberCard key={user} member={user} />)}
+              organizers.map(user => (
+                <MemberCard key={user.id} member={user} />
+              ))}
+            {organizers && organizers.length === 0 && (
+              <Grid
+                container
+                alignContent="center"
+                direction="column"
+                justify="center"
+                item
+              >
+                <Grid item>
+                  <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+                </Grid>
+                <Grid item>
+                  <Typography
+                    variant="h3"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                  >
+                    Come back soon!
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="h6" align="center">
+                    No organizers have signed up yet but come back soon to meet
+                    them all!
+                  </Typography>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
-
-          {organizers && organizers.length === 0 && (
-            <Grid
-              container
-              align="center"
-              direction="column"
-              justify="center"
-              spacing={4}
-            >
-              <Grid item>
-                <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
-              </Grid>
-              <Grid item>
-                <Typography
-                  variant="h3"
-                  align="center"
-                  color="textPrimary"
-                  gutterBottom
-                >
-                  Come back soon!
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6" align="center">
-                  No organizers have signed up yet but come back soon to meet
-                  them all!
-                </Typography>
-              </Grid>
-            </Grid>
-          )}
         </Container>
       </main>
       <Footer />
@@ -101,7 +105,7 @@ function OrganizerGallery(props) {
   );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: FixMeLater) => {
   return {
     organizers: state.firestore.ordered.users
   };
