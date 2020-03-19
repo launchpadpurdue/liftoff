@@ -1,16 +1,17 @@
-import React, { Component, ReactNode } from "react";
+import React, { ChangeEvent, Component, ReactNode } from 'react';
+
+import { faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Typography,
-  makeStyles,
-  GridList,
-  GridListTile,
-  Container,
-  Grid
-} from "@material-ui/core";
-import firebase from "../../config/firebaseConfig";
-import { Skeleton } from "@material-ui/lab";
-import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+    AppBar, Box, Checkbox, Container, createStyles, fade, FormControl, Grid, GridList, GridListTile,
+    Input, InputBase, ListItemText, makeStyles, MenuItem, Select, Theme, Toolbar, Typography,
+    WithStyles, withStyles
+} from '@material-ui/core';
+import { Search } from '@material-ui/icons';
+import { Skeleton } from '@material-ui/lab';
+
+import firebase from '../../config/firebaseConfig';
+import { skillTypes } from '../../constants';
 
 const headerStyles = makeStyles(theme => ({
   header: {
@@ -99,6 +100,156 @@ function EmptyData({ title, message }: EmptyDataProps) {
   );
 }
 
+const queryBarStyles = (theme: Theme) => {
+  const lightMode: boolean = theme.palette.type === "light";
+  const backgroundColor: string = lightMode
+    ? theme.palette.grey[200]
+    : theme.palette.grey[700];
+  const textColor: string = theme.palette.getContrastText(backgroundColor);
+  const fadeColor: string = lightMode
+    ? theme.palette.common.black
+    : theme.palette.common.white;
+  return createStyles({
+    appbar: {
+      background: backgroundColor,
+      color: textColor
+    },
+    search: {
+      position: "relative",
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(fadeColor, 0.15),
+      "&:hover": {
+        backgroundColor: fade(fadeColor, 0.25)
+      },
+      marginLeft: 0,
+      width: "100%",
+      [theme.breakpoints.up("sm")]: {
+        width: "auto",
+        margin: theme.spacing(0, 1, 0, 1)
+      }
+    },
+    searchIcon: {
+      padding: theme.spacing(0, 2),
+      height: "100%",
+      position: "absolute",
+      pointerEvents: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    inputRoot: {
+      color: "inherit"
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      transition: theme.transitions.create("width"),
+      width: "12ch",
+      [theme.breakpoints.up("sm")]: {
+        width: "12ch",
+        "&:focus": {
+          width: "20ch"
+        }
+      }
+    },
+    select: {
+      margin: theme.spacing(0, 1, 0, 1),
+      minWidth: 100,
+      maxWidth: 200
+    }
+  });
+};
+interface QueryBarProps extends WithStyles<typeof queryBarStyles> {
+  onQuery: (query: MemberQuery) => void;
+}
+type QueryBarState = { name: string; skills: Array<string> };
+export interface MemberQuery {
+  name: string;
+  skills: Array<string>;
+}
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+
+const QueryBar = withStyles(queryBarStyles)(
+  class extends Component<QueryBarProps, QueryBarState> {
+    state = { name: "", skills: Array<string>() };
+
+    onInput = (event: ChangeEvent<HTMLInputElement>) => {
+      this.setState({ name: event.target.value }, () => {
+        this.props.onQuery({ ...this.state });
+      });
+    };
+
+    onSelectInput = (event: any, child: any) => {
+      this.setState({ skills: event.target.value }, () => {
+        this.props.onQuery({ ...this.state });
+      });
+    };
+
+    render() {
+      const { classes } = this.props;
+      return (
+        <AppBar position="relative" className={classes.appbar}>
+          <Toolbar variant="dense">
+            <Box
+              display="flex"
+              flexGrow={1}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Typography variant="body1">Filter by Name:</Typography>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <Search />
+                </div>
+                <InputBase
+                  onChange={this.onInput}
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput
+                  }}
+                />
+              </div>
+              <Typography variant="body1">Filter by Skill: </Typography>
+              <FormControl margin="dense" className={classes.select}>
+                <Select
+                  MenuProps={MenuProps}
+                  input={<Input />}
+                  multiple
+                  name="skills"
+                  onChange={this.onSelectInput}
+                  renderValue={selected =>
+                    (selected as Array<string>).join(", ")
+                  }
+                  value={this.state.skills}
+                >
+                  {skillTypes.map(skill => (
+                    <MenuItem key={skill} value={skill}>
+                      <Checkbox checked={this.state.skills.includes(skill)} />
+                      <ListItemText primary={skill} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      );
+    }
+  }
+);
+
 interface Tile {
   url: string;
   alt: string;
@@ -157,4 +308,4 @@ class ImageGrid extends Component<{}, ImageGridState> {
   }
 }
 
-export { EmptyData, Footer, Header, ImageGrid };
+export { EmptyData, Footer, Header, ImageGrid, QueryBar };

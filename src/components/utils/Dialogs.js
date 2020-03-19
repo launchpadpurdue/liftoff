@@ -367,23 +367,29 @@ class EditProfileDialog extends Component {
             <DialogContentText>
               Edit the details of your profile
             </DialogContentText>
-            <TextField
-              autoFocus
-              fullWidth
-              id="firstName"
-              label="First Name"
-              margin="dense"
-              onChange={this.onInput}
-              value={firstName}
-            />
-            <TextField
-              fullWidth
-              id="lastName"
-              label="Last Name"
-              margin="dense"
-              onChange={this.onInput}
-              value={lastName}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  margin="dense"
+                  onChange={this.onInput}
+                  value={firstName}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  margin="dense"
+                  onChange={this.onInput}
+                  value={lastName}
+                />
+              </Grid>
+            </Grid>
             <FormControl fullWidth margin="dense">
               <input
                 accept="image/*"
