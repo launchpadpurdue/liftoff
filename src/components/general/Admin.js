@@ -1,6 +1,3 @@
-import React, { Component, Fragment } from "react";
-import NavBar from "../navigation/NavBar";
-import { Footer } from "../utils/Utlities";
 import {
   Container,
   ListItem,
@@ -13,20 +10,29 @@ import {
   Box,
   Button
 } from "@material-ui/core";
-import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
-import { firestoreConnect } from "react-redux-firebase";
-import { compose } from "redux";
 import { Add, Delete, Edit } from "@material-ui/icons";
+
+import React, { Component, Fragment } from "react";
+
+import { connect } from "react-redux";
+
+import { Redirect } from "react-router-dom";
+
+import { firestoreConnect } from "react-redux-firebase";
+
+import { compose } from "redux";
+
+import { eventIcon } from "../../constants";
+import NavBar from "../navigation/NavBar";
 import { ListCard } from "../utils/Cards";
-import { deleteUser } from "../../store/actions/authActions";
 import { ConfirmDialog, EventDialog } from "../utils/Dialogs";
+import { Footer } from "../utils/Utlities";
+import { deleteUser } from "../../store/actions/authActions";
 import {
   createEvent,
   deleteEvent,
   editEvent
 } from "../../store/actions/eventActions";
-import { eventIcon } from "../../constants";
 
 class Admin extends Component {
   state = {
@@ -77,21 +83,26 @@ class Admin extends Component {
 
   renderEventItem = event => {
     return (
-      <ListItem key={event.id}>
+      <ListItem key={event.id} style={{ paddingRight: 48 * 2 }}>
         <ListItemAvatar>
           <Avatar>{eventIcon(event.type)}</Avatar>
         </ListItemAvatar>
         <ListItemText primary={event.title} secondary={event.location} />
         <ListItemSecondaryAction>
-          <IconButton onClick={() => this.showEventDialog(event)}>
-            <Edit />
-          </IconButton>
-          <IconButton
-            onClick={() => this.showDeleteEventDialog(event)}
-            edge="end"
-          >
-            <Delete />
-          </IconButton>
+          <Box>
+            <IconButton
+              onClick={() => this.showEventDialog(event)}
+              edge="start"
+            >
+              <Edit />
+            </IconButton>
+            <IconButton
+              onClick={() => this.showDeleteEventDialog(event)}
+              edge="end"
+            >
+              <Delete />
+            </IconButton>
+          </Box>
         </ListItemSecondaryAction>
       </ListItem>
     );
