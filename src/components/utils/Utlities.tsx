@@ -1,17 +1,17 @@
 import React, { ChangeEvent, Component, ReactNode } from 'react';
 
-import { faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     AppBar, Box, Checkbox, Container, createStyles, fade, FormControl, Grid, GridList, GridListTile,
-    Input, InputBase, ListItemText, makeStyles, MenuItem, Select, Theme, Toolbar, Typography,
-    WithStyles, withStyles
+    Hidden, Input, InputBase, ListItemText, makeStyles, MenuItem, Select, Theme, Toolbar,
+    Typography, WithStyles, withStyles
 } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
 
 import firebase from '../../config/firebaseConfig';
-import { skillTypes } from '../../constants';
+import { MemberQuery, SelectMenuProps, skillTypes } from '../../constants';
 
 const headerStyles = makeStyles(theme => ({
   header: {
@@ -75,11 +75,42 @@ function EmptyData({ title, message }: EmptyDataProps) {
       alignContent="center"
       direction="column"
       justify="center"
+      spacing={4}
+    >
+      <Grid item container justify="center">
+        <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+      </Grid>
+      <Grid item>
+        <Typography
+          variant="h3"
+          align="center"
+          color="textPrimary"
+          gutterBottom
+        >
+          {title}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Typography variant="h6" align="center">
+          {message}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+}
+type EmptyQueryProps = EmptyDataProps;
+function EmptyQuery({ title, message }: EmptyQueryProps) {
+  return (
+    <Grid
+      container
+      alignContent="center"
+      direction="column"
+      justify="center"
       item
       spacing={4}
     >
-      <Grid item>
-        <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+      <Grid item container justify="center">
+        <FontAwesomeIcon icon={faExclamationCircle} size="10x" />
       </Grid>
       <Grid item>
         <Typography
@@ -164,21 +195,6 @@ interface QueryBarProps extends WithStyles<typeof queryBarStyles> {
   onQuery: (query: MemberQuery) => void;
 }
 type QueryBarState = { name: string; skills: Array<string> };
-export interface MemberQuery {
-  name: string;
-  skills: Array<string>;
-}
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
 
 const QueryBar = withStyles(queryBarStyles)(
   class extends Component<QueryBarProps, QueryBarState> {
@@ -207,7 +223,9 @@ const QueryBar = withStyles(queryBarStyles)(
               alignItems="center"
               justifyContent="center"
             >
-              <Typography variant="body1">Filter by Name:</Typography>
+              <Hidden xsDown>
+                <Typography variant="body1">Filter by Name:</Typography>
+              </Hidden>
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <Search />
@@ -221,10 +239,12 @@ const QueryBar = withStyles(queryBarStyles)(
                   }}
                 />
               </div>
-              <Typography variant="body1">Filter by Skill: </Typography>
+              <Hidden xsDown>
+                <Typography variant="body1">Filter by Skill: </Typography>
+              </Hidden>
               <FormControl margin="dense" className={classes.select}>
                 <Select
-                  MenuProps={MenuProps}
+                  MenuProps={SelectMenuProps}
                   input={<Input />}
                   multiple
                   name="skills"
@@ -308,4 +328,4 @@ class ImageGrid extends Component<{}, ImageGridState> {
   }
 }
 
-export { EmptyData, Footer, Header, ImageGrid, QueryBar };
+export { EmptyData, EmptyQuery, Footer, Header, ImageGrid, QueryBar };

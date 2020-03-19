@@ -39,7 +39,7 @@ import { getFirebase } from "react-redux-firebase";
 
 import Cropper from "react-easy-crop";
 
-import { eventTypes, skillTypes } from "../../constants";
+import { eventTypes, skillTypes, SelectMenuProps } from "../../constants";
 import { deleteAccount } from "../../store/actions/authActions";
 
 // AlertDialog Definition
@@ -301,14 +301,6 @@ const mapDispatchToProps = dispatch => {
 DeleteAccountDialog = connect(null, mapDispatchToProps)(DeleteAccountDialog);
 
 // EditProfileDialog Definition
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: 48 * 4.5 + 8,
-      width: 250
-    }
-  }
-};
 
 function mapProfile(profile) {
   return {
@@ -433,7 +425,7 @@ class EditProfileDialog extends Component {
             <FormControl fullWidth margin="dense">
               <InputLabel>Skills</InputLabel>
               <Select
-                MenuProps={MenuProps}
+                MenuProps={SelectMenuProps}
                 input={<Input />}
                 multiple
                 name="skills"

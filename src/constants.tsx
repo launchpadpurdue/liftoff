@@ -1,25 +1,11 @@
-import DateUtils from "@date-io/date-fns";
+import React from 'react';
 
+import DateUtils from '@date-io/date-fns';
+import { faAndroid, faApple } from '@fortawesome/free-brands-svg-icons';
 import {
-  faGlobe,
-  faGamepad,
-  faRobot,
-  faDesktop,
-  faBug,
-  IconDefinition
-} from "@fortawesome/free-solid-svg-icons";
-import { faApple, faAndroid } from "@fortawesome/free-brands-svg-icons";
-
-import {
-  Slideshow,
-  Work,
-  School,
-  Group,
-  Code,
-  BugReport
-} from "@material-ui/icons";
-
-import React from "react";
+    faBug, faDesktop, faGamepad, faGlobe, faRobot, IconDefinition
+} from '@fortawesome/free-solid-svg-icons';
+import { BugReport, Code, Group, School, Slideshow, Work } from '@material-ui/icons';
 
 export type FixMeLater = any;
 
@@ -58,6 +44,32 @@ export interface Member {
   preferences: Preferences;
 }
 
+export interface MemberQuery {
+  name: string;
+  skills: Array<string>;
+}
+
+export const filterMembers = (
+  members: Array<Member>,
+  query: MemberQuery
+): Array<Member> => {
+  if (!members) return [];
+  if (!query) return members;
+  return members.filter((member: Member) => {
+    const memberName = (member.firstName + member.lastName)
+      .replace(/\s/g, "")
+      .toLowerCase();
+    const matchesName = memberName.includes(query.name);
+    if (query.skills.length === 0) return matchesName;
+    for (const skill of query.skills) {
+      if (member.skills.includes(skill)) {
+        return matchesName;
+      }
+    }
+    return false;
+  });
+};
+
 export const weekdays: Array<string> = [
   "Sunday",
   "Monday",
@@ -86,3 +98,14 @@ export const skillIcon = (skillType: string): IconDefinition =>
 export const eventTypes: Array<string> = Object.keys(events).sort();
 export const eventIcon = (eventType: string): JSX.Element =>
   events[eventType] ?? <BugReport />;
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+export const SelectMenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};

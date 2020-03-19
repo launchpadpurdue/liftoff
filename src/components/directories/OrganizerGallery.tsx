@@ -9,11 +9,11 @@ import {
     Container, createStyles, Grid, Theme, Typography, WithStyles, withStyles
 } from '@material-ui/core';
 
-import { FixMeLater, Member } from '../../constants';
+import { filterMembers, FixMeLater, Member, MemberQuery } from '../../constants';
 import NavBar from '../navigation/NavBar';
 // Local Imports
 import { MemberCard, SkeletonCard } from '../utils/Cards';
-import { EmptyData, Footer, Header, MemberQuery, QueryBar } from '../utils/Utlities';
+import { EmptyData, EmptyQuery, Footer, Header, QueryBar } from '../utils/Utlities';
 
 const organizerStyles = (theme: Theme) =>
   createStyles({
@@ -28,7 +28,10 @@ interface OrganizerGalleryProps extends WithStyles<typeof organizerStyles> {
 type OrganizerGalleryState = {
   query: MemberQuery;
 };
-class OrganizerGallery extends Component<OrganizerGalleryProps, {}> {
+class OrganizerGallery extends Component<
+  OrganizerGalleryProps,
+  OrganizerGalleryState
+> {
   state = { query: { name: "", skills: [] } };
 
   onQuery = (query: MemberQuery) => {
@@ -40,26 +43,12 @@ class OrganizerGallery extends Component<OrganizerGalleryProps, {}> {
     });
   };
 
-  filter = (members: Array<Member>, query: MemberQuery) =>
-    members.filter((member: Member) => {
-      const text = (member.firstName + member.lastName)
-        .replace(/\s/g, "")
-        .toLowerCase();
-      if (query.skills.length === 0) {
-        return text.includes(query.name);
-      }
-      for (const skill of query.skills) {
-        if (member.skills.includes(skill)) {
-          return text.includes(query.name);
-        }
-      }
-      return false;
-    });
-
   render() {
     const { classes, organizers } = this.props;
+    const { query } = this.state;
     const dataLoaded: boolean = isLoaded(organizers),
       dataEmpty: boolean = isEmpty(organizers);
+    const filteredMembers = filterMembers(organizers, query);
     return (
       <React.Fragment>
         <NavBar />
@@ -101,10 +90,16 @@ class OrganizerGallery extends Component<OrganizerGalleryProps, {}> {
             them all!"
               />
             )}
-            {dataLoaded && !dataEmpty && (
+            {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (
+              <EmptyQuery
+                title="No organizers found"
+                message="No organizers were found that matched your query"
+              />
+            )}
+            {dataLoaded && !dataEmpty && filteredMembers.length > 0 && (
               <Fragment>
                 <Grid container spacing={4}>
-                  {this.filter(organizers, this.state.query).map(user => (
+                  {filteredMembers.map(user => (
                     <MemberCard key={user.id} member={user} />
                   ))}
                 </Grid>

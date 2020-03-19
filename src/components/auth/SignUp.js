@@ -32,7 +32,7 @@ import { signUp } from "../../store/actions/authActions";
 
 // Local Imports
 import { CropDialog } from "../utils/Dialogs";
-import { skillTypes } from "../../constants";
+import { skillTypes, SelectMenuProps } from "../../constants";
 
 const LinkTemplate = React.forwardRef((props, ref) => (
   <RouterLink innerRef={ref} {...props} />
@@ -60,14 +60,6 @@ const styles = theme => ({
     display: "none"
   }
 });
-
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: 48 * 4.5 + 8
-    }
-  }
-};
 
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -440,7 +432,7 @@ class SignUp extends Component {
                       />
                     }
                     renderValue={selected => selected.join(", ")}
-                    MenuProps={MenuProps}
+                    MenuProps={SelectMenuProps}
                   >
                     {skillTypes.map(skill => (
                       <MenuItem key={skill} value={skill}>
