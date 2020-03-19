@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from "react";
+import DateFnsUtils from "@date-io/date-fns";
 
-// Material UI Imports
 import {
   AppBar,
   Button,
@@ -21,8 +20,6 @@ import {
   KeyboardDateTimePicker,
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
-
-// Material UI Imports
 import {
   TextField,
   FormControl,
@@ -34,15 +31,16 @@ import {
   ListItemText
 } from "@material-ui/core";
 
-import { eventTypes, skillTypes } from "../../constants";
+import React, { Component, Fragment } from "react";
 
-// Redux Imports
 import { connect } from "react-redux";
+
 import { getFirebase } from "react-redux-firebase";
-import { deleteAccount } from "../../store/actions/authActions";
-import DateFnsUtils from "@date-io/date-fns"; // choose your lib
-// React Easy Crop Imports
+
 import Cropper from "react-easy-crop";
+
+import { eventTypes, skillTypes } from "../../constants";
+import { deleteAccount } from "../../store/actions/authActions";
 
 // AlertDialog Definition
 function AlertDialog(props) {
@@ -480,21 +478,35 @@ class EditProfileDialog extends Component {
 }
 
 class EventDialog extends Component {
-  state = {
-    title: "",
-    description: "",
-    location: "",
-    time: null,
-    type: "",
-    duration: 1,
-    ...this.props.event
-  };
+  state = {};
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.open && !state.event) {
+      if (props.event) {
+        state.event = { ...props.event };
+        state.event.time = state.event.time.toDate();
+      } else if (!props.event) {
+        state.event = {
+          title: "",
+          description: "",
+          location: "",
+          time: null,
+          type: "",
+          duration: 1
+        };
+      }
+    }
+
+    return state;
+  }
 
   onInput = event => {
     let property = event.target.id ? event.target.id : event.target.name,
       value = event.target.value;
     if (property === "duration" && value === "") return;
-    this.setState({ [property]: value });
+    const test = this.state.event;
+    test[property] = value;
+    this.setState({ event: test });
   };
 
   closeDialog = event => {
@@ -505,23 +517,21 @@ class EventDialog extends Component {
     }
     this.props.onClose(event, eventID);
     this.setState({
-      title: "",
-      description: "",
-      location: "",
-      time: null,
-      duration: 1
+      event: null
     });
   };
 
   render() {
-    const { open, event } = this.props;
-    const { title, description, time, location, type, duration } = this.state;
+    const { open } = this.props;
+    if (!open) return null;
+    const { event } = this.state;
+    const { title, description, time, location, type, duration } = event;
     return (
       <Dialog fullWidth open={open} onClose={() => this.closeDialog(null)}>
-        <DialogTitle>{event ? "Edit" : "Create"} Event Details</DialogTitle>
+        <DialogTitle>{event.id ? "Edit" : "Create"} Event Details</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {event ? "Edit" : "Create"} details for the event
+            {event.id ? "Edit" : "Create"} details for the event
           </DialogContentText>
           <TextField
             autoFocus
@@ -550,12 +560,17 @@ class EventDialog extends Component {
               variant="inline"
               id="time"
               label="Event Date and Time"
-              value={time instanceof Date ? time : time ? time.toDate() : null}
+              value={time}
               autoOk
               margin="dense"
-              onChange={time => {
-                this.setState({ time });
-              }}
+              onChange={time =>
+                this.setState(prevState => ({
+                  event: {
+                    ...prevState.event,
+                    time
+                  }
+                }))
+              }
               format="MM/dd/yyyy HH:mm"
             />
           </MuiPickersUtilsProvider>
@@ -563,7 +578,7 @@ class EventDialog extends Component {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth margin="dense">
                 <InputLabel>Event Type</InputLabel>
-                <Select defaultValue={type} onChange={this.onInput} name="type">
+                <Select value={type} onChange={this.onInput} name="type">
                   {eventTypes.map(type => (
                     <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -602,7 +617,7 @@ class EventDialog extends Component {
             Cancel
           </Button>
           <Button
-            onClick={() => this.closeDialog(this.state)}
+            onClick={() => this.closeDialog(this.state.event)}
             color="primary"
             autoFocus
           >

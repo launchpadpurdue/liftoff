@@ -4,10 +4,13 @@ import {
   makeStyles,
   GridList,
   GridListTile,
-  Container
+  Container,
+  Grid
 } from "@material-ui/core";
 import firebase from "../../config/firebaseConfig";
 import { Skeleton } from "@material-ui/lab";
+import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const headerStyles = makeStyles(theme => ({
   header: {
@@ -57,6 +60,42 @@ function Footer() {
       </Typography>
       <Copyright />
     </footer>
+  );
+}
+
+type EmptyDataProps = {
+  title: string;
+  message: string;
+};
+function EmptyData({ title, message }: EmptyDataProps) {
+  return (
+    <Grid
+      container
+      alignContent="center"
+      direction="column"
+      justify="center"
+      item
+      spacing={4}
+    >
+      <Grid item>
+        <FontAwesomeIcon icon={faHourglassHalf} size="10x" />
+      </Grid>
+      <Grid item>
+        <Typography
+          variant="h3"
+          align="center"
+          color="textPrimary"
+          gutterBottom
+        >
+          {title}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Typography variant="h6" align="center">
+          {message}
+        </Typography>
+      </Grid>
+    </Grid>
   );
 }
 
@@ -118,4 +157,4 @@ class ImageGrid extends Component<{}, ImageGridState> {
   }
 }
 
-export { Footer, Header, ImageGrid };
+export { EmptyData, Footer, Header, ImageGrid };

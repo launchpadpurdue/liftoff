@@ -49,8 +49,9 @@ class Admin extends Component {
 
   hideEventDialog = (event, eventID) => {
     if (event) {
-      if (eventID) this.props.editEvent(event, eventID);
-      else this.props.createEvent(event);
+      eventID
+        ? this.props.editEvent(event, eventID)
+        : this.props.createEvent(event);
     }
     this.setState({ showEventDialog: false, currentEvent: null });
   };
@@ -190,13 +191,11 @@ class Admin extends Component {
           </Container>
         </Box>
         <Footer />
-        {showEventDialog && (
-          <EventDialog
-            open={showEventDialog}
-            onClose={this.hideEventDialog}
-            event={this.state.currentEvent}
-          />
-        )}
+        <EventDialog
+          open={showEventDialog}
+          onClose={this.hideEventDialog}
+          event={this.state.currentEvent}
+        />
         <ConfirmDialog
           open={showDeleteEventDialog}
           onConfirm={this.onDeleteEvent}
