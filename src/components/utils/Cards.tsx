@@ -1,28 +1,14 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Chip,
-  Divider,
-  Grid,
-  makeStyles,
-  Tooltip,
-  Typography,
-  Paper,
-  Box,
-  List
-} from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+    Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Divider, Grid, List, makeStyles,
+    Paper, Tooltip, Typography
+} from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 
-import React, { Fragment } from "react";
-
-import { Link } from "react-router-dom";
-
-import { skillIcon, Member } from "../../constants";
+import { Member, skillIcon } from '../../constants';
 
 const cardStyles = makeStyles({
   card: {

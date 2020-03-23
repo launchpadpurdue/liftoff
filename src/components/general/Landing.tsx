@@ -1,20 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
-// React Router Imports
-import { Link } from "react-router-dom";
+import { Button, Container, Grid, makeStyles, Typography } from '@material-ui/core';
 
-// Material UI Imports
-import {
-  makeStyles,
-  Container,
-  Typography,
-  Grid,
-  Button
-} from "@material-ui/core";
-
-// Local Imports
-import NavBar from "../navigation/NavBar";
-import { Footer, ImageGrid, Header } from "../utils/Utlities";
+import NavBar from '../navigation/NavBar';
+import { Footer, Header, ImageGrid } from '../utils/Utlities';
 
 const useStyles = makeStyles(theme => ({
   about: {
@@ -41,10 +31,11 @@ export default function Landing() {
           color="textPrimary"
           gutterBottom
         >
-          Prepare for Liftoff!{" "}
           <span role="img" aria-label="Rocket">
             🚀
+            <br />
           </span>
+          Prepare for Liftoff!
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
           Welcome to Liftoff, LaunchPad's portal for connecting aspiring mentees
