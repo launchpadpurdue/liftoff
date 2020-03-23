@@ -22,6 +22,7 @@ const mentorStyles = (theme: Theme) =>
 interface MentorGalleryProps extends WithStyles<typeof mentorStyles> {
   mentors: Array<Member>;
 }
+type MentorGalleryData = Partial<MentorGalleryProps>;
 type MentorGalleryState = {
   query: MemberQuery;
 };
@@ -103,7 +104,7 @@ class MentorGallery extends Component<MentorGalleryProps, MentorGalleryState> {
   }
 }
 
-const mapStateToProps = (state: FixMeLater): FixMeLater => {
+const mapStateToProps = (state: FixMeLater): MentorGalleryData => {
   return {
     mentors: state.firestore.ordered.users
   };

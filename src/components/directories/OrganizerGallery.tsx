@@ -22,6 +22,7 @@ const organizerStyles = (theme: Theme) =>
 interface OrganizerGalleryProps extends WithStyles<typeof organizerStyles> {
   organizers: Array<Member>;
 }
+type OrganizerGalleryData = Partial<OrganizerGalleryProps>;
 type OrganizerGalleryState = {
   query: MemberQuery;
 };
@@ -106,7 +107,7 @@ class OrganizerGallery extends Component<
   }
 }
 
-const mapStateToProps = (state: FixMeLater): FixMeLater => {
+const mapStateToProps = (state: FixMeLater): OrganizerGalleryData => {
   return {
     organizers: state.firestore.ordered.users
   };

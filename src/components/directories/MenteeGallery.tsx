@@ -22,6 +22,7 @@ const menteeStyles = (theme: Theme) =>
 interface MenteeGalleryProps extends WithStyles<typeof menteeStyles> {
   mentees: Array<Member>;
 }
+type MenteeGalleryData = Partial<MenteeGalleryProps>;
 type MenteeGalleryState = {
   query: MemberQuery;
 };
@@ -102,7 +103,7 @@ class MenteeGallery extends Component<MenteeGalleryProps, MenteeGalleryState> {
     );
   }
 }
-const mapStateToProps = (state: FixMeLater): FixMeLater => {
+const mapStateToProps = (state: FixMeLater): MenteeGalleryData => {
   return {
     mentees: state.firestore.ordered.users
   };
