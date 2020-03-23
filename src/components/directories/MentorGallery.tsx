@@ -12,23 +12,20 @@ import NavBar from '../navigation/NavBar';
 import { MemberCard, SkeletonCard } from '../utils/Cards';
 import { EmptyData, EmptyQuery, Footer, Header, QueryBar } from '../utils/Utlities';
 
-const organizerStyles = (theme: Theme) =>
+const mentorStyles = (theme: Theme) =>
   createStyles({
     cardGrid: {
       padding: theme.spacing(8, 4, 8, 4)
     }
   });
 
-interface OrganizerGalleryProps extends WithStyles<typeof organizerStyles> {
-  organizers: Array<Member>;
+interface MentorGalleryProps extends WithStyles<typeof mentorStyles> {
+  mentors: Array<Member>;
 }
-type OrganizerGalleryState = {
+type MentorGalleryState = {
   query: MemberQuery;
 };
-class OrganizerGallery extends Component<
-  OrganizerGalleryProps,
-  OrganizerGalleryState
-> {
+class MentorGallery extends Component<MentorGalleryProps, MentorGalleryState> {
   state = { query: { name: "", skills: [] } };
 
   onQuery = (query: MemberQuery) => {
@@ -41,11 +38,11 @@ class OrganizerGallery extends Component<
   };
 
   render() {
-    const { classes, organizers } = this.props;
+    const { classes, mentors } = this.props;
     const { query } = this.state;
-    const dataLoaded: boolean = isLoaded(organizers),
-      dataEmpty: boolean = isEmpty(organizers);
-    const filteredMembers = filterMembers(organizers, query);
+    const dataLoaded: boolean = isLoaded(mentors),
+      dataEmpty: boolean = isEmpty(mentors);
+    const filteredMembers = filterMembers(mentors, query);
     return (
       <Fragment>
         <NavBar />
@@ -57,7 +54,7 @@ class OrganizerGallery extends Component<
             color="textPrimary"
             gutterBottom
           >
-            Meet the Organizers
+            Meet the Mentors
           </Typography>
           <Typography
             variant="h5"
@@ -82,14 +79,14 @@ class OrganizerGallery extends Component<
           {dataLoaded && dataEmpty && (
             <EmptyData
               title="Come back soon!"
-              message="No organizers have signed up yet but come back soon to meet
+              message="No mentors have signed up yet but come back soon to meet
             them all!"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (
             <EmptyQuery
-              title="No organizers found"
-              message="No organizers were found that matched your query"
+              title="No mentors found"
+              message="No mentors were found that matched your query"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length > 0 && (
@@ -108,7 +105,7 @@ class OrganizerGallery extends Component<
 
 const mapStateToProps = (state: FixMeLater): FixMeLater => {
   return {
-    organizers: state.firestore.ordered.users
+    mentors: state.firestore.ordered.users
   };
 };
 
@@ -117,8 +114,8 @@ export default compose(
   firestoreConnect([
     {
       collection: "users",
-      where: ["role", "==", "Organizer"]
+      where: ["role", "==", "Mentor"]
     }
   ]),
-  withStyles(organizerStyles)
-)(OrganizerGallery);
+  withStyles(mentorStyles)
+)(MentorGallery);

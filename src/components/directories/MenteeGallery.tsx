@@ -4,7 +4,7 @@ import { firestoreConnect, isEmpty, isLoaded } from 'react-redux-firebase';
 import { compose } from 'redux';
 
 import {
-    Container, createStyles, Grid, Theme, Typography, WithStyles, withStyles
+    Container, createStyles, Grid, Theme, Typography, withStyles, WithStyles
 } from '@material-ui/core';
 
 import { filterMembers, FixMeLater, Member, MemberQuery } from '../../constants';
@@ -12,23 +12,20 @@ import NavBar from '../navigation/NavBar';
 import { MemberCard, SkeletonCard } from '../utils/Cards';
 import { EmptyData, EmptyQuery, Footer, Header, QueryBar } from '../utils/Utlities';
 
-const organizerStyles = (theme: Theme) =>
+const menteeStyles = (theme: Theme) =>
   createStyles({
     cardGrid: {
       padding: theme.spacing(8, 4, 8, 4)
     }
   });
 
-interface OrganizerGalleryProps extends WithStyles<typeof organizerStyles> {
-  organizers: Array<Member>;
+interface MenteeGalleryProps extends WithStyles<typeof menteeStyles> {
+  mentees: Array<Member>;
 }
-type OrganizerGalleryState = {
+type MenteeGalleryState = {
   query: MemberQuery;
 };
-class OrganizerGallery extends Component<
-  OrganizerGalleryProps,
-  OrganizerGalleryState
-> {
+class MenteeGallery extends Component<MenteeGalleryProps, MenteeGalleryState> {
   state = { query: { name: "", skills: [] } };
 
   onQuery = (query: MemberQuery) => {
@@ -41,11 +38,11 @@ class OrganizerGallery extends Component<
   };
 
   render() {
-    const { classes, organizers } = this.props;
+    const { classes, mentees } = this.props;
     const { query } = this.state;
-    const dataLoaded: boolean = isLoaded(organizers),
-      dataEmpty: boolean = isEmpty(organizers);
-    const filteredMembers = filterMembers(organizers, query);
+    const dataLoaded: boolean = isLoaded(mentees),
+      dataEmpty: boolean = isEmpty(mentees);
+    const filteredMembers = filterMembers(mentees, query);
     return (
       <Fragment>
         <NavBar />
@@ -57,7 +54,7 @@ class OrganizerGallery extends Component<
             color="textPrimary"
             gutterBottom
           >
-            Meet the Organizers
+            Meet the Mentors
           </Typography>
           <Typography
             variant="h5"
@@ -82,14 +79,14 @@ class OrganizerGallery extends Component<
           {dataLoaded && dataEmpty && (
             <EmptyData
               title="Come back soon!"
-              message="No organizers have signed up yet but come back soon to meet
-            them all!"
+              message="No mentors have signed up yet but come back soon to meet
+              them all!"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (
             <EmptyQuery
-              title="No organizers found"
-              message="No organizers were found that matched your query"
+              title="No mentors found"
+              message="No mentors were found that matched your query"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length > 0 && (
@@ -105,10 +102,9 @@ class OrganizerGallery extends Component<
     );
   }
 }
-
 const mapStateToProps = (state: FixMeLater): FixMeLater => {
   return {
-    organizers: state.firestore.ordered.users
+    mentees: state.firestore.ordered.users
   };
 };
 
@@ -117,8 +113,8 @@ export default compose(
   firestoreConnect([
     {
       collection: "users",
-      where: ["role", "==", "Organizer"]
+      where: ["role", "==", "Mentee"]
     }
   ]),
-  withStyles(organizerStyles)
-)(OrganizerGallery);
+  withStyles(menteeStyles)
+)(MenteeGallery);

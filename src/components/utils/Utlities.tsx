@@ -34,7 +34,7 @@ function Header({ children }: HeaderProps) {
   const classes = headerStyles();
   return (
     <header className={classes.header}>
-      <Container maxWidth="md">{children}</Container>
+      <Container maxWidth="sm">{children}</Container>
     </header>
   );
 }
