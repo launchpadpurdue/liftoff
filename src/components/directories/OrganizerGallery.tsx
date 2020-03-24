@@ -83,8 +83,7 @@ class OrganizerGallery extends Component<
           {dataLoaded && dataEmpty && (
             <EmptyData
               title="Come back soon!"
-              message="No organizers have signed up yet but come back soon to meet
-            them all!"
+              message="No organizers have signed up yet but come back soon to meet them all!"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (

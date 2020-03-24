@@ -80,8 +80,7 @@ class MenteeGallery extends Component<MenteeGalleryProps, MenteeGalleryState> {
           {dataLoaded && dataEmpty && (
             <EmptyData
               title="Come back soon!"
-              message="No mentees have signed up yet but come back soon to meet
-              them all!"
+              message="No mentees have signed up yet but come back soon to meet them all!"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (
