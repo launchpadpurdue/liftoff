@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Button, Container, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, Button, Container, Grid, makeStyles, Typography } from '@material-ui/core';
 
 import NavBar from '../navigation/NavBar';
 import { Footer, Header, ImageGrid } from '../utils/Utlities';
@@ -24,6 +24,9 @@ export default function Landing() {
     <Fragment>
       <NavBar />
       <Header>
+        <Box display="flex" justifyContent="center" mb={4}>
+          <img src="/logo.png" alt="LaunchPad Logo" height={128} />
+        </Box>
         <Typography
           component="h1"
           variant="h2"
@@ -31,10 +34,6 @@ export default function Landing() {
           color="textPrimary"
           gutterBottom
         >
-          <span role="img" aria-label="Rocket">
-            🚀
-            <br />
-          </span>
           Prepare for Liftoff!
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>

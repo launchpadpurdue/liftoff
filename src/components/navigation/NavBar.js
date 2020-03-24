@@ -160,7 +160,7 @@ function NavBar(props) {
             component={Link}
             to="/"
           >
-            <img src="/logo.png" alt="Logo" height={32} />
+            <img src="/logo.png" alt="LaunchPad Logo" height={32} />
           </IconButton>
           <Typography variant="h6" noWrap>
             Liftoff
