@@ -118,7 +118,10 @@ class Admin extends Component {
         </ListItemAvatar>
         <ListItemText primary={`${member.firstName}  ${member.lastName}`} />
         <ListItemSecondaryAction>
-          <IconButton edge="end" onClick={this.showDeleteUserDialog}>
+          <IconButton
+            edge="end"
+            onClick={() => this.showDeleteUserDialog(member)}
+          >
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>

@@ -1,4 +1,7 @@
-export const signIn = (credentials) => {
+import { enqueueSnackbar } from "./notificationActions";
+import { SnackbarVariants } from "../../constants";
+
+export const signIn = credentials => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase();
     firebase
@@ -18,7 +21,7 @@ export const signOut = () => {
   };
 };
 
-export const signUp = (accountDetails) => {
+export const signUp = accountDetails => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
     const firestore = getFirestore();
@@ -148,6 +151,17 @@ export const deleteUser = uid => {
     const firestore = getFirestore();
     const storage = firebase.storage().ref();
     const functions = firebase.functions();
+
+    let currentUser = firebase.auth().currentUser.uid;
+    if (!currentUser || uid === currentUser) {
+      dispatch(
+        enqueueSnackbar({
+          message: "You can't delete your own account",
+          options: SnackbarVariants.ERROR
+        })
+      );
+      return;
+    }
 
     const deleteUser = functions.httpsCallable("deleteUser");
 
