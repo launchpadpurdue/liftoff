@@ -55,7 +55,7 @@ class MenteeGallery extends Component<MenteeGalleryProps, MenteeGalleryState> {
             color="textPrimary"
             gutterBottom
           >
-            Meet the Mentors
+            Meet the Mentees
           </Typography>
           <Typography
             variant="h5"
@@ -80,14 +80,14 @@ class MenteeGallery extends Component<MenteeGalleryProps, MenteeGalleryState> {
           {dataLoaded && dataEmpty && (
             <EmptyData
               title="Come back soon!"
-              message="No mentors have signed up yet but come back soon to meet
+              message="No mentees have signed up yet but come back soon to meet
               them all!"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length === 0 && (
             <EmptyQuery
-              title="No mentors found"
-              message="No mentors were found that matched your query"
+              title="No mentees found"
+              message="No mentees were found that matched your query"
             />
           )}
           {dataLoaded && !dataEmpty && filteredMembers.length > 0 && (
