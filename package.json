@@ -21,6 +21,7 @@
     "date-fns": "^2.11.0",
     "firebase": "^7.5.1",
     "firebase-admin": "^8.10.0",
+    "notistack": "^0.9.9",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-easy-crop": "^2.0.0",

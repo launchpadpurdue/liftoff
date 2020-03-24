@@ -24,6 +24,8 @@ import Loading from "./components/general/Loading";
 import ViewProfile from "./components/auth/ViewProfile";
 import Events from "./components/general/Events";
 import Admin from "./components/general/Admin";
+import Notifier from "./components/utils/Notifier";
+import { SnackbarProvider } from "notistack";
 
 function App(props) {
   // Load in the dynamic theme
@@ -33,25 +35,28 @@ function App(props) {
   // Wait for firebase to initialize then load the site
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {isLoaded(props.auth) && isLoaded(props.profile) ? (
-        <Router>
-          <Switch>
-            <Route path="/" component={Landing} exact></Route>
-            <Route path="/signin" component={SignIn}></Route>
-            <Route path="/signup" component={SignUp}></Route>
-            <Route path="/profile" component={Profile} exact></Route>
-            <Route path="/profile/:id" component={ViewProfile}></Route>
-            <Route path="/mentees" component={MenteeGallery}></Route>
-            <Route path="/mentors" component={MentorGallery}></Route>
-            <Route path="/organizers" component={OrganizerGallery}></Route>
-            <Route path="/events" component={Events}></Route>
-            <Route path="/admin" component={Admin}></Route>
-          </Switch>
-        </Router>
-      ) : (
-        <Loading />
-      )}
+      <SnackbarProvider>
+        <CssBaseline />
+        <Notifier />
+        {isLoaded(props.auth) && isLoaded(props.profile) ? (
+          <Router>
+            <Switch>
+              <Route path="/" component={Landing} exact></Route>
+              <Route path="/signin" component={SignIn}></Route>
+              <Route path="/signup" component={SignUp}></Route>
+              <Route path="/profile" component={Profile} exact></Route>
+              <Route path="/profile/:id" component={ViewProfile}></Route>
+              <Route path="/mentees" component={MenteeGallery}></Route>
+              <Route path="/mentors" component={MentorGallery}></Route>
+              <Route path="/organizers" component={OrganizerGallery}></Route>
+              <Route path="/events" component={Events}></Route>
+              <Route path="/admin" component={Admin}></Route>
+            </Switch>
+          </Router>
+        ) : (
+          <Loading />
+        )}
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

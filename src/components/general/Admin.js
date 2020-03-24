@@ -33,6 +33,7 @@ import {
   deleteEvent,
   editEvent
 } from "../../store/actions/eventActions";
+import { enqueueSnackbar } from "../../store/actions/notificationActions";
 
 class Admin extends Component {
   state = {
@@ -232,7 +233,8 @@ const mapDispatchToProps = dispatch => {
     deleteUser: uid => dispatch(deleteUser(uid)),
     createEvent: event => dispatch(createEvent(event)),
     deleteEvent: eventID => dispatch(deleteEvent(eventID)),
-    editEvent: (event, eventID) => dispatch(editEvent(event, eventID))
+    editEvent: (event, eventID) => dispatch(editEvent(event, eventID)),
+    enqueueSnackBar: test => dispatch(enqueueSnackbar(test))
   };
 };
 

@@ -109,3 +109,15 @@ export const SelectMenuProps = {
     }
   }
 };
+
+const DEFAULT_SNACKBAR = {
+  variant: "default",
+  autoHideDuration: 3000
+};
+export const SnackbarVariants = {
+  DEFAULT: DEFAULT_SNACKBAR,
+  SUCCESS: { ...DEFAULT_SNACKBAR, variant: "success" },
+  ERROR: { ...DEFAULT_SNACKBAR, variant: "error" },
+  WARNING: { ...DEFAULT_SNACKBAR, variant: "warning" },
+  INFO: { ...DEFAULT_SNACKBAR, variant: "info" }
+};
