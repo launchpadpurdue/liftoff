@@ -39,9 +39,8 @@ export default function Landing() {
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
           Welcome to Liftoff, LaunchPad's portal for connecting aspiring mentees
           and experienced mentors. Find peers with similar skill sets and get to
-          know the members of LaunchPad. We hope to provide an easy to use and
-          convenient way to learn more about one another and foster a welcoming
-          community.
+          know the members of LaunchPad. We hope to provide a convenient way to
+          learn about one another and foster a welcoming community.
         </Typography>
         <Typography variant="h6" align="center" color="textPrimary">
           Get Started
