@@ -128,28 +128,13 @@ export const updateProfile = (uid, newProfile) => {
 export const deleteAccount = () => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
-    const firestore = getFirestore();
-    const storage = firebase.storage().ref();
-    const user = firebase.auth().currentUser;
-
-    const promises = [
-      storage.child(`/userImages/${user.uid}/profilePicture`).delete(),
-      firestore
-        .collection("users")
-        .doc(user.uid)
-        .delete()
-    ];
-    Promise.allSettled(promises).then(() => {
-      user.delete();
-    });
+    firebase.auth().currentUser.delete();
   };
 };
 
 export const deleteUser = uid => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     const firebase = getFirebase();
-    const firestore = getFirestore();
-    const storage = firebase.storage().ref();
     const functions = firebase.functions();
 
     let currentUser = firebase.auth().currentUser.uid;
@@ -164,17 +149,23 @@ export const deleteUser = uid => {
     }
 
     const deleteUser = functions.httpsCallable("deleteUser");
-
-    const promises = [
-      storage.child(`/userImages/${uid}/profilePicture`).delete(),
-      firestore
-        .collection("users")
-        .doc(uid)
-        .delete()
-    ];
-    Promise.allSettled(promises).then(async () => {
-      await deleteUser({ uid: uid });
-      dispatch({ type: "DELETE_USER_SUCCESS" });
-    });
+    deleteUser({ uid })
+      .then(() => {
+        dispatch({ type: "DELETE_USER_SUCCESS" });
+        dispatch(
+          enqueueSnackbar({
+            message: "Successfully Deleted User",
+            options: SnackbarVariants.SUCCESS
+          })
+        );
+      })
+      .catch(err => {
+        dispatch(
+          enqueueSnackbar({
+            message: "Could Not Delete User",
+            options: SnackbarVariants.ERROR
+          })
+        );
+      });
   };
 };

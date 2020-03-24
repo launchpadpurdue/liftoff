@@ -5,7 +5,8 @@ const serviceAccount = require("./launchpadliftoff-firebase-adminsdk-oz2zu-c50c5
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://launchpadliftoff.firebaseio.com"
+  databaseURL: "https://launchpadliftoff.firebaseio.com",
+  storageBucket: "launchpadliftoff.appspot.com"
 });
 
 exports.deleteUser = functions.https.onCall((data, context) => {
@@ -45,4 +46,20 @@ exports.getRole = functions.https.onCall((data, context) => {
         "The sign up code provided is invalid"
       );
   }
+});
+
+exports.onUserDelete = functions.auth.user().onDelete(user => {
+  const { uid } = user;
+  return admin
+    .firestore()
+    .collection("users")
+    .doc(uid)
+    .delete()
+    .then(() =>
+      admin
+        .storage()
+        .bucket()
+        .file(`userImages/${uid}/profilePicture`)
+        .delete()
+    );
 });
