@@ -1,4 +1,5 @@
-import React from 'react';
+import { OptionsObject } from 'notistack';
+import React, { Key, ReactNode } from 'react';
 
 import DateUtils from '@date-io/date-fns';
 import { faAndroid, faApple } from '@fortawesome/free-brands-svg-icons';
@@ -120,4 +121,11 @@ export const SnackbarVariants = {
   ERROR: { ...DEFAULT_SNACKBAR, variant: "error" },
   WARNING: { ...DEFAULT_SNACKBAR, variant: "warning" },
   INFO: { ...DEFAULT_SNACKBAR, variant: "info" }
+};
+
+export type Notification = {
+  key: Key;
+  message: ReactNode;
+  options: OptionsObject;
+  dismissed: Boolean;
 };

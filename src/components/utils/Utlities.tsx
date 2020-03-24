@@ -1,4 +1,6 @@
-import React, { ChangeEvent, Component, ReactNode } from 'react';
+import { useSnackbar } from 'notistack';
+import React, { ChangeEvent, Component, Key, ReactNode } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { faExclamationCircle, faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +13,10 @@ import { Search } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
 
 import firebase from '../../config/firebaseConfig';
-import { MemberQuery, SelectMenuProps, skillTypes } from '../../constants';
+import {
+    FixMeLater, MemberQuery, Notification, SelectMenuProps, skillTypes
+} from '../../constants';
+import { removeSnackbar } from '../../store/actions/notificationActions';
 
 const headerStyles = makeStyles(theme => ({
   header: {
@@ -328,4 +333,57 @@ class ImageGrid extends Component<{}, ImageGridState> {
   }
 }
 
-export { EmptyData, EmptyQuery, Footer, Header, ImageGrid, QueryBar };
+let displayed: Array<Key> = [];
+const Notifier = () => {
+  const dispatch = useDispatch();
+  const notifications = useSelector(
+    (store: FixMeLater) => store.notifications.notifications || []
+  );
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const storeDisplayed = (id: Key) => {
+    displayed = [...displayed, id];
+  };
+
+  const removeDisplayed = (id: Key) => {
+    displayed = [...displayed.filter((key: Key) => id !== key)];
+  };
+
+  React.useEffect(() => {
+    notifications.forEach(
+      ({ key, message, options = {}, dismissed = false }: Notification) => {
+        if (dismissed) {
+          // dismiss snackbar using notistack
+          closeSnackbar(key);
+          return;
+        }
+
+        // do nothing if snackbar is already displayed
+        if (displayed.includes(key)) return;
+
+        // display snackbar using notistack
+        enqueueSnackbar(message, {
+          key,
+          ...options,
+          onClose: (event, reason, myKey) => {
+            if (options.onClose) {
+              options.onClose(event, reason, myKey);
+            }
+          },
+          onExited: (event, myKey) => {
+            // removen this snackbar from redux store
+            dispatch(removeSnackbar(myKey));
+            removeDisplayed(myKey);
+          }
+        });
+
+        // keep track of snackbars that we've displayed
+        storeDisplayed(key);
+      }
+    );
+  }, [notifications, closeSnackbar, enqueueSnackbar, dispatch]);
+
+  return null;
+};
+
+export { EmptyData, EmptyQuery, Footer, Header, ImageGrid, Notifier, QueryBar };

@@ -24,7 +24,7 @@ import Loading from "./components/general/Loading";
 import ViewProfile from "./components/auth/ViewProfile";
 import Events from "./components/general/Events";
 import Admin from "./components/general/Admin";
-import Notifier from "./components/utils/Notifier";
+import { Notifier } from "./components/utils/Utlities";
 import { SnackbarProvider } from "notistack";
 
 function App(props) {
