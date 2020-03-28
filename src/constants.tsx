@@ -50,6 +50,15 @@ export interface MemberQuery {
   skills: Array<string>;
 }
 
+export interface Event {
+  title: string;
+  description: string;
+  location: string;
+  type: string;
+  time: firebase.firestore.Timestamp;
+  duration: number;
+}
+
 export const filterMembers = (
   members: Array<Member>,
   query: MemberQuery
