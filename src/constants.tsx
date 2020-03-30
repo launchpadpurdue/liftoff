@@ -29,11 +29,11 @@ const skills: Record<string, IconDefinition> = {
 
 const dateUtils: DateUtils = new DateUtils();
 
-export interface Preferences {
+export type Preferences = {
   theme: string;
-}
+};
 
-export interface Member {
+export type Member = {
   id: string;
   firstName: string;
   lastName: string;
@@ -43,21 +43,21 @@ export interface Member {
   profilePicture: string;
   skills: Array<string>;
   preferences: Preferences;
-}
+};
 
-export interface MemberQuery {
+export type MemberQuery = {
   name: string;
   skills: Array<string>;
-}
+};
 
-export interface Event {
+export type Event = {
   title: string;
   description: string;
   location: string;
   type: string;
   time: firebase.firestore.Timestamp;
   duration: number;
-}
+};
 
 export const filterMembers = (
   members: Array<Member>,
@@ -90,7 +90,7 @@ export const weekdays: Array<string> = [
   "Saturday"
 ];
 
-export const timestampString = (
+export const formatTimestamp = (
   timestamp: firebase.firestore.Timestamp
 ): string => {
   const dateTime: Date = dateUtils.date(timestamp.toDate());
@@ -102,11 +102,10 @@ export const timestampString = (
 };
 
 export const skillTypes: Array<string> = Object.keys(skills);
-export const skillIcon = (skillType: string): IconDefinition =>
-  skills[skillType] ?? faBug;
+export const skillIcon = (skillType: string) => skills[skillType] ?? faBug;
 
 export const eventTypes: Array<string> = Object.keys(events).sort();
-export const eventIcon = (eventType: string): JSX.Element =>
+export const eventIcon = (eventType: string) =>
   events[eventType] ?? <BugReport />;
 
 const ITEM_HEIGHT = 48;

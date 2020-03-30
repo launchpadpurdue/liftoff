@@ -41,24 +41,24 @@ import Cropper from "react-easy-crop";
 
 import { eventTypes, skillTypes, SelectMenuProps } from "../../constants";
 import { deleteAccount } from "../../store/actions/authActions";
-
+import AlertDialog from "./Dialogs/AlertDialog";
 // AlertDialog Definition
-function AlertDialog(props) {
-  const { open, onClose, title, message } = props;
-  return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button autoFocus color="primary" onClick={onClose}>
-          Okay
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
+// function AlertDialog(props) {
+//   const { open, onClose, title, message } = props;
+//   return (
+//     <Dialog open={open} onClose={onClose}>
+//       <DialogTitle>{title}</DialogTitle>
+//       <DialogContent>
+//         <DialogContentText>{message}</DialogContentText>
+//       </DialogContent>
+//       <DialogActions>
+//         <Button autoFocus color="primary" onClick={onClose}>
+//           Okay
+//         </Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// }
 
 // Confirm Dialog Definition
 function ConfirmDialog(props) {

@@ -18,7 +18,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
-import { eventIcon, timestampString } from "../../constants";
+import { eventIcon, formatTimestamp } from "../../constants";
 import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -88,7 +88,7 @@ function Events(props) {
           {events.map(event => (
             <TimelineElement
               key={event.id}
-              date={timestampString(event.time)}
+              date={formatTimestamp(event.time)}
               eventType={event.type}
             >
               <Typography variant="h6">{event.title}</Typography>
