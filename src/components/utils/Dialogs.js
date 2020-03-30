@@ -1,5 +1,3 @@
-import DateFnsUtils from "@date-io/date-fns";
-
 import {
   AppBar,
   Button,
@@ -16,10 +14,7 @@ import {
   Grid
 } from "@material-ui/core";
 import { Close, PhotoLibrary } from "@material-ui/icons";
-import {
-  KeyboardDateTimePicker,
-  MuiPickersUtilsProvider
-} from "@material-ui/pickers";
+
 import {
   TextField,
   FormControl,
@@ -39,10 +34,11 @@ import { getFirebase } from "react-redux-firebase";
 
 import Cropper from "react-easy-crop";
 
-import { eventTypes, skillTypes, SelectMenuProps } from "../../constants";
+import { skillTypes, SelectMenuProps } from "../../constants";
 import { deleteAccount } from "../../store/actions/authActions";
 import AlertDialog from "./Dialogs/AlertDialog";
 import ConfirmationDialog from "./Dialogs/ConfirmationDialog";
+import EventDialog from "./Dialogs/EventDialog";
 
 // CropDialog Definition
 class CropDialog extends Component {
@@ -436,158 +432,6 @@ class EditProfileDialog extends Component {
           srcImage={image}
         ></CropDialog>
       </Fragment>
-    );
-  }
-}
-
-class EventDialog extends Component {
-  state = {};
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.open && !state.event) {
-      if (props.event) {
-        state.event = { ...props.event };
-        state.event.time = state.event.time.toDate();
-      } else if (!props.event) {
-        state.event = {
-          title: "",
-          description: "",
-          location: "",
-          time: null,
-          type: "",
-          duration: 1
-        };
-      }
-    }
-
-    return state;
-  }
-
-  onInput = event => {
-    let property = event.target.id ? event.target.id : event.target.name,
-      value = event.target.value;
-    if (property === "duration" && value === "") return;
-    const test = this.state.event;
-    test[property] = value;
-    this.setState({ event: test });
-  };
-
-  closeDialog = event => {
-    let eventID;
-    if (event) {
-      eventID = event.id;
-      delete event["id"];
-    }
-    this.props.onClose(event, eventID);
-    this.setState({
-      event: null
-    });
-  };
-
-  render() {
-    const { open } = this.props;
-    if (!open) return null;
-    const { event } = this.state;
-    const { title, description, time, location, type, duration } = event;
-    return (
-      <Dialog fullWidth open={open} onClose={() => this.closeDialog(null)}>
-        <DialogTitle>{event.id ? "Edit" : "Create"} Event Details</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {event.id ? "Edit" : "Create"} details for the event
-          </DialogContentText>
-          <TextField
-            autoFocus
-            fullWidth
-            id="title"
-            margin="dense"
-            defaultValue={title}
-            label="Event Name"
-            placeholder="ex. Pairing Night"
-            onChange={this.onInput}
-          />
-          <TextField
-            autoFocus
-            fullWidth
-            id="location"
-            margin="dense"
-            defaultValue={location}
-            label="Event Location"
-            placeholder="ex. LWSN B155"
-            onChange={this.onInput}
-          />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDateTimePicker
-              fullWidth
-              placeholder="MM/DD/YYYY hh:mm"
-              variant="inline"
-              id="time"
-              label="Event Date and Time"
-              value={time}
-              autoOk
-              margin="dense"
-              onChange={time =>
-                this.setState(prevState => ({
-                  event: {
-                    ...prevState.event,
-                    time
-                  }
-                }))
-              }
-              format="MM/dd/yyyy HH:mm"
-            />
-          </MuiPickersUtilsProvider>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth margin="dense">
-                <InputLabel>Event Type</InputLabel>
-                <Select value={type} onChange={this.onInput} name="type">
-                  {eventTypes.map(type => (
-                    <MenuItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                inputProps={{ min: 1 }}
-                margin="dense"
-                fullWidth
-                label="Duration (minutes)"
-                id="duration"
-                type="number"
-                onInput={this.onInput}
-                value={duration}
-              />
-            </Grid>
-          </Grid>
-          <TextField
-            id="description"
-            label="Event Description"
-            margin="dense"
-            placeholder="Add a description of the event"
-            onChange={this.onInput}
-            defaultValue={description}
-            fullWidth
-            rowsMax="4"
-            multiline
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => this.closeDialog(null)} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => this.closeDialog(this.state.event)}
-            color="primary"
-            autoFocus
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
     );
   }
 }

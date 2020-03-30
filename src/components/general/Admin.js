@@ -38,6 +38,7 @@ import { enqueueSnackbar } from "../../store/actions/notificationActions";
 class Admin extends Component {
   state = {
     currentEvent: null,
+    currentEventID: null,
     currentUser: null,
     showDeleteEventDialog: false,
     showDeleteUserDialog: false,
@@ -45,7 +46,22 @@ class Admin extends Component {
   };
 
   showEventDialog = event => {
-    this.setState({ showEventDialog: true, currentEvent: event });
+    if (event) {
+      const selectedEvent = { ...event };
+      const eventID = selectedEvent.id;
+      delete selectedEvent["id"];
+      this.setState({
+        showEventDialog: true,
+        currentEvent: selectedEvent,
+        currentEventID: eventID
+      });
+    } else {
+      this.setState({
+        showEventDialog: true,
+        currentEvent: null,
+        currentEventID: null
+      });
+    }
   };
 
   hideEventDialog = (event, eventID) => {
@@ -54,7 +70,11 @@ class Admin extends Component {
         ? this.props.editEvent(event, eventID)
         : this.props.createEvent(event);
     }
-    this.setState({ showEventDialog: false, currentEvent: null });
+    this.setState({
+      showEventDialog: false,
+      currentEvent: null,
+      currentEventID: null
+    });
   };
 
   showDeleteEventDialog = event => {
@@ -199,6 +219,7 @@ class Admin extends Component {
           open={showEventDialog}
           onClose={this.hideEventDialog}
           event={this.state.currentEvent}
+          eventID={this.state.currentEventID}
         />
         <ConfirmationDialog
           open={showDeleteEventDialog}
