@@ -42,42 +42,7 @@ import Cropper from "react-easy-crop";
 import { eventTypes, skillTypes, SelectMenuProps } from "../../constants";
 import { deleteAccount } from "../../store/actions/authActions";
 import AlertDialog from "./Dialogs/AlertDialog";
-// AlertDialog Definition
-// function AlertDialog(props) {
-//   const { open, onClose, title, message } = props;
-//   return (
-//     <Dialog open={open} onClose={onClose}>
-//       <DialogTitle>{title}</DialogTitle>
-//       <DialogContent>
-//         <DialogContentText>{message}</DialogContentText>
-//       </DialogContent>
-//       <DialogActions>
-//         <Button autoFocus color="primary" onClick={onClose}>
-//           Okay
-//         </Button>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// }
-
-// Confirm Dialog Definition
-function ConfirmDialog(props) {
-  const { open, onConfirm, onDismiss, title, message } = props;
-  return (
-    <Dialog open={open} onClose={onDismiss}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onDismiss}>Cancel</Button>
-        <Button autoFocus color="primary" onClick={onConfirm}>
-          Confirm
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
+import ConfirmationDialog from "./Dialogs/ConfirmationDialog";
 
 // CropDialog Definition
 class CropDialog extends Component {
@@ -629,7 +594,7 @@ class EventDialog extends Component {
 
 export {
   AlertDialog,
-  ConfirmDialog,
+  ConfirmationDialog,
   CropDialog,
   DeleteAccountDialog,
   EditProfileDialog,

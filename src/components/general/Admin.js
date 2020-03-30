@@ -25,7 +25,7 @@ import { compose } from "redux";
 import { eventIcon } from "../../constants";
 import NavBar from "../navigation/NavBar";
 import { ListCard } from "../utils/Cards";
-import { ConfirmDialog, EventDialog } from "../utils/Dialogs";
+import { ConfirmationDialog, EventDialog } from "../utils/Dialogs";
 import { Footer } from "../utils/Utlities";
 import { deleteUser } from "../../store/actions/authActions";
 import {
@@ -200,14 +200,14 @@ class Admin extends Component {
           onClose={this.hideEventDialog}
           event={this.state.currentEvent}
         />
-        <ConfirmDialog
+        <ConfirmationDialog
           open={showDeleteEventDialog}
           onConfirm={this.onDeleteEvent}
           onDismiss={this.hideDeleteEventDialog}
           title="Delete Event"
           message="Are you sure you want to delete this event?"
         />
-        <ConfirmDialog
+        <ConfirmationDialog
           open={showDeleteUserDialog}
           onConfirm={this.onDeleteUser}
           onDismiss={this.hideDeleteUserDialog}

@@ -4,28 +4,31 @@ import {
     Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@material-ui/core';
 
-type AlertDialogProps = {
+type ConfirmationDialogProps = {
   title: string;
   message: string;
   open: boolean;
-  onClose: () => void;
+  onConfirm: () => void;
+  onDismiss: () => void;
 };
 
-export default function AlertDialog({
+export default function ConfirmationDialog({
   title,
   message,
   open,
-  onClose
-}: AlertDialogProps) {
+  onConfirm,
+  onDismiss
+}: ConfirmationDialogProps) {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onDismiss}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus color="primary" onClick={onClose}>
-          Okay
+        <Button onClick={onDismiss}>Cancel</Button>
+        <Button autoFocus color="primary" onClick={onConfirm}>
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>
