@@ -18,7 +18,7 @@ export default function AlertDialog({
   onClose
 }: AlertDialogProps) {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog onClose={onClose} open={open}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>

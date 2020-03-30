@@ -20,14 +20,14 @@ export default function ConfirmationDialog({
   onDismiss
 }: ConfirmationDialogProps) {
   return (
-    <Dialog open={open} onClose={onDismiss}>
+    <Dialog onClose={() => onDismiss()} open={open}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onDismiss}>Cancel</Button>
-        <Button autoFocus color="primary" onClick={onConfirm}>
+        <Button onClick={() => onDismiss()}>Cancel</Button>
+        <Button autoFocus color="primary" onClick={() => onConfirm()}>
           Confirm
         </Button>
       </DialogActions>
