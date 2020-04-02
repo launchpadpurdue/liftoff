@@ -21,13 +21,17 @@ import { DeleteForever, Edit, ExitToApp, Lock } from "@material-ui/icons";
 // Redux Imports
 import { connect } from "react-redux";
 import { getFirebase } from "react-redux-firebase";
-import { signOut, updateProfile } from "../../store/actions/authActions";
+import {
+  signOut,
+  updateProfile,
+  deleteAccount
+} from "../../store/actions/authActions";
 import { setTheme } from "../../store/actions/preferenceActions";
 
 // Local Imports
 import {
   AlertDialog,
-  DeleteAccountDialog,
+  ReauthenticateDialog,
   EditProfileDialog
 } from "../utils/Dialogs";
 import NavBar from "../navigation/NavBar";
@@ -68,7 +72,8 @@ class Profile extends Component {
     this.setState({ showDeleteAccount: true });
   };
 
-  hideDeleteAccount = () => {
+  hideDeleteAccount = reauthenticated => {
+    if (reauthenticated) this.props.deleteAccount();
     this.setState({
       showDeleteAccount: false
     });
@@ -194,7 +199,7 @@ class Profile extends Component {
           title="Password Reset"
           message={` An email to reset your password has been sent to ${auth.email}`}
         />
-        <DeleteAccountDialog
+        <ReauthenticateDialog
           open={this.state.showDeleteAccount}
           onClose={this.hideDeleteAccount}
         />
@@ -212,6 +217,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    deleteAccount: () => dispatch(deleteAccount()),
     setTheme: theme => dispatch(setTheme(theme)),
     signOut: () => dispatch(signOut()),
     updateProfile: (uid, profile) => dispatch(updateProfile(uid, profile))
