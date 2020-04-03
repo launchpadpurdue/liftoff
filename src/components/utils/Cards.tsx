@@ -1,30 +1,11 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Divider, Grid, List, makeStyles,
-    Paper, Tooltip, Typography
-} from '@material-ui/core';
+import { Box, Chip, Divider, Grid, List, makeStyles, Paper, Typography } from '@material-ui/core';
 
 import { Member, skillIcon } from '../../constants';
+import MemberCard from './Cards/MemberCard';
 import SkeletonCard from './Cards/SkeletonCard';
-
-const cardStyles = makeStyles({
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-  cardMedia: {
-    paddingTop: "100%", // 1:1
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
-  chipLabel: { paddingRight: 0 },
-  chipRoot: { maxHeight: 32 },
-});
 
 const profileStyles = makeStyles((theme) => ({
   divider: {
@@ -62,62 +43,6 @@ const listCardStyles = makeStyles({
     overflow: "auto",
   },
 });
-
-type MemberCardProps = {
-  member: Member;
-};
-function MemberCard({ member }: MemberCardProps) {
-  const classes = cardStyles();
-  const { firstName, lastName, profilePicture, skills, id } = member;
-  return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Card className={classes.card}>
-        <CardMedia
-          className={classes.cardMedia}
-          image={profilePicture}
-          title={`${firstName} ${lastName} Picture`}
-        />
-        <CardContent className={classes.cardContent}>
-          <Typography gutterBottom component="h2" variant="h5">
-            {`${firstName} ${lastName}`}
-          </Typography>
-          <Grid container spacing={1}>
-            {skills.sort().map((skill) => (
-              <Grid item key={skill}>
-                <Tooltip arrow title={skill}>
-                  <Chip
-                    color="secondary"
-                    classes={{
-                      label: classes.chipLabel,
-                      root: classes.chipRoot,
-                    }}
-                    icon={
-                      <FontAwesomeIcon
-                        fixedWidth
-                        icon={skillIcon(skill)}
-                        size="lg"
-                      />
-                    }
-                  ></Chip>
-                </Tooltip>
-              </Grid>
-            ))}
-          </Grid>
-        </CardContent>
-        <CardActions>
-          <Button
-            color="primary"
-            size="small"
-            component={Link}
-            to={`/profile/${id}`}
-          >
-            View Profile
-          </Button>
-        </CardActions>
-      </Card>
-    </Grid>
-  );
-}
 
 type ProfileCardProps = {
   profile: Member;
