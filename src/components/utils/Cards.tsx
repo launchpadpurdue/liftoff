@@ -6,30 +6,30 @@ import {
     Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Divider, Grid, List, makeStyles,
     Paper, Tooltip, Typography
 } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
 
 import { Member, skillIcon } from '../../constants';
+import SkeletonCard from './Cards/SkeletonCard';
 
 const cardStyles = makeStyles({
   card: {
     height: "100%",
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   cardMedia: {
-    paddingTop: "100%" // 1:1
+    paddingTop: "100%", // 1:1
   },
   cardContent: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   chipLabel: { paddingRight: 0 },
-  chipRoot: { maxHeight: 32 }
+  chipRoot: { maxHeight: 32 },
 });
 
-const profileStyles = makeStyles(theme => ({
+const profileStyles = makeStyles((theme) => ({
   divider: {
     marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   image: {
     border: `5px solid ${theme.palette.primary.main}`,
@@ -39,28 +39,28 @@ const profileStyles = makeStyles(theme => ({
     width: "75%",
     [theme.breakpoints.up("sm")]: {
       height: "auto",
-      width: "100%"
-    }
+      width: "100%",
+    },
   },
   name: {
     [theme.breakpoints.down("xs")]: {
-      textAlign: "center"
-    }
+      textAlign: "center",
+    },
   },
   profile: {
     [theme.breakpoints.up("xs")]: {
-      marginLeft: theme.spacing(2)
-    }
+      marginLeft: theme.spacing(2),
+    },
   },
   skill: {
-    padding: theme.spacing(1)
-  }
+    padding: theme.spacing(1),
+  },
 }));
 
 const listCardStyles = makeStyles({
   list: {
-    overflow: "auto"
-  }
+    overflow: "auto",
+  },
 });
 
 type MemberCardProps = {
@@ -82,14 +82,14 @@ function MemberCard({ member }: MemberCardProps) {
             {`${firstName} ${lastName}`}
           </Typography>
           <Grid container spacing={1}>
-            {skills.sort().map(skill => (
+            {skills.sort().map((skill) => (
               <Grid item key={skill}>
                 <Tooltip arrow title={skill}>
                   <Chip
                     color="secondary"
                     classes={{
                       label: classes.chipLabel,
-                      root: classes.chipRoot
+                      root: classes.chipRoot,
                     }}
                     icon={
                       <FontAwesomeIcon
@@ -130,7 +130,7 @@ function ProfileCard({ profile }: ProfileCardProps) {
     skills,
     description,
     profilePicture,
-    role
+    role,
   } = profile;
   if (description === "") description = "User has not added a description yet";
   if (profilePicture === "") profilePicture = "/profile.jpg";
@@ -153,7 +153,7 @@ function ProfileCard({ profile }: ProfileCardProps) {
             <Typography variant="h6">Skills</Typography>
             <Grid item container spacing={1}>
               {skills && skills.length ? (
-                skills.sort().map(skill => (
+                skills.sort().map((skill) => (
                   <Grid item key={skill}>
                     <Chip
                       className={classes.skill}
@@ -178,51 +178,6 @@ function ProfileCard({ profile }: ProfileCardProps) {
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  );
-}
-
-function SkeletonCard() {
-  const classes = cardStyles();
-  return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Card className={classes.card}>
-        <Skeleton className={classes.cardMedia} variant="rect" />
-        <CardContent className={classes.cardContent}>
-          <Typography gutterBottom component="h2" variant="h5">
-            <Skeleton animation="wave" variant="text" />
-          </Typography>
-          <Grid container spacing={1}>
-            <Grid item>
-              <Skeleton
-                width={32}
-                height={32}
-                animation="wave"
-                variant="circle"
-              />
-            </Grid>
-            <Grid item>
-              <Skeleton
-                width={32}
-                height={32}
-                animation="wave"
-                variant="circle"
-              />
-            </Grid>
-            <Grid item>
-              <Skeleton
-                width={32}
-                height={32}
-                animation="wave"
-                variant="circle"
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <CardActions>
-          <Skeleton animation="wave" width="40%" />
-        </CardActions>
-      </Card>
     </Grid>
   );
 }

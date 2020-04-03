@@ -6,6 +6,7 @@ import { faAndroid, faApple } from '@fortawesome/free-brands-svg-icons';
 import {
     faBug, faDesktop, faGamepad, faGlobe, faRobot, IconDefinition
 } from '@fortawesome/free-solid-svg-icons';
+import { makeStyles } from '@material-ui/core';
 import { BugReport, Code, Group, School, Slideshow, Work } from '@material-ui/icons';
 
 export type FixMeLater = any;
@@ -15,7 +16,7 @@ const events: Record<string, JSX.Element> = {
   hacknight: <Code />,
   meeting: <Work />,
   social: <Group />,
-  workshop: <School />
+  workshop: <School />,
 };
 
 const skills: Record<string, IconDefinition> = {
@@ -24,7 +25,7 @@ const skills: Record<string, IconDefinition> = {
   Android: faAndroid,
   Gaming: faGamepad,
   "Machine Learning": faRobot,
-  Desktop: faDesktop
+  Desktop: faDesktop,
 };
 
 const dateUtils: DateUtils = new DateUtils();
@@ -87,7 +88,7 @@ export const weekdays: Array<string> = [
   "Wednesday",
   "Thursday",
   "Friday",
-  "Saturday"
+  "Saturday",
 ];
 
 export const formatTimestamp = (
@@ -114,21 +115,21 @@ export const SelectMenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
+      width: 250,
+    },
+  },
 };
 
 const DEFAULT_SNACKBAR = {
   variant: "default",
-  autoHideDuration: 3000
+  autoHideDuration: 3000,
 };
 export const SnackbarVariants = {
   DEFAULT: DEFAULT_SNACKBAR,
   SUCCESS: { ...DEFAULT_SNACKBAR, variant: "success" },
   ERROR: { ...DEFAULT_SNACKBAR, variant: "error" },
   WARNING: { ...DEFAULT_SNACKBAR, variant: "warning" },
-  INFO: { ...DEFAULT_SNACKBAR, variant: "info" }
+  INFO: { ...DEFAULT_SNACKBAR, variant: "info" },
 };
 
 export type Notification = {
@@ -137,3 +138,19 @@ export type Notification = {
   options: OptionsObject;
   dismissed: Boolean;
 };
+
+export const cardStyles = makeStyles({
+  card: {
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+  },
+  cardMedia: {
+    paddingTop: "100%", // 1:1
+  },
+  cardContent: {
+    flexGrow: 1,
+  },
+  chipLabel: { paddingRight: 0 },
+  chipRoot: { maxHeight: 32 },
+});
