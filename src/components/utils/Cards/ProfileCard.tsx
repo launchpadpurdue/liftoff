@@ -55,21 +55,21 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
   return (
     <Grid container>
-      <Grid item xs={12} sm={3} container alignItems="center" justify="center">
-        <img className={classes.image} alt="User" src={profilePicture} />
+      <Grid alignItems="center" container item justify="center" sm={3} xs={12}>
+        <img alt="User" className={classes.image} src={profilePicture} />
       </Grid>
-      <Grid item className={classes.profile} xs>
+      <Grid className={classes.profile} item xs>
         <Typography className={classes.name} variant="h3">
           {`${firstName} ${lastName}`}
         </Typography>
         <Divider className={classes.divider} />
-        <Grid item container direction="column" spacing={1}>
+        <Grid container direction="column" item spacing={1}>
           <Grid item container alignItems="center">
             <Typography variant="h6">{role}</Typography>
           </Grid>
           <Grid item>
             <Typography variant="h6">Skills</Typography>
-            <Grid item container spacing={1}>
+            <Grid container item spacing={1}>
               {skills && skills.length ? (
                 skills.sort().map((skill) => (
                   <Grid item key={skill}>
